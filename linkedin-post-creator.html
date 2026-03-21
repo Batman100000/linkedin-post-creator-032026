@@ -1,0 +1,2374 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>יוצר פוסטים לינקדאין</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #0a0a0f;
+  --bg2: #0f0f1a;
+  --card: #13111f;
+  --card2: #1a1730;
+  --border: #2a2545;
+  --border2: #3d3660;
+  --primary: #7c3aed;
+  --primary-dark: #5b21b6;
+  --primary-light: #a78bfa;
+  --primary-glow: rgba(124,58,237,0.3);
+  --accent: #c084fc;
+  --accent-glow: rgba(192,132,252,0.2);
+  --ai: #e879f9;
+  --ai-glow: rgba(232,121,249,0.2);
+  --gold: #fbbf24;
+  --text: #f1eeff;
+  --text2: #a89ec5;
+  --text3: #5c5480;
+  --red: #f87171;
+  --green: #34d399;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 8px 32px rgba(0,0,0,0.6);
+  --shadow-purple: 0 4px 24px rgba(124,58,237,0.35);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+body {
+  font-family:'Heebo',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  direction:rtl;
+  overflow-x:hidden;
+}
+
+body::before {
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 10% 5%, rgba(124,58,237,0.18) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 40% at 90% 90%, rgba(192,132,252,0.12) 0%,transparent 60%),
+    radial-gradient(ellipse 30% 30% at 50% 50%, rgba(232,121,249,0.06) 0%,transparent 70%);
+  pointer-events:none;z-index:0;
+}
+
+/* ─── HEADER ─── */
+header {
+  position:sticky;top:0;z-index:100;
+  background:rgba(10,10,15,0.95);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 2rem;
+  height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+
+.logo {
+  display:flex;align-items:center;gap:0.75rem;
+}
+.logo-in {
+  width:36px;height:36px;
+  background:linear-gradient(135deg,#5b21b6,#7c3aed);
+  border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:1rem;color:#fff;
+  box-shadow:0 0 20px rgba(124,58,237,0.5);
+  flex-shrink:0;
+}
+.logo-text h1{font-size:1rem;font-weight:800;color:var(--text);line-height:1.1;}
+.logo-text span{font-size:0.7rem;color:var(--text3);font-weight:400;}
+
+.header-center {
+  display:flex;align-items:center;gap:0.5rem;
+}
+
+.lang-toggle {
+  display:flex;
+  background:var(--card2);
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:3px;
+  gap:2px;
+}
+.lang-toggle button {
+  padding:0.25rem 0.75rem;
+  border:none;border-radius:999px;
+  font-family:'Heebo',sans-serif;font-size:0.75rem;font-weight:600;
+  cursor:pointer;color:var(--text3);background:transparent;
+  transition:all 0.2s;
+}
+.lang-toggle button.active {background:var(--primary);color:#fff;}
+
+.header-actions{display:flex;gap:0.5rem;align-items:center;}
+
+.btn-link-connect {
+  display:flex;align-items:center;gap:0.5rem;
+  padding:0.4rem 0.9rem;
+  background:linear-gradient(135deg,var(--primary-dark),var(--primary));
+  border:none;border-radius:999px;
+  color:#fff;font-family:'Heebo',sans-serif;font-size:0.78rem;font-weight:700;
+  cursor:pointer;transition:all 0.2s;
+  box-shadow:0 2px 12px rgba(124,58,237,0.4);
+}
+.btn-link-connect:hover{box-shadow:0 4px 20px rgba(124,58,237,0.6);transform:translateY(-1px);}
+.btn-link-connect.connected{background:linear-gradient(135deg,#059669,#34d399);}
+
+.btn-settings {
+  width:36px;height:36px;
+  background:var(--card2);border:1px solid var(--border);border-radius:9px;
+  color:var(--text3);font-size:1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all 0.15s;
+}
+.btn-settings:hover{border-color:var(--border2);color:var(--text);}
+
+/* ─── PROGRESS ─── */
+.progress-bar-wrap {
+  padding:0 2rem;
+  background:rgba(10,10,15,0.8);
+  border-bottom:1px solid var(--border);
+}
+.progress-pct {
+  font-size:0.72rem;font-weight:700;color:var(--primary-light);
+  padding-top:0.5rem;
+}
+.progress-track {
+  height:3px;background:var(--card2);border-radius:999px;margin:0.3rem 0;
+  overflow:hidden;
+}
+.progress-fill {
+  height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));
+  border-radius:999px;transition:width 0.5s ease;
+}
+.steps-row {
+  display:flex;align-items:center;
+  padding:0.75rem 0;
+  gap:0;
+}
+.step-item {
+  display:flex;align-items:center;gap:0.5rem;flex:1;cursor:pointer;
+}
+.step-item:last-child{flex:0;}
+.step-num {
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.75rem;font-weight:800;
+  background:var(--card2);border:2px solid var(--border);
+  color:var(--text3);transition:all 0.3s;flex-shrink:0;
+}
+.step-item.active .step-num{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 0 14px var(--primary-glow);}
+.step-item.done .step-num{background:var(--accent);border-color:var(--accent);color:#fff;}
+.step-label{font-size:0.78rem;font-weight:600;color:var(--text3);transition:color 0.2s;}
+.step-item.active .step-label{color:var(--text);}
+.step-item.done .step-label{color:var(--accent);}
+.step-connector {
+  flex:1;height:2px;background:var(--border);border-radius:999px;
+  transition:background 0.3s;
+}
+.step-connector.done{background:linear-gradient(90deg,var(--primary),var(--accent));}
+
+/* ─── MAIN ─── */
+main {
+  position:relative;z-index:1;
+  max-width:960px;margin:0 auto;
+  padding:2rem 1.5rem 5rem;
+}
+
+/* ─── STEP PANELS ─── */
+.step-panel{display:none;}
+.step-panel.active{display:block;animation:fadeUp 0.3s ease;}
+
+@keyframes fadeUp {
+  from{opacity:0;transform:translateY(12px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* ─── STEP 1: Topic / URL ─── */
+.step1-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:0.75rem;
+}
+.step1-header h2{font-size:1.15rem;font-weight:800;}
+.step1-header p{font-size:0.78rem;color:var(--text3);margin-top:0.15rem;}
+
+.url-box {
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:0.85rem 1.1rem;margin-bottom:1rem;
+  box-shadow:var(--shadow);
+}
+.url-box-title {
+  font-size:0.72rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;
+  margin-bottom:0.6rem;display:flex;align-items:center;gap:0.4rem;
+}
+.url-input-row {
+  display:flex;gap:0.75rem;align-items:stretch;
+}
+.url-input-wrap {
+  flex:1;display:flex;align-items:center;gap:0.6rem;
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:0 0.9rem;transition:border-color 0.2s,box-shadow 0.2s;
+}
+.url-input-wrap:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow);}
+.url-input-wrap svg{color:var(--text3);flex-shrink:0;}
+.url-input-wrap input {
+  flex:1;background:transparent;border:none;outline:none;
+  color:var(--text);font-family:'Heebo',sans-serif;font-size:0.88rem;
+  padding:0.65rem 0;direction:ltr;
+}
+.url-input-wrap input::placeholder{color:var(--text3);}
+.btn-primary {
+  padding:0.65rem 1.5rem;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  border:none;border-radius:var(--radius-sm);
+  color:#fff;font-family:'Heebo',sans-serif;font-size:0.88rem;font-weight:700;
+  cursor:pointer;white-space:nowrap;
+  transition:all 0.2s;box-shadow:var(--shadow-purple);
+  display:flex;align-items:center;gap:0.5rem;
+}
+.btn-primary:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 28px rgba(124,58,237,0.55);}
+.btn-primary:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+
+.divider-row {
+  display:flex;align-items:center;gap:1rem;margin:0.65rem 0;
+  color:var(--text3);font-size:0.75rem;
+}
+.divider-row::before,.divider-row::after{
+  content:'';flex:1;height:1px;background:var(--border);
+}
+
+.topic-input-row textarea {
+  width:100%;background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:0.55rem 0.9rem;
+  color:var(--text);font-family:'Heebo',sans-serif;font-size:0.85rem;
+  resize:none;height:58px;line-height:1.6;outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.topic-input-row textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow);}
+
+/* Articles list */
+.articles-header {
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;
+}
+.articles-title {font-size:1rem;font-weight:800;}
+.articles-title span{color:var(--gold);}
+.articles-subtitle{font-size:0.8rem;color:var(--text3);margin-top:0.15rem;}
+
+.btn-trending-alt {
+  background:linear-gradient(135deg,rgba(232,121,249,0.15),rgba(124,58,237,0.15));
+  border-color:rgba(232,121,249,0.4);
+  color:var(--ai);
+  box-shadow:0 0 16px rgba(232,121,249,0.12);
+}
+.btn-trending-alt:hover:not(:disabled){
+  background:linear-gradient(135deg,rgba(232,121,249,0.25),rgba(124,58,237,0.2));
+  box-shadow:0 0 24px rgba(232,121,249,0.3);
+}
+
+.btn-trending {
+  display:flex;align-items:center;gap:0.5rem;
+  padding:0.45rem 1rem;
+  background:linear-gradient(135deg,rgba(124,58,237,0.25),rgba(192,132,252,0.15));
+  border:1px solid rgba(124,58,237,0.5);
+  border-radius:999px;
+  color:var(--primary-light);font-family:'Heebo',sans-serif;font-size:0.8rem;font-weight:700;
+  cursor:pointer;transition:all 0.2s;white-space:nowrap;
+  box-shadow:0 0 16px rgba(124,58,237,0.2);
+}
+.btn-trending:hover:not(:disabled){
+  background:linear-gradient(135deg,rgba(124,58,237,0.4),rgba(192,132,252,0.25));
+  box-shadow:0 0 28px rgba(124,58,237,0.4);transform:translateY(-1px);
+}
+.btn-trending:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
+
+/* Sort pills - prominent */
+.sort-group{display:flex;gap:0.4rem;}
+.sort-pill {
+  display:flex;align-items:center;gap:0.35rem;
+  padding:0.35rem 0.9rem;
+  background:var(--card);border:1.5px solid var(--border);border-radius:999px;
+  font-size:0.8rem;font-weight:700;color:var(--text2);
+  cursor:pointer;font-family:'Heebo',sans-serif;transition:all 0.15s;
+}
+.sort-pill:hover{border-color:var(--border2);color:var(--text);}
+.sort-pill.sort-active{background:rgba(124,58,237,0.15);border-color:var(--primary);color:var(--primary-light);}
+.sort-arrow{font-size:0.85rem;font-weight:900;transition:all 0.15s;}
+
+/* Connect tabs */
+.connect-tabs{display:flex;gap:0.4rem;margin-bottom:1.25rem;border-bottom:1px solid var(--border);padding-bottom:0.75rem;}
+.conn-tab {
+  padding:0.4rem 0.9rem;border-radius:8px;border:1px solid var(--border);
+  background:var(--card2);color:var(--text3);font-family:'Heebo',sans-serif;
+  font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.15s;
+}
+.conn-tab:hover{border-color:var(--border2);color:var(--text2);}
+.conn-tab.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+.conn-content{animation:fadeUp 0.2s ease;}
+
+/* Settings */
+.settings-section{margin-bottom:1.1rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
+.settings-section:last-of-type{border-bottom:none;margin-bottom:0;}
+.settings-label{font-size:0.78rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;}
+.settings-opt {
+  padding:0.35rem 0.85rem;border-radius:8px;border:1px solid var(--border);
+  background:var(--card2);color:var(--text3);font-family:'Heebo',sans-serif;
+  font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.15s;
+}
+.settings-opt:hover{border-color:var(--border2);color:var(--text);}
+.settings-opt.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+
+/* Reminders */
+.reminder-list{display:flex;flex-direction:column;gap:0.4rem;margin-top:0.5rem;max-height:150px;overflow-y:auto;}
+.reminder-item{display:flex;align-items:center;gap:0.5rem;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:0.4rem 0.75rem;font-size:0.78rem;}
+.reminder-day{font-weight:700;color:var(--primary);min-width:22px;}
+.reminder-time{color:var(--accent);font-weight:700;}
+.reminder-msg{flex:1;color:var(--text2);}
+.reminder-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:0.7rem;padding:0;}
+.reminder-del:hover{color:var(--red);}
+
+/* Day picker */
+.field-label{font-size:0.78rem;font-weight:700;color:var(--text3);}
+.day-btn {
+  width:34px;height:34px;border-radius:50%;border:1.5px solid var(--border);
+  background:var(--card2);color:var(--text3);font-family:'Heebo',sans-serif;
+  font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.15s;
+}
+.day-btn:hover{border-color:var(--primary);color:var(--text);}
+.day-btn.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+
+/* Week schedule */
+.week-schedule{display:flex;flex-direction:column;gap:0.45rem;margin-top:0.5rem;}
+.week-day-row{display:flex;align-items:center;gap:0.75rem;}
+.week-day-label{font-size:0.8rem;font-weight:700;color:var(--text2);min-width:22px;}
+.week-time-input{background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:0.3rem 0.5rem;color:var(--text);font-family:'Heebo',sans-serif;font-size:0.78rem;outline:none;color-scheme:dark;width:90px;}
+.week-time-input:disabled{opacity:0.35;}
+
+/* Toggle switch */
+.toggle-switch{position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;}
+.toggle-switch input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;cursor:pointer;inset:0;background:var(--border2);border-radius:999px;transition:.25s;}
+.toggle-slider::before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.25s;}
+.toggle-switch input:checked + .toggle-slider{background:var(--primary);}
+.toggle-switch input:checked + .toggle-slider::before{transform:translateX(16px);}
+
+
+  display:flex;align-items:center;gap:0.5rem;
+  padding:0.45rem 1rem;
+  background:linear-gradient(135deg,rgba(155,111,255,0.2),rgba(24,119,242,0.2));
+  border:1px solid rgba(155,111,255,0.4);
+  border-radius:999px;
+  color:var(--ai);font-family:'Heebo',sans-serif;font-size:0.8rem;font-weight:700;
+  cursor:pointer;transition:all 0.2s;white-space:nowrap;
+  box-shadow:0 0 16px rgba(155,111,255,0.15);
+}
+.btn-trending:hover:not(:disabled){
+  background:linear-gradient(135deg,rgba(155,111,255,0.3),rgba(24,119,242,0.3));
+  box-shadow:0 0 24px rgba(155,111,255,0.3);transform:translateY(-1px);
+}
+.btn-trending:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
+
+.trending-status {
+  display:flex;align-items:center;gap:0.6rem;
+  background:rgba(155,111,255,0.08);border:1px solid rgba(155,111,255,0.2);
+  border-radius:var(--radius-sm);padding:0.6rem 1rem;margin-bottom:0.75rem;
+  font-size:0.78rem;color:var(--text2);
+}
+.trending-pulse {
+  width:8px;height:8px;border-radius:50%;background:var(--ai);flex-shrink:0;
+  animation:pulse 1.2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(1.4);}}
+.trending-sources{color:var(--accent);font-weight:600;font-size:0.72rem;margin-right:auto;}
+
+.platform-icon {
+  font-size:0.8rem;font-weight:800;
+  background:var(--card2);border-radius:4px;
+  padding:0 4px;margin-left:2px;
+}
+.trend-dot {
+  display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:var(--ai);margin-left:5px;vertical-align:middle;
+  box-shadow:0 0 6px var(--ai);animation:pulse 1.5s infinite;
+}
+
+
+  background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:0.75rem 1rem;margin-bottom:1rem;
+  display:flex;flex-direction:column;gap:0.55rem;
+}
+.filter-row {
+  display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;min-height:28px;
+}
+.filter-row-label {
+  font-size:0.68rem;font-weight:700;color:var(--text3);text-transform:uppercase;
+  letter-spacing:0.06em;white-space:nowrap;min-width:54px;
+}
+.filter-chips-wrap{display:flex;flex-wrap:wrap;gap:0.35rem;flex:1;}
+.filter-sort-wrap{display:flex;gap:0.35rem;}
+.sort-btn {
+  padding:0.25rem 0.65rem;
+  background:var(--card);border:1px solid var(--border);border-radius:999px;
+  font-size:0.72rem;font-weight:600;color:var(--text3);
+  cursor:pointer;font-family:'Heebo',sans-serif;transition:all 0.15s;
+  display:flex;align-items:center;gap:0.25rem;
+}
+.sort-btn:hover{border-color:var(--border2);color:var(--text2);}
+.sort-btn.sort-active{background:rgba(24,119,242,0.15);border-color:var(--primary);color:var(--primary);}
+.filter-active-badge {
+  display:flex;align-items:center;gap:0.4rem;
+  background:rgba(0,201,167,0.1);border:1px solid rgba(0,201,167,0.3);
+  border-radius:999px;padding:0.2rem 0.6rem;
+  font-size:0.72rem;color:var(--accent);font-weight:600;
+}
+.filter-active-badge button{background:none;border:none;color:var(--accent);cursor:pointer;font-size:0.7rem;padding:0;}
+.filter-chip {
+  padding:0.25rem 0.65rem;
+  background:var(--card);border:1px solid var(--border);border-radius:999px;
+  font-size:0.72rem;font-weight:600;color:var(--text3);
+  cursor:pointer;transition:all 0.15s;white-space:nowrap;
+}
+.filter-chip:hover{border-color:var(--border2);color:var(--text2);}
+.filter-chip.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+
+.articles-list{display:flex;flex-direction:column;gap:0.6rem;}
+
+.article-card {
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:1rem 1.25rem;
+  display:flex;align-items:center;gap:1rem;
+  cursor:pointer;transition:all 0.18s;
+  position:relative;overflow:hidden;
+}
+.article-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(124,58,237,0.12),transparent);
+  opacity:0;transition:opacity 0.2s;
+}
+.article-card:hover{border-color:var(--border2);transform:translateX(-2px);}
+.article-card:hover::before{opacity:1;}
+.article-card.selected{border-color:var(--primary);background:rgba(124,58,237,0.1);}
+.article-card.selected::before{opacity:1;}
+
+.score-badge {
+  width:50px;height:50px;border-radius:12px;flex-shrink:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--card2);border:1px solid var(--border);
+}
+.score-num{font-size:1.1rem;font-weight:900;line-height:1;}
+.score-label{font-size:0.6rem;color:var(--text3);font-weight:500;}
+.score-badge.high{background:rgba(124,58,237,0.2);border-color:var(--primary);}
+.score-badge.high .score-num{color:var(--primary-light);}
+.score-badge.mid{background:rgba(232,121,249,0.12);border-color:var(--ai);}
+.score-badge.mid .score-num{color:var(--ai);}
+.score-badge.low{background:rgba(248,113,113,0.1);border-color:var(--red);}
+.score-badge.low .score-num{color:var(--red);}
+
+.article-body{flex:1;min-width:0;}
+.article-title{font-size:0.88rem;font-weight:700;line-height:1.4;color:var(--text);}
+.article-meta{
+  display:flex;align-items:center;gap:0.5rem;margin-top:0.3rem;
+  font-size:0.72rem;color:var(--text3);flex-wrap:wrap;
+}
+.article-meta .tag{
+  padding:0.15rem 0.5rem;border-radius:999px;font-size:0.68rem;font-weight:600;
+}
+.tag-ai{background:var(--ai-glow);color:var(--ai);border:1px solid rgba(155,111,255,0.3);}
+.tag-cyber{background:rgba(0,201,167,0.1);color:var(--accent);border:1px solid rgba(0,201,167,0.3);}
+.tag-biz{background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);}
+
+.article-select-btn {
+  width:32px;height:32px;border-radius:8px;flex-shrink:0;
+  background:var(--card2);border:1px solid var(--border);
+  color:var(--text3);font-size:1rem;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all 0.15s;
+}
+.article-card.selected .article-select-btn{
+  background:var(--primary);border-color:var(--primary);color:#fff;
+}
+
+/* ─── STEP 2: Hook ─── */
+.back-btn {
+  display:flex;align-items:center;gap:0.4rem;
+  background:transparent;border:none;
+  color:var(--text3);font-family:'Heebo',sans-serif;font-size:0.82rem;font-weight:600;
+  cursor:pointer;margin-bottom:1.5rem;transition:color 0.15s;
+}
+.back-btn:hover{color:var(--text);}
+
+.selected-article-chip {
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:0.75rem 1rem;margin-bottom:1.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.selected-article-chip .title{font-size:0.85rem;font-weight:700;flex:1;}
+.selected-article-chip .meta{font-size:0.72rem;color:var(--text3);margin-top:0.1rem;}
+
+.hook-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1rem;
+}
+.hook-title{font-size:1.1rem;font-weight:800;}
+.hook-subtitle{font-size:0.78rem;color:var(--text3);margin-top:0.15rem;}
+
+.btn-regen-hooks {
+  display:flex;align-items:center;gap:0.5rem;
+  padding:0.5rem 1rem;
+  background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  color:var(--text2);font-family:'Heebo',sans-serif;font-size:0.8rem;font-weight:600;
+  cursor:pointer;transition:all 0.15s;
+}
+.btn-regen-hooks:hover{border-color:var(--ai);color:var(--ai);}
+
+.hooks-list{display:flex;flex-direction:column;gap:0.6rem;margin-bottom:1.5rem;}
+
+.hook-card {
+  background:var(--card);border:2px solid var(--border);border-radius:var(--radius-sm);
+  padding:1rem 1.25rem;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  cursor:pointer;transition:all 0.18s;
+}
+.hook-card:hover{border-color:var(--border2);transform:translateX(-2px);}
+.hook-card.selected{border-color:var(--primary);background:rgba(124,58,237,0.1);}
+.hook-card-text{font-size:0.88rem;line-height:1.6;flex:1;color:var(--text);}
+.hook-select {
+  width:32px;height:32px;border-radius:8px;flex-shrink:0;
+  background:var(--card2);border:1px solid var(--border);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--text3);font-size:0.9rem;transition:all 0.15s;
+}
+.hook-card.selected .hook-select{background:var(--primary);border-color:var(--primary);color:#fff;}
+
+.hooks-footer{
+  display:flex;align-items:center;justify-content:space-between;
+}
+
+.btn-regen-all {
+  display:flex;align-items:center;gap:0.5rem;
+  padding:0.55rem 1.2rem;
+  background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.35);border-radius:var(--radius-sm);
+  color:var(--primary-light);font-family:'Heebo',sans-serif;font-size:0.82rem;font-weight:700;
+  cursor:pointer;transition:all 0.15s;
+}
+.btn-regen-all:hover{background:rgba(124,58,237,0.28);}
+
+/* ─── STEP 3: Post ─── */
+.step3-layout{display:grid;grid-template-columns:1fr;gap:1.25rem;}
+
+.post-editor-card {
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;box-shadow:var(--shadow);
+}
+.post-editor-top {
+  background:var(--card2);border-bottom:1px solid var(--border);
+  padding:0.85rem 1.25rem;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.post-editor-label{font-size:0.8rem;font-weight:700;color:var(--text);}
+.post-editor-actions{display:flex;gap:0.5rem;}
+.btn-sm {
+  padding:0.35rem 0.75rem;
+  background:var(--card);border:1px solid var(--border);border-radius:8px;
+  color:var(--text3);font-family:'Heebo',sans-serif;font-size:0.75rem;font-weight:600;
+  cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:0.3rem;
+}
+.btn-sm:hover{border-color:var(--border2);color:var(--text);}
+
+.post-textarea {
+  width:100%;min-height:260px;padding:1.25rem;
+  background:transparent;border:none;outline:none;
+  color:var(--text);font-family:'Heebo',sans-serif;font-size:0.9rem;line-height:1.75;
+  resize:vertical;direction:rtl;
+}
+
+.post-bottom-bar {
+  background:var(--card2);border-top:1px solid var(--border);
+  padding:0.75rem 1.25rem;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:0.5rem;
+}
+.char-counter{font-size:0.75rem;color:var(--text3);}
+.char-counter.warn{color:#f59e0b;}
+.char-counter.over{color:var(--red);}
+
+.quick-inserts{display:flex;gap:0.4rem;flex-wrap:wrap;}
+.qi-btn {
+  padding:0.3rem 0.65rem;
+  background:var(--card);border:1px solid var(--border);border-radius:8px;
+  color:var(--text3);font-family:'Heebo',sans-serif;font-size:0.73rem;font-weight:600;
+  cursor:pointer;transition:all 0.15s;
+}
+.qi-btn:hover{border-color:var(--primary);color:var(--primary);}
+
+/* Fix box */
+.fix-card {
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:1rem 1.25rem;box-shadow:var(--shadow);
+}
+.fix-card h4{font-size:0.82rem;font-weight:700;margin-bottom:0.75rem;
+  display:flex;align-items:center;gap:0.4rem;}
+.fix-input-row{display:flex;gap:0.6rem;}
+.fix-input-row input {
+  flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:8px;
+  padding:0.55rem 0.8rem;color:var(--text);font-family:'Heebo',sans-serif;font-size:0.85rem;
+  outline:none;transition:border-color 0.2s;
+}
+.fix-input-row input:focus{border-color:var(--ai);}
+.btn-fix {
+  padding:0.55rem 1rem;
+  background:rgba(124,58,237,0.2);border:1px solid rgba(124,58,237,0.4);border-radius:8px;
+  color:var(--primary-light);font-family:'Heebo',sans-serif;font-size:0.82rem;font-weight:700;
+  cursor:pointer;transition:all 0.15s;white-space:nowrap;
+  display:flex;align-items:center;gap:0.4rem;
+}
+.btn-fix:hover{background:rgba(124,58,237,0.35);}
+.fix-hint{font-size:0.73rem;color:var(--text3);margin-top:0.5rem;font-style:italic;}
+
+/* ─── STEP 4: Publish ─── */
+.step4-layout{display:grid;grid-template-columns:340px 1fr;gap:1.5rem;}
+@media(max-width:768px){.step4-layout{grid-template-columns:1fr;}}
+
+/* LinkedIn Preview */
+.li-preview-card {
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;box-shadow:var(--shadow);
+}
+.li-preview-header {
+  background:#fff;padding:0.75rem 1rem;border-bottom:1px solid #e0e0e0;
+}
+.li-profile-row{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.4rem;}
+.li-avatar {
+  width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(135deg,#0077B5,#1877F2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;font-weight:800;color:#fff;flex-shrink:0;
+}
+.li-name{font-size:0.85rem;font-weight:700;color:#000;line-height:1.2;}
+.li-role{font-size:0.7rem;color:#666;}
+.li-time{font-size:0.68rem;color:#888;margin-top:0.1rem;}
+.li-post-body {
+  background:#fff;padding:0.85rem 1rem;
+  font-size:0.82rem;line-height:1.65;color:#333;
+  white-space:pre-wrap;max-height:280px;overflow-y:auto;
+  border-bottom:1px solid #e0e0e0;
+  direction:rtl;font-family:system-ui,sans-serif;
+}
+.li-post-img{width:100%;height:160px;object-fit:cover;background:#e8e8e8;display:flex;align-items:center;justify-content:center;color:#999;font-size:0.8rem;}
+.li-post-img img{width:100%;height:160px;object-fit:cover;}
+.li-actions{background:#fff;padding:0.5rem 1rem;display:flex;gap:1rem;}
+.li-action-btn{font-size:0.72rem;color:#666;background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:0.25rem;font-family:system-ui,sans-serif;}
+
+/* Image picker */
+.image-picker{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:0.85rem 1rem;box-shadow:var(--shadow);
+}
+.image-picker h4{font-size:0.8rem;font-weight:700;margin-bottom:0.75rem;display:flex;align-items:center;gap:0.4rem;}
+.img-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;}
+.img-thumb {
+  aspect-ratio:16/9;border-radius:8px;overflow:hidden;cursor:pointer;
+  border:2px solid transparent;transition:all 0.15s;background:var(--card2);
+  display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:0.7rem;
+  position:relative;
+}
+.img-thumb:hover{border-color:var(--border2);}
+.img-thumb.selected{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-glow);}
+.img-thumb .img-label{
+  position:absolute;bottom:0;inset-x:0;
+  background:rgba(0,0,0,0.6);
+  font-size:0.6rem;font-weight:700;color:#fff;text-align:center;padding:0.15rem;
+}
+.img-thumb img{width:100%;height:100%;object-fit:cover;}
+
+/* Emoji picker */
+.emoji-section{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:0.85rem 1rem;
+}
+.emoji-section h4{font-size:0.8rem;font-weight:700;margin-bottom:0.75rem;display:flex;align-items:center;gap:0.4rem;}
+.emoji-categories{display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:0.6rem;}
+.emoji-cat-btn {
+  padding:0.2rem 0.55rem;border-radius:999px;font-size:0.7rem;font-weight:600;
+  background:var(--card2);border:1px solid var(--border);color:var(--text3);
+  cursor:pointer;transition:all 0.15s;
+}
+.emoji-cat-btn.active,.emoji-cat-btn:hover{background:var(--primary);border-color:var(--primary);color:#fff;}
+.emoji-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:2px;}
+.e-btn{
+  width:28px;height:28px;border-radius:6px;font-size:1rem;
+  background:transparent;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:background 0.1s;
+}
+.e-btn:hover{background:var(--card2);}
+
+/* Publish buttons */
+.publish-actions{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:0.85rem 1rem;
+}
+.publish-actions h4{font-size:0.8rem;font-weight:700;margin-bottom:0.75rem;}
+
+.schedule-row{display:flex;gap:0.6rem;margin-bottom:0.75rem;}
+.schedule-row input[type="date"],
+.schedule-row input[type="time"] {
+  flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:8px;
+  padding:0.5rem 0.7rem;color:var(--text);font-family:'Heebo',sans-serif;font-size:0.82rem;
+  outline:none;color-scheme:dark;transition:border-color 0.2s;
+}
+.schedule-row input:focus{border-color:var(--primary);}
+
+.publish-btns{display:flex;gap:0.6rem;flex-direction:column;}
+
+.btn-publish {
+  width:100%;padding:0.75rem;
+  background:linear-gradient(135deg,var(--primary-dark),var(--primary));
+  border:none;border-radius:var(--radius-sm);
+  color:#fff;font-family:'Heebo',sans-serif;font-size:0.9rem;font-weight:800;
+  cursor:pointer;transition:all 0.2s;box-shadow:var(--shadow-purple);
+  display:flex;align-items:center;justify-content:center;gap:0.5rem;
+}
+.btn-publish:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 28px rgba(124,58,237,0.55);}
+.btn-publish:disabled{opacity:0.5;cursor:not-allowed;}
+
+.btn-schedule {
+  width:100%;padding:0.65rem;
+  background:rgba(192,132,252,0.15);border:1px solid rgba(192,132,252,0.35);border-radius:var(--radius-sm);
+  color:var(--accent);font-family:'Heebo',sans-serif;font-size:0.85rem;font-weight:700;
+  cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:0.5rem;
+}
+.btn-schedule:hover{background:rgba(192,132,252,0.25);}
+
+.btn-save-draft {
+  width:100%;padding:0.55rem;
+  background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  color:var(--text3);font-family:'Heebo',sans-serif;font-size:0.82rem;font-weight:600;
+  cursor:pointer;transition:all 0.15s;
+}
+.btn-save-draft:hover{border-color:var(--border2);color:var(--text);}
+
+/* Right column step4 */
+.step4-right{display:flex;flex-direction:column;gap:1rem;}
+
+/* Spinner */
+@keyframes spin{to{transform:rotate(360deg);}}
+.spinner{
+  width:16px;height:16px;border-radius:50%;
+  border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;
+  animation:spin 0.7s linear infinite;display:inline-block;flex-shrink:0;
+}
+
+/* Toast */
+.toast {
+  position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--card2);border:1px solid var(--border);border-radius:999px;
+  padding:0.6rem 1.5rem;font-size:0.85rem;font-weight:600;color:var(--text);
+  box-shadow:var(--shadow);opacity:0;transition:all 0.3s;pointer-events:none;
+  z-index:999;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.success{border-color:var(--accent);color:var(--accent);}
+.toast.error{border-color:var(--red);color:#fca5a5;}
+
+/* Modal */
+.modal-overlay {
+  position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;
+  display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);
+  opacity:0;pointer-events:none;transition:opacity 0.2s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal {
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:2rem;width:440px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  transform:translateY(20px);transition:transform 0.2s;
+}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal h3{font-size:1.1rem;font-weight:800;margin-bottom:0.5rem;}
+.modal p{font-size:0.85rem;color:var(--text2);margin-bottom:1.5rem;line-height:1.6;}
+.modal-btns{display:flex;gap:0.75rem;}
+.modal-btns button{flex:1;}
+.btn-cancel{
+  padding:0.65rem;background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  color:var(--text3);font-family:'Heebo',sans-serif;font-size:0.85rem;font-weight:600;
+  cursor:pointer;transition:all 0.15s;
+}
+.btn-cancel:hover{border-color:var(--border2);color:var(--text);}
+
+.connect-steps{margin:1rem 0;display:flex;flex-direction:column;gap:0.6rem;}
+.connect-step{display:flex;align-items:flex-start;gap:0.75rem;font-size:0.82rem;color:var(--text2);line-height:1.5;}
+.connect-step .n{
+  width:22px;height:22px;border-radius:50%;background:var(--primary);
+  color:#fff;font-size:0.7rem;font-weight:800;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;margin-top:1px;
+}
+
+/* Error box */
+.err-box{
+  background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);
+  border-radius:var(--radius-sm);padding:0.75rem 1rem;
+  font-size:0.82rem;color:#fca5a5;margin-bottom:1rem;
+}
+
+/* ─── MOBILE ─── */
+@media(max-width:600px){
+  header{padding:0 0.85rem;height:54px;}
+  .logo-text span{display:none;}
+  .header-center{display:none;}
+  .btn-link-connect{font-size:0.72rem;padding:0.35rem 0.6rem;}
+  .btn-link-connect span.btn-label{display:none;}
+  main{padding:1rem 0.85rem 4rem;}
+  .steps-row .step-label{display:none;}
+  .step4-layout{grid-template-columns:1fr;}
+  .emoji-grid{grid-template-columns:repeat(8,1fr);}
+  .articles-header{flex-direction:column;align-items:flex-start;gap:0.6rem;}
+  .filter-row{flex-wrap:wrap;}
+  .sort-group{flex-wrap:wrap;}
+  .step1-header h2{font-size:1rem;}
+  .hook-header{flex-direction:column;align-items:flex-start;gap:0.5rem;}
+  .hooks-footer{flex-direction:column;gap:0.5rem;}
+  .hooks-footer .btn-primary,.hooks-footer .btn-regen-all{width:100%;justify-content:center;}
+  .post-bottom-bar{flex-direction:column;align-items:flex-start;}
+  .quick-inserts{flex-wrap:wrap;}
+  .schedule-row{flex-direction:column;}
+  .fix-input-row{flex-direction:column;}
+  .btn-fix{justify-content:center;}
+  .modal{padding:1.25rem;width:95vw!important;}
+  .connect-tabs{flex-wrap:wrap;}
+  .img-grid{grid-template-columns:repeat(3,1fr);}
+  .progress-bar-wrap{padding:0 0.85rem;}
+}
+
+@media(max-width:400px){
+  .filter-chips-wrap{gap:0.25rem;}
+  .filter-chip{font-size:0.68rem;padding:0.2rem 0.5rem;}
+  .article-card{padding:0.75rem;}
+  .score-badge{width:42px;height:42px;}
+}
+
+/* ─── FOCUS / ACCESSIBILITY ─── */
+:focus-visible{
+  outline:2px solid var(--primary);
+  outline-offset:2px;
+  border-radius:4px;
+}
+.sr-only{
+  position:absolute;width:1px;height:1px;
+  padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+button:focus-visible,a:focus-visible,[tabindex]:focus-visible{
+  outline:2px solid var(--primary);
+  outline-offset:2px;
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:0.01ms!important;transition-duration:0.01ms!important;}
+}
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-in">in</div>
+    <div class="logo-text">
+      <h1>יוצר פוסטים לינקדאין</h1>
+      <span>סייבר &amp; בינה מלאכותית</span>
+    </div>
+  </div>
+
+  <div class="header-center">
+    <div class="lang-toggle">
+      <button class="active" onclick="setLang('he')">בעברית</button>
+      <button onclick="setLang('en')">us English</button>
+    </div>
+  </div>
+
+  <div class="header-actions">
+    <button class="btn-link-connect" id="btn-li-connect" onclick="openConnectModal()" aria-label="חיבור חשבון LinkedIn">
+      <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      <span class="btn-label">חבר לינקדאין</span>
+    </button>
+    <button class="btn-settings" onclick="openSettingsModal()" aria-label="פתח הגדרות">⚙️</button>
+  </div>
+</header>
+
+<!-- PROGRESS -->
+<div class="progress-bar-wrap">
+  <div class="progress-pct" id="pct-label">25%</div>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:25%"></div></div>
+  <div class="steps-row">
+    <div class="step-item active" id="step-nav-1" onclick="goStep(1)">
+      <div class="step-num">1</div>
+      <div class="step-label">בחר נושא</div>
+    </div>
+    <div class="step-connector" id="conn-1"></div>
+    <div class="step-item" id="step-nav-2" onclick="goStep(2)">
+      <div class="step-num">2</div>
+      <div class="step-label">בחר Hook</div>
+    </div>
+    <div class="step-connector" id="conn-2"></div>
+    <div class="step-item" id="step-nav-3" onclick="goStep(3)">
+      <div class="step-num">3</div>
+      <div class="step-label">צור פוסט</div>
+    </div>
+    <div class="step-connector" id="conn-3"></div>
+    <div class="step-item" id="step-nav-4" onclick="goStep(4)">
+      <div class="step-num">4</div>
+      <div class="step-label">כתוב פוסט</div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div id="err-global" class="err-box" style="display:none"></div>
+
+<!-- ══════════ STEP 1 ══════════ -->
+<div class="step-panel active" id="panel-1">
+  <div class="step1-header">
+    <div>
+      <h2>🔥 בחר נושא לפוסט</h2>
+      <p>הדבק קישור לכתבה, או כתוב נושא חופשי</p>
+    </div>
+  </div>
+
+  <div class="url-box">
+    <div class="url-box-title">🔗 הדבק קישור ליצירת פוסט</div>
+    <div class="url-input-row">
+      <div class="url-input-wrap">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        <input type="url" id="url-input" placeholder="https://example.com/article..." dir="ltr" />
+      </div>
+      <button class="btn-primary" onclick="fetchFromUrl()" id="btn-fetch-url">
+        <span id="fetch-icon">←</span> צור פוסט
+      </button>
+    </div>
+    <div class="divider-row">או כתוב נושא חופשי</div>
+    <div class="topic-input-row">
+      <textarea id="topic-input" placeholder="למשל: 73% מהמנהלים חוששים מ-AI בפנים – מה זה אומר לנו?"></textarea>
+    </div>
+    <button class="btn-primary" style="margin-top:0.75rem;width:100%;justify-content:center;" onclick="fetchTopicArticles()">
+      <span id="topic-icon">🔍</span> מצא כתבות רלוונטיות
+    </button>
+  </div>
+
+  <div id="articles-section" style="display:none">
+    <div class="articles-header">
+      <div>
+        <div class="articles-title">🔥 <span id="articles-count">—</span> כותרות חמות</div>
+        <div class="articles-subtitle" id="articles-subtitle">טוען נושאים חמים...</div>
+        <div id="last-updated" style="display:none;font-size:0.68rem;color:var(--accent);font-weight:600;margin-top:0.25rem;display:flex;align-items:center;gap:0.3rem;">
+          <span>✅</span><span id="last-updated-text"></span>
+        </div>
+      </div>
+      <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+        <button class="btn-trending" id="btn-trending" onclick="window._userRequestedRefresh=true;fetchTrending('ai-cyber')">
+          <span id="trending-icon">🌐</span>
+          <span id="trending-text">AI &amp; סייבר חמים</span>
+        </button>
+        <button class="btn-trending btn-trending-alt" id="btn-trending2" onclick="window._userRequestedRefresh=true;fetchTrending('tech-business')">
+          <span id="trending-icon2">🚀</span>
+          <span id="trending-text2">טק &amp; עסקים חמים</span>
+        </button>
+        <button class="btn-sm" onclick="refreshArticles()" title="רענן">🔄</button>
+      </div>
+    </div>
+
+    <!-- Trending status bar -->
+    <div id="trending-bar" style="display:none">
+      <div class="trending-status">
+        <div class="trending-pulse"></div>
+        <span id="trending-status-text">סורק X, Reddit, Instagram, Facebook...</span>
+        <span class="trending-sources" id="trending-sources"></span>
+      </div>
+    </div>
+
+    <!-- Filter Panel: redesigned -->
+    <div class="filter-panel" id="filter-panel">
+
+      <!-- Row 1: Category -->
+      <div class="filter-row">
+        <span class="filter-row-label">קטגוריה</span>
+        <div class="filter-chips-wrap">
+          <span class="filter-chip cat-chip active" data-cat="all"   onclick="setCat(this,'all')">הכל 🔥</span>
+          <span class="filter-chip cat-chip" data-cat="ai"    onclick="setCat(this,'ai')">סייבר &amp; AI 💻</span>
+          <span class="filter-chip cat-chip" data-cat="genai" onclick="setCat(this,'genai')">GenAI 🤖</span>
+          <span class="filter-chip cat-chip" data-cat="cyber" onclick="setCat(this,'cyber')">כופרה ⚡</span>
+          <span class="filter-chip cat-chip" data-cat="zero"  onclick="setCat(this,'zero')">Zero Trust 🏛</span>
+        </div>
+      </div>
+
+      <!-- Row 2: Sort buttons - prominent -->
+      <div class="filter-row">
+        <span class="filter-row-label">מיין לפי</span>
+        <div class="sort-group">
+          <button class="sort-pill" id="sort-score-btn" onclick="toggleSort('score')">
+            🔥 מעורבות <span id="sort-score-icon" class="sort-arrow">↕</span>
+          </button>
+          <button class="sort-pill" id="sort-date-btn" onclick="toggleSort('date')">
+            📅 תאריך <span id="sort-date-icon" class="sort-arrow">↕</span>
+          </button>
+        </div>
+        <div style="display:flex;gap:0.4rem;align-items:center;margin-right:auto;">
+          <span class="filter-row-label" style="min-width:auto">טווח</span>
+          <span class="filter-chip date-chip active" data-days="0"  onclick="setDate(this,0)">הכל</span>
+          <span class="filter-chip date-chip" data-days="3"  onclick="setDate(this,3)">3י׳</span>
+          <span class="filter-chip date-chip" data-days="7"  onclick="setDate(this,7)">שבוע</span>
+          <span class="filter-chip date-chip" data-days="30" onclick="setDate(this,30)">חודש</span>
+        </div>
+      </div>
+
+      <!-- Row 3: Engagement filter -->
+      <div class="filter-row">
+        <span class="filter-row-label">מעורבות</span>
+        <div class="filter-chips-wrap">
+          <span class="filter-chip eng-chip active" onclick="setEng(this,0,999)">הכל</span>
+          <span class="filter-chip eng-chip" onclick="setEng(this,90,999)">גבוהה +90 🔥</span>
+          <span class="filter-chip eng-chip" onclick="setEng(this,80,89)">בינונית 80–89 ⚡</span>
+          <span class="filter-chip eng-chip" onclick="setEng(this,0,79)">נמוכה –79 💡</span>
+        </div>
+        <div class="filter-active-badge" id="filter-badge" style="display:none">
+          <span id="filter-badge-text"></span>
+          <button onclick="resetFilters()">✕</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="articles-list" id="articles-list" role="list" aria-label="רשימת כתבות" aria-live="polite"></div>
+  </div>
+</div>
+
+<!-- ══════════ STEP 2 ══════════ -->
+<div class="step-panel" id="panel-2">
+  <button class="back-btn" onclick="goStep(1)">← חזרה</button>
+
+  <div class="selected-article-chip" id="selected-chip">
+    <div style="flex:1">
+      <div class="title" id="chip-title">כותרת הכתבה הנבחרת</div>
+      <div class="meta" id="chip-meta">מקור • תאריך</div>
+    </div>
+  </div>
+
+  <div class="hook-header">
+    <div>
+      <div class="hook-title">🔥 בחר Hook – משפט פתיחה</div>
+      <div class="hook-subtitle">משפט הפתיחה הוא הדבר הכי חשוב בפוסט!</div>
+    </div>
+    <button class="btn-regen-hooks" onclick="generateHooks()" id="btn-regen-h">
+      <span id="regen-h-icon">⚡</span> מחולל Hooks
+    </button>
+  </div>
+
+  <div class="hooks-list" id="hooks-list">
+    <div style="text-align:center;padding:2rem;color:var(--text3)">
+      <div style="font-size:2rem;margin-bottom:0.5rem">⚡</div>
+      לוחץ על "מחולל Hooks" לקבלת הצעות
+    </div>
+  </div>
+
+  <div class="hooks-footer">
+    <button class="btn-regen-all" onclick="generateHooks()">
+      🎯 מחולל 20 Hooks – הצעות
+    </button>
+    <button class="btn-primary" onclick="proceedToStep3()" id="btn-to-step3" disabled>
+      המשך לצור פוסט ←
+    </button>
+  </div>
+</div>
+
+<!-- ══════════ STEP 3 ══════════ -->
+<div class="step-panel" id="panel-3">
+  <button class="back-btn" onclick="goStep(2)">← חזרה</button>
+
+  <div class="selected-article-chip">
+    <div style="flex:1">
+      <div class="title" id="s3-chip-title"></div>
+      <div class="meta">Hook שנבחר: <span id="s3-hook-preview" style="color:var(--text2)"></span></div>
+    </div>
+  </div>
+
+  <div class="post-editor-card">
+    <div class="post-editor-top">
+      <div class="post-editor-label" id="post-editor-label">⏳ יוצר פוסט...</div>
+      <div class="post-editor-actions">
+        <button class="btn-sm" onclick="generatePost()" id="btn-regen-post" title="צור פוסט מחדש">🔄 צור מחדש</button>
+        <button class="btn-sm" onclick="copyPost()">📋 העתק</button>
+        <button class="btn-sm" id="btn-save" onclick="saveDraft()">💾 שמור</button>
+      </div>
+    </div>
+    <textarea class="post-textarea" id="post-textarea" oninput="updateCharCount()" placeholder="⏳ הפוסט נוצר, המתן..."></textarea>
+    <div class="post-bottom-bar">
+      <span class="char-counter" id="char-count">0 / 3000</span>
+      <div class="quick-inserts">
+        <button class="qi-btn" onclick="insertCTA()">קו הפרדה</button>
+        <button class="qi-btn" onclick="insertHashtags()">Hashtags#</button>
+        <button class="qi-btn" onclick="insertCTAText()">CTA</button>
+        <button class="qi-btn" onclick="insertShare()">שיתוף</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="fix-card" style="margin-top:1rem">
+    <h4>✏️ יש תיקונים?</h4>
+    <div class="fix-input-row">
+      <input type="text" id="fix-input" placeholder="למשל: שנה את הפתיחה, הוסף נתונים..." />
+      <button class="btn-fix" onclick="fixPost()" id="btn-fix">
+        <span id="fix-icon">⚡</span> תקן
+      </button>
+    </div>
+    <div class="fix-hint">אין תיקונים, הכל מעולה! 🔥</div>
+  </div>
+
+  <div style="display:flex;justify-content:flex-end;margin-top:1.25rem">
+    <button class="btn-primary" onclick="goStep(4)">המשך לפרסום ←</button>
+  </div>
+</div>
+
+<!-- ══════════ STEP 4 ══════════ -->
+<div class="step-panel" id="panel-4">
+  <button class="back-btn" onclick="goStep(3)">← חזרה</button>
+
+  <div class="step4-layout">
+    <!-- Left: Preview -->
+    <div>
+      <div style="font-size:0.8rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.75rem;display:flex;align-items:center;gap:0.4rem;">
+        <span style="width:6px;height:6px;border-radius:50%;background:var(--primary);display:inline-block"></span>
+        תצוגה מקדימה
+      </div>
+      <div class="li-preview-card">
+        <div class="li-preview-header">
+          <div class="li-profile-row">
+            <div class="li-avatar" id="li-avatar">א</div>
+            <div>
+              <div class="li-name" id="li-name">השם שלך</div>
+              <div class="li-role" id="li-role">Cyber &amp; AI Professional • Now</div>
+            </div>
+          </div>
+          <div class="li-time">עכשיו • 🌐</div>
+        </div>
+        <div class="li-post-body" id="li-post-preview">הפוסט יוצג כאן...</div>
+        <div class="li-post-img" id="li-img-preview">
+          <span>🖼 בחר תמונה משמאל</span>
+        </div>
+        <div class="li-actions">
+          <button class="li-action-btn">👍 Like</button>
+          <button class="li-action-btn">💬 Comment</button>
+          <button class="li-action-btn">🔁 Repost</button>
+          <button class="li-action-btn">📤 Send</button>
+        </div>
+      </div>
+
+      <div class="image-picker" style="margin-top:0.75rem">
+        <h4>🖼 בחר תמונה לפוסט</h4>
+        <div class="img-grid" id="img-grid">
+          <div class="img-thumb selected" onclick="selectImg(this,'none')" data-src="">
+            <span>✕ ללא</span>
+          </div>
+          <div class="img-thumb" onclick="selectImg(this,'office')" data-src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&q=60">
+            <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&q=60" loading="lazy" />
+            <div class="img-label">צוות</div>
+          </div>
+          <div class="img-thumb" onclick="selectImg(this,'data')" data-src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&q=60">
+            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&q=60" loading="lazy" />
+            <div class="img-label">סקר</div>
+          </div>
+          <div class="img-thumb" onclick="selectImg(this,'laptop')" data-src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&q=60">
+            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&q=60" loading="lazy" />
+            <div class="img-label">נתונים</div>
+          </div>
+          <div class="img-thumb" onclick="selectImg(this,'sec')" data-src="https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=400&q=60">
+            <img src="https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=400&q=60" loading="lazy" />
+            <div class="img-label">אבטחה</div>
+          </div>
+          <div class="img-thumb" onclick="selectImg(this,'ai')" data-src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&q=60">
+            <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&q=60" loading="lazy" />
+            <div class="img-label">AI</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Actions -->
+    <div class="step4-right">
+      <!-- Profile -->
+      <div class="publish-actions">
+        <h4>👤 פרופיל LinkedIn</h4>
+        <div style="display:flex;gap:0.6rem;margin-bottom:0.75rem;">
+          <input type="text" id="profile-name" placeholder="השם שלך" oninput="updatePreviewProfile()"
+            style="flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.5rem 0.7rem;color:var(--text);font-family:'Heebo',sans-serif;font-size:0.82rem;outline:none;" />
+          <input type="text" id="profile-role" placeholder="תפקיד / תחום"  oninput="updatePreviewProfile()"
+            style="flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.5rem 0.7rem;color:var(--text);font-family:'Heebo',sans-serif;font-size:0.82rem;outline:none;" />
+        </div>
+      </div>
+
+      <!-- Emoji picker -->
+      <div class="emoji-section">
+        <h4>😊 הוסף אימוג׳י לפוסט</h4>
+        <div class="emoji-categories" id="emoji-cats"></div>
+        <div class="emoji-grid" id="emoji-grid"></div>
+      </div>
+
+      <!-- Scheduling -->
+      <div class="publish-actions">
+        <h4>📅 תזמון פרסום</h4>
+        <div class="schedule-row">
+          <input type="date" id="sched-date" />
+          <input type="time" id="sched-time" value="09:00" />
+        </div>
+        <div style="font-size:0.72rem;color:var(--text3);margin-bottom:0.75rem;">
+          💡 הזמן האידיאלי לפרסום: ב׳–ד׳ בשעות 8-10 ו-17-19
+        </div>
+        <div class="publish-btns">
+          <button class="btn-publish" id="btn-pub" onclick="publishNow()">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            פרסם עכשיו בלינקדאין
+          </button>
+          <button class="btn-schedule" onclick="schedulePost()">📅 תזמן פרסום</button>
+          <button class="btn-save-draft" onclick="saveDraftFull()">💾 שמור טיוטה</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- CONNECT MODAL - 3 options -->
+<div class="modal-overlay" id="connect-modal" role="dialog" aria-modal="true" aria-label="חיבור LinkedIn">
+  <div class="modal" style="width:520px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+      <h3>🔗 חבר לינקדאין – 3 אפשרויות</h3>
+      <button onclick="closeModal()" style="background:none;border:none;color:var(--text3);font-size:1.2rem;cursor:pointer;">✕</button>
+    </div>
+
+    <!-- Option tabs -->
+    <div class="connect-tabs">
+      <button class="conn-tab active" onclick="showConnTab(this,'zapier')">⚡ Zapier</button>
+      <button class="conn-tab" onclick="showConnTab(this,'buffer')">📦 Buffer</button>
+      <button class="conn-tab" onclick="showConnTab(this,'manual')">✋ ידני</button>
+    </div>
+
+    <!-- Zapier -->
+    <div class="conn-content active" id="conn-zapier">
+      <div style="font-size:0.82rem;color:var(--text2);margin-bottom:1rem;line-height:1.6;">
+        Zapier מחבר בין האפליקציה לינקדאין שלך בלי צורך בקוד. ✅ קל, מהיר, בחינם עד 100 פעולות/חודש.
+      </div>
+      <div class="connect-steps">
+        <div class="connect-step"><div class="n">1</div><div>כנס ל-<strong>zapier.com</strong> וצור חשבון חינמי</div></div>
+        <div class="connect-step"><div class="n">2</div><div>צור Zap חדש: Trigger = <strong>Webhook</strong> → Action = <strong>LinkedIn: Create Post</strong></div></div>
+        <div class="connect-step"><div class="n">3</div><div>העתק את ה-Webhook URL והדבק כאן:</div></div>
+      </div>
+      <input type="url" id="zapier-url" placeholder="https://hooks.zapier.com/hooks/catch/..." dir="ltr"
+        style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.55rem 0.8rem;color:var(--text);font-family:'Heebo',sans-serif;font-size:0.82rem;outline:none;margin:0.75rem 0;" />
+      <button class="btn-primary" style="width:100%;justify-content:center;" onclick="connectZapier()">✓ חבר Zapier</button>
+    </div>
+
+    <!-- Buffer -->
+    <div class="conn-content" id="conn-buffer" style="display:none">
+      <div style="font-size:0.82rem;color:var(--text2);margin-bottom:1rem;line-height:1.6;">
+        Buffer הוא כלי ניהול רשתות חברתיות. תומך בלינקדאין ומאפשר תזמון פוסטים. ✅ יש תוכנית חינמית.
+      </div>
+      <div class="connect-steps">
+        <div class="connect-step"><div class="n">1</div><div>כנס ל-<strong>buffer.com</strong> וחבר את חשבון הלינקדאין שלך</div></div>
+        <div class="connect-step"><div class="n">2</div><div>בהגדרות Buffer → <strong>API Access</strong> → צור Access Token</div></div>
+        <div class="connect-step"><div class="n">3</div><div>הדבק את ה-Token + מזהה הפרופיל כאן:</div></div>
+      </div>
+      <input type="text" id="buffer-token" placeholder="Buffer Access Token" dir="ltr"
+        style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.55rem 0.8rem;color:var(--text);font-family:'Heebo',sans-serif;font-size:0.82rem;outline:none;margin:0.5rem 0;" />
+      <input type="text" id="buffer-profile" placeholder="LinkedIn Profile ID" dir="ltr"
+        style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.55rem 0.8rem;color:var(--text);font-family:'Heebo',sans-serif;font-size:0.82rem;outline:none;margin-bottom:0.75rem;" />
+      <button class="btn-primary" style="width:100%;justify-content:center;" onclick="connectBuffer()">✓ חבר Buffer</button>
+    </div>
+
+    <!-- Manual -->
+    <div class="conn-content" id="conn-manual" style="display:none">
+      <div style="font-size:0.82rem;color:var(--text2);margin-bottom:1rem;line-height:1.6;">
+        ללא חיבור API – האפליקציה תעתיק את הפוסט ותפתח את לינקדאין ישירות. הפרסום ידני.
+      </div>
+      <div class="connect-steps">
+        <div class="connect-step"><div class="n">1</div><div>לחץ "פרסם" → הפוסט יועתק אוטומטית ללוח</div></div>
+        <div class="connect-step"><div class="n">2</div><div>לינקדאין ייפתח בטאב חדש → הדבק ופרסם</div></div>
+        <div class="connect-step"><div class="n">3</div><div>תזמון: תקבל תזכורת push בדפדפן בשעה שתבחר</div></div>
+      </div>
+      <button class="btn-primary" style="width:100%;justify-content:center;margin-top:0.75rem;" onclick="connectManual()">✓ השתמש במצב ידני</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settings-modal" role="dialog" aria-modal="true" aria-label="הגדרות">
+  <div class="modal" style="width:480px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+      <h3>⚙️ הגדרות</h3>
+      <button onclick="closeSettingsModal()" style="background:none;border:none;color:var(--text3);font-size:1.2rem;cursor:pointer;">✕</button>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-label">🔑 Claude API Key</div>
+      <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+        <input type="password" id="set-api-key" placeholder="sk-ant-api03-..." dir="ltr"
+          style="flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.5rem 0.7rem;color:var(--text);font-family:'Heebo',sans-serif;font-size:0.82rem;outline:none;" />
+      </div>
+      <div style="font-size:0.72rem;color:var(--text3);margin-top:0.35rem;">נדרש לטעינת טרנדים ויצירת פוסטים. הופך ב-<a href="https://console.anthropic.com" target="_blank" style="color:var(--primary-light)">console.anthropic.com</a></div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-label">👤 פרופיל ברירת מחדל</div>
+      <div style="display:flex;gap:0.6rem;margin-top:0.5rem;">
+        <input type="text" id="set-name" placeholder="שמך המלא" style="flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.5rem 0.7rem;color:var(--text);font-family:'Heebo',sans-serif;font-size:0.82rem;outline:none;" />
+        <input type="text" id="set-role" placeholder="תפקיד / תחום" style="flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.5rem 0.7rem;color:var(--text);font-family:'Heebo',sans-serif;font-size:0.82rem;outline:none;" />
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-label">🌐 שפת פוסטים ברירת מחדל</div>
+      <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+        <button class="settings-opt active" id="set-lang-he" onclick="setSettingsLang('he',this)">🇮🇱 עברית</button>
+        <button class="settings-opt" id="set-lang-en" onclick="setSettingsLang('en',this)">🇺🇸 English</button>
+        <button class="settings-opt" id="set-lang-both" onclick="setSettingsLang('both',this)">🌍 שתיהן</button>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-label">🔔 תזכורות פרסום</div>
+      <div class="reminder-list" id="reminder-list"></div>
+      <button class="btn-sm" style="margin-top:0.5rem;" onclick="openReminderAdd()">+ הוסף תזכורת</button>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-label">📅 תזמון פוסטים קבוע</div>
+      <div style="font-size:0.78rem;color:var(--text3);margin:0.4rem 0;">צור תוכנית פרסום שבועית – קבע ימים ושעות</div>
+      <div class="week-schedule" id="week-schedule"></div>
+    </div>
+
+    <button class="btn-primary" style="width:100%;justify-content:center;margin-top:1rem;" onclick="saveSettings()">💾 שמור הגדרות</button>
+  </div>
+</div>
+
+<!-- REMINDER MODAL -->
+<div class="modal-overlay" id="reminder-modal" role="dialog" aria-modal="true" aria-label="הוספת תזכורת">
+  <div class="modal" style="width:400px;">
+    <h3 style="margin-bottom:1rem;">🔔 הוסף תזכורת פרסום</h3>
+    <div class="field-group">
+      <label class="field-label">יום בשבוע</label>
+      <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-top:0.4rem;" id="day-picker">
+        <button class="day-btn" data-day="0">א׳</button>
+        <button class="day-btn" data-day="1">ב׳</button>
+        <button class="day-btn" data-day="2">ג׳</button>
+        <button class="day-btn" data-day="3">ד׳</button>
+        <button class="day-btn" data-day="4">ה׳</button>
+        <button class="day-btn" data-day="5">ו׳</button>
+        <button class="day-btn" data-day="6">ש׳</button>
+      </div>
+    </div>
+    <div class="field-group" style="margin-top:0.85rem;">
+      <label class="field-label">שעה</label>
+      <input type="time" id="reminder-time" value="09:00" style="margin-top:0.4rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.5rem 0.7rem;color:var(--text);font-family:'Heebo',sans-serif;font-size:0.85rem;outline:none;color-scheme:dark;" />
+    </div>
+    <div class="field-group" style="margin-top:0.85rem;">
+      <label class="field-label">תזכורת טקסט (אופציונלי)</label>
+      <input type="text" id="reminder-text" placeholder="זמן לפרסם פוסט! 🔥" style="margin-top:0.4rem;width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.5rem 0.7rem;color:var(--text);font-family:'Heebo',sans-serif;font-size:0.82rem;outline:none;" />
+    </div>
+    <div style="display:flex;gap:0.6rem;margin-top:1.25rem;">
+      <button class="btn-cancel" onclick="closeReminderModal()" style="flex:1;">ביטול</button>
+      <button class="btn-primary" style="flex:1;justify-content:center;" onclick="addReminder()">✓ הוסף</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOADING OVERLAY -->
+<div id="loading-overlay" style="display:none;position:fixed;inset:0;background:rgba(12,20,33,0.85);z-index:300;backdrop-filter:blur(8px);flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;">
+  <div style="width:56px;height:56px;border-radius:50%;border:3px solid rgba(24,119,242,0.3);border-top-color:var(--primary);animation:spin 0.8s linear infinite;"></div>
+  <div style="text-align:center;">
+    <div id="loading-title" style="font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:0.4rem;">🔍 סורק טרנדים חמים...</div>
+    <div id="loading-sub" style="font-size:0.82rem;color:var(--text2);">X, Reddit, Instagram, Facebook, LinkedIn, Hacker News</div>
+    <div id="loading-progress" style="margin-top:1rem;width:220px;height:3px;background:var(--border);border-radius:999px;overflow:hidden;margin-inline:auto;">
+      <div id="loading-bar-fill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:999px;transition:width 0.4s ease;"></div>
+    </div>
+    <div id="loading-sources" style="font-size:0.72rem;color:var(--accent);margin-top:0.5rem;font-weight:600;"></div>
+  </div>
+</div>
+
+<!-- API KEY BANNER -->
+<div id="api-key-banner" style="display:none;position:fixed;bottom:1.5rem;right:1.5rem;z-index:500;background:var(--card2);border:1px solid var(--primary);border-radius:var(--radius);padding:1rem 1.25rem;box-shadow:0 8px 32px rgba(124,58,237,0.4);max-width:380px;gap:0.75rem;flex-direction:column;">
+  <div style="font-size:0.88rem;font-weight:800;color:var(--text);">🔑 הגדר Claude API Key</div>
+  <div style="font-size:0.78rem;color:var(--text2);line-height:1.5;">ללא API Key לא ניתן לטעון טרנדים. צור מפתח ב-<a href="https://console.anthropic.com" target="_blank" style="color:var(--primary-light)">console.anthropic.com</a></div>
+  <div style="display:flex;gap:0.5rem;">
+    <input type="password" id="set-api-key-banner" placeholder="sk-ant-api03-..." dir="ltr"
+      style="flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.5rem 0.7rem;color:var(--text);font-family:'Heebo',sans-serif;font-size:0.82rem;outline:none;" />
+    <button onclick="saveBannerApiKey()" style="padding:0.5rem 0.9rem;background:var(--primary);border:none;border-radius:8px;color:#fff;font-family:'Heebo',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;">שמור</button>
+    <button onclick="document.getElementById('api-key-banner').style.display='none'" style="padding:0.5rem 0.7rem;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text3);font-family:'Heebo',sans-serif;font-size:0.82rem;cursor:pointer;">✕</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API = "https://api.anthropic.com/v1/messages";
+const MODEL = "claude-sonnet-4-20250514";
+let API_KEY = localStorage.getItem('claude_api_key') || '';
+let currentStep = 1;
+let selectedArticle = null;
+let selectedHook = null;
+let currentLang = 'he';
+let liConnected = false;
+
+// ── ARTICLES DATA ──
+const ARTICLES = [
+  {id:1,score:85,title:"CISO Survey 2026: 73% מהמנהלים חוששים מ-AI מבפנים",source:"CSO Online",date:"Mar 8, 2026",cat:"ai",tags:["GenAI בארגונים"]},
+  {id:2,score:94,title:"IBM X-Force 2026: מתקפות AI מסלימות בזמן שפערי אבטחה בסיסיים ארגונים",source:"IBM / PR Newswire",date:"Mar 7, 2026",cat:"ai",tags:["תקיפות סייבר מונעות AI"]},
+  {id:3,score:93,title:"CrowdStrike מזהירה: AI Worms – הדור הבא של מתקפות",source:"CrowdStrike",date:"Mar 7, 2026",cat:"ai",tags:["תקיפות סייבר מונעות AI"]},
+  {id:4,score:86,title:"Google חוסמת קמפיין ריגול על ספקי טלקום ב-70 מדינות",source:"CyberInsider",date:"Mar 6, 2026",cat:"cyber",tags:["IoT/OT אבטחת"]},
+  {id:5,score:88,title:"סין חוסמת גישה ל-AI כדי לפרוץ +600 מכשירי FortiGate ב-55 מדינות",source:"CyberSecurity Dive",date:"Mar 5, 2026",cat:"cyber",tags:["תקיפות סייבר מונעות AI"]},
+  {id:6,score:97,title:"הסכנה האמיתית: AI יוצר פרצות אבטחה בקוד ייצור ללא ידיעת המפתחים",source:"The Hacker News",date:"Mar 5, 2026",cat:"high",tags:["GenAI בארגונים"]},
+  {id:7,score:78,title:"Quantum & הצפנה: עד 2030 RSA-2048 עשויה להיפרץ",source:"MIT Technology Review",date:"Mar 4, 2026",cat:"zero",tags:["Quantum & הצפנה"]},
+  {id:8,score:91,title:"Zero Trust 2026: 68% מהחברות לא מיישמות נכון",source:"Gartner Research",date:"Mar 3, 2026",cat:"zero",tags:["ארכיטקטורה & Zero Trust"]},
+  {id:9,score:82,title:"Ransomware-as-a-Service: הכלי החדש שמוריד חסמי כניסה לפשע",source:"Dark Reading",date:"Mar 2, 2026",cat:"cyber",tags:["כופרה & Ransomware"]},
+  {id:10,score:76,title:"AI Act האיחוד האירופי: מה זה אומר לחברות סייבר ישראליות?",source:"TechCrunch",date:"Mar 1, 2026",cat:"genai",tags:["AI Act & רגולציה"]},
+];
+
+function scoreClass(s){return s>=90?'high':s>=80?'mid':'low';}
+function scoreFlame(s){return s>=90?'🔥':s>=80?'⚡':'💡';}
+function tagClass(t){
+  if(t.includes('AI'))return'tag-ai';
+  if(t.includes('סייבר')||t.includes('כופר')||t.includes('Zero'))return'tag-cyber';
+  return'tag-biz';
+}
+
+function renderArticles(list){
+  const el = document.getElementById('articles-list');
+  if(!list.length){
+    el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--text3)">אין תוצאות לפילטר הנוכחי</div>';
+    return;
+  }
+  el.innerHTML = list.map(a=>`
+    <div class="article-card ${selectedArticle?.id===a.id?'selected':''}" onclick="selectArticle(${a.id})">
+      <div class="score-badge ${scoreClass(a.score)}">
+        <div class="score-num">${a.score}</div>
+        <div class="score-label">מעורבות ${scoreFlame(a.score)}</div>
+      </div>
+      <div class="article-body">
+        <div class="article-title">${a.isTrending?'<span class="trend-dot"></span>':''}${a.title}</div>
+        <div class="article-meta">
+          ${a.sourceIcon?`<span class="platform-icon">${a.sourceIcon}</span>`:''}
+          <span>${a.source}</span><span>•</span><span>${a.date}</span>
+          ${a.tags.map(t=>`<span class="tag ${tagClass(t)}">${t}</span>`).join('')}
+        </div>
+      </div>
+      <button class="article-select-btn">${selectedArticle?.id===a.id?'✓':'→'}</button>
+    </div>
+  `).join('');
+}
+
+// ── FILTER + SORT STATE ──
+let filterCat   = 'all';
+let filterDays  = 0;
+let filterEngMin = 0;
+let filterEngMax = 999;
+let sortField   = null; // 'date' | 'score'
+let sortDir     = {};   // {date:'desc', score:'desc'}
+
+function applyFilters(){
+  const now = new Date('2026-03-21');
+  let list = ARTICLES.filter(a=>{
+    // category
+    if(filterCat!=='all' && a.cat!==filterCat) return false;
+    // date range
+    if(filterDays>0){
+      const diff=(now-new Date(a.date))/(1000*60*60*24);
+      if(diff>filterDays) return false;
+    }
+    // engagement
+    if(a.score<filterEngMin || a.score>filterEngMax) return false;
+    return true;
+  });
+  // sort
+  if(sortField==='date'){
+    list=[...list].sort((a,b)=>{
+      const d=new Date(b.date)-new Date(a.date);
+      return sortDir.date==='asc'?-d:d;
+    });
+  } else if(sortField==='score'){
+    list=[...list].sort((a,b)=>{
+      const d=b.score-a.score;
+      return sortDir.score==='asc'?-d:d;
+    });
+  }
+  renderArticles(list);
+  updateFilterBadge(list.length);
+}
+
+function setCat(el,cat){
+  filterCat=cat;
+  document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();
+}
+
+function setDate(el,days){
+  filterDays=days;
+  document.querySelectorAll('.date-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();
+}
+
+function setEng(el,min,max){
+  filterEngMin=min; filterEngMax=max||999;
+  document.querySelectorAll('.eng-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();
+}
+
+function toggleSort(field){
+  if(sortField===field){
+    sortDir[field] = sortDir[field]==='desc'?'asc':'desc';
+  } else {
+    sortField=field;
+    sortDir[field]='desc';
+  }
+  // reset other
+  const other=field==='date'?'score':'date';
+  document.getElementById(`sort-${other}-icon`).textContent='↕';
+  document.getElementById(`sort-${other}-btn`).classList.remove('sort-active');
+  document.getElementById(`sort-${field}-icon`).textContent=sortDir[field]==='desc'?'↓':'↑';
+  document.getElementById(`sort-${field}-btn`).classList.add('sort-active');
+  applyFilters();
+}
+
+function resetFilterState(){
+  // Reset state only, NO render
+  filterCat='all'; filterDays=0; filterEngMin=0; filterEngMax=999;
+  sortField=null;
+  document.querySelectorAll('.cat-chip')[0]?.classList.add('active');
+  document.querySelectorAll('.cat-chip').forEach((c,i)=>{if(i>0)c.classList.remove('active');});
+  document.querySelectorAll('.date-chip')[0]?.classList.add('active');
+  document.querySelectorAll('.date-chip').forEach((c,i)=>{if(i>0)c.classList.remove('active');});
+  document.querySelectorAll('.eng-chip')[0]?.classList.add('active');
+  document.querySelectorAll('.eng-chip').forEach((c,i)=>{if(i>0)c.classList.remove('active');});
+  ['date','score'].forEach(f=>{
+    document.getElementById(`sort-${f}-icon`).textContent='↕';
+    document.getElementById(`sort-${f}-btn`).classList.remove('sort-active');
+  });
+}
+
+function resetFilters(){
+  resetFilterState();
+  applyFilters(); // single render
+}
+
+function updateFilterBadge(count){
+  const badge=document.getElementById('filter-badge');
+  const active = filterCat!=='all'||filterDays>0||filterEngMin>0||filterEngMax<999;
+  if(active){
+    badge.style.display='flex';
+    document.getElementById('filter-badge-text').textContent=`${count} תוצאות`;
+  } else {
+    badge.style.display='none';
+  }
+}
+
+function filterArticles(el,cat){setCat(el,cat);}// legacy compat
+
+function selectArticle(id){
+  selectedArticle = ARTICLES.find(a=>a.id===id);
+  applyFilters();
+  setTimeout(()=>goStep(2),300);
+}
+
+function sortByDate(){toggleSort('date');}
+function refreshArticles(){
+  const el=document.getElementById('articles-list');
+  el.style.opacity='0.4';
+  setTimeout(()=>{applyFilters();el.style.opacity='1';},600);
+}
+
+async function fetchTopicArticles(){
+  const topic = document.getElementById('topic-input').value.trim();
+  if(!topic){showToast('כתוב נושא תחילה','error');return;}
+  const btn = document.querySelector('[onclick="fetchTopicArticles()"]');
+  document.getElementById('topic-icon').innerHTML='<div class="spinner"></div>';
+  btn.disabled=true;
+  document.getElementById('articles-section').style.display='block';
+  applyFilters();
+  await new Promise(r=>setTimeout(r,800));
+  document.getElementById('topic-icon').textContent='🔍';
+  btn.disabled=false;
+}
+
+// ── TRENDING ──
+let trendingLoaded = false;
+let lastFetchTime = 0; // timestamp of last successful fetch
+
+const SOURCES = [
+  {id:'x',    label:'X / Twitter', icon:'𝕏', color:'#fff'},
+  {id:'reddit',label:'Reddit',     icon:'🔴', color:'#FF4500'},
+  {id:'insta', label:'Instagram',  icon:'📸', color:'#E1306C'},
+  {id:'fb',    label:'Facebook',   icon:'f',  color:'#1877F2'},
+  {id:'hn',    label:'Hacker News',icon:'🧡', color:'#FF6600'},
+  {id:'li',    label:'LinkedIn',   icon:'in', color:'#0077B5'},
+];
+
+function showTrendingBar(msg){
+  const bar=document.getElementById('trending-bar');
+  bar.style.display='block';
+  document.getElementById('trending-status-text').textContent=msg;
+}
+function hideTrendingBar(){
+  document.getElementById('trending-bar').style.display='none';
+}
+
+function animateSources(){
+  const el=document.getElementById('trending-sources');
+  let i=0;
+  const iv=setInterval(()=>{
+    if(i>=SOURCES.length){clearInterval(iv);return;}
+    el.textContent='✓ '+SOURCES.slice(0,i+1).map(s=>s.label).join(' · ');
+    i++;
+  },350);
+  return iv;
+}
+
+// ── SAFE JSON PARSE ──
+function safeParseJSON(raw){
+  if(!raw) return null;
+  // 1. strip markdown fences
+  let s = raw.replace(/```json|```/gi,'').trim();
+  // 2. extract outermost {...}
+  const m = s.match(/\{[\s\S]*\}/);
+  if(!m) return null;
+  s = m[0];
+  // 3. try direct parse
+  try { return JSON.parse(s); } catch(_){}
+  // 4. sanitize: replace curly/smart quotes, fix common issues
+  s = s
+    .replace(/[\u2018\u2019]/g,"'")
+    .replace(/[\u201C\u201D]/g,'"')
+    .replace(/,\s*([}\]])/g,'$1')  // trailing commas
+    .replace(/([{,]\s*)(\w+):/g,'$1"$2":'); // unquoted keys
+  try { return JSON.parse(s); } catch(_){}
+  // 5. line-by-line reconstruction
+  try {
+    const items = [];
+    const re = /\{[^{}]*"title"\s*:\s*"([^"]+)"[^{}]*\}/g;
+    let match;
+    while((match=re.exec(raw))!==null){
+      try { items.push(JSON.parse(match[0])); } catch(_){}
+    }
+    if(items.length) return {trending:items};
+  } catch(_){}
+  return null;
+}
+
+let isFetchingTrending = false;
+
+async function fetchTrending(mode='ai-cyber'){
+  if(isFetchingTrending){ showToast('⏳ כבר מבצע סריקה...',''); return; }
+  // Use cached data if fetched in the last 30 minutes (unless user explicitly clicked)
+  const CACHE_MS = 30 * 60 * 1000;
+  if(trendingLoaded && lastFetchTime && (Date.now()-lastFetchTime)<CACHE_MS && !window._userRequestedRefresh){
+    showToast('✅ הנתונים עדכניים, אין צורך לרענן','success');
+    return;
+  }
+  window._userRequestedRefresh = false;
+  isFetchingTrending = true;
+  const isFirst = mode==='ai-cyber';
+  const btnId = isFirst ? 'btn-trending' : 'btn-trending2';
+  const iconId = isFirst ? 'trending-icon' : 'trending-icon2';
+  const textId = isFirst ? 'trending-text' : 'trending-text2';
+  const btn=document.getElementById(btnId);
+  const icon=document.getElementById(iconId);
+  const text=document.getElementById(textId);
+
+  // Disable both buttons
+  document.getElementById('btn-trending').disabled=true;
+  document.getElementById('btn-trending2').disabled=true;
+  icon.innerHTML='<div class="spinner" style="border-color:rgba(255,255,255,0.3);border-top-color:#fff;width:13px;height:13px;"></div>';
+  text.textContent='טוען...';
+
+  showLoadingOverlay(
+    isFirst ? '🔍 סורק AI & סייבר...' : '🔍 סורק טק & עסקים...',
+    isFirst ? 'X, Reddit, LinkedIn, HackerNews, Dark Reading' : 'X, Reddit, TechCrunch, Wired, HackerNews'
+  );
+  document.getElementById('articles-section').style.display='block';
+  document.getElementById('articles-count').textContent='...';
+  document.getElementById('articles-subtitle').textContent='סורק טרנדים חמים ברשתות...';
+
+  // Build simple prompt - no JSON literals inside template to avoid parse issues
+  const topicEn  = isFirst ? 'AI, cybersecurity, machine learning, data breaches, ransomware, zero trust' : 'technology, startups, fintech, business, career, productivity';
+  const catList  = isFirst ? 'ai, cyber, genai, zero' : 'tech, biz, career, fintech';
+  const defaultCat = isFirst ? 'ai' : 'tech';
+
+  const prompt = [
+    'Return ONLY a JSON object. No explanation, no markdown, no text before or after.',
+    'Generate 8 trending topics about: ' + topicEn,
+    'JSON format (copy exactly):',
+    '{"trending":[{"id":1,"title":"כותרת בעברית","source":"X","icon":"X","date":"Mar 21, 2026","cat":"' + (isFirst?'ai':'tech') + '","tag":"AI","score":88}]}',
+    'Rules: title in Hebrew. icon: X R IG FB LI HN W. cat from: ' + catList + '. score 70-99. Exactly 8 items.'
+  ].join('\n');
+
+  try {
+    const raw = await callAI(prompt);
+    hideLoadingOverlay();
+
+    const data = safeParseJSON(raw);
+    const items = (data && data.trending ? data.trending : []).filter(t => t && t.title && t.title.length > 2);
+
+    if(!items.length) throw new Error('Empty response — raw: ' + raw.slice(0,200));
+
+    const iconMap = {X:'𝕏', R:'🔴', IG:'📸', FB:'f', LI:'in', HN:'🧡', W:'🌐'};
+    const newItems = items.slice(0,8).map((t,i)=>({
+      id: (isFirst ? 1000 : 2000) + i,
+      title:      t.title,
+      source:     t.source || 'Web',
+      sourceIcon: iconMap[t.icon] || '🌐',
+      date:       t.date || 'Mar 21, 2026',
+      cat:        (catList.includes(t.cat) ? t.cat : defaultCat),
+      tags:       [t.tag || 'טרנד'],
+      score:      Math.max(70, Math.min(99, parseInt(t.score) || 80)),
+      isTrending: true,
+      trendMode:  mode,
+    }));
+
+    lastFetchTime = Date.now();
+    ARTICLES.splice(0, ARTICLES.length, ...newItems);
+    trendingLoaded = true;
+    resetFilterState();
+    renderArticles(newItems);
+
+    // Update header
+    document.getElementById('articles-count').textContent = newItems.length;
+    document.getElementById('articles-subtitle').textContent = 'בחר כתבה · סן לפי קטגוריה, תאריך, מעורבות';
+    setLastUpdated(isFirst ? 'AI & סייבר' : 'טק & עסקים', newItems.length);
+
+    // Success banner
+    showSuccessBanner(newItems.length, isFirst ? 'AI & סייבר' : 'טק & עסקים');
+    showToast('✅ ' + newItems.length + ' נושאים נטענו בהצלחה!', 'success');
+
+  } catch(e) {
+    hideLoadingOverlay();
+    console.error('[fetchTrending]', e.message);
+    const isLimit = e.message.toLowerCase().includes('limit') || e.message.toLowerCase().includes('concurrent') || e.message.includes('529') || e.message.includes('429');
+    document.getElementById('articles-count').textContent = '—';
+    document.getElementById('articles-subtitle').textContent = 'לא הצלחנו לטעון';
+    document.getElementById('articles-list').innerHTML =
+      '<div style="text-align:center;padding:3rem 1rem;">' +
+        '<div style="font-size:2.5rem;margin-bottom:0.75rem">⚠️</div>' +
+        '<div style="font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:0.4rem">שגיאה בטעינת הטרנדים</div>' +
+        '<div style="font-size:0.8rem;color:var(--text2);margin-bottom:1.5rem;line-height:1.6">' +
+          (isLimit ? 'יש עומס על השרת. המתן כ-10 שניות ונסה שוב.' : 'בדוק חיבור לאינטרנט ונסה שוב.') +
+        '</div>' +
+        '<button class="btn-primary" onclick="fetchTrending(\'' + mode + '\')" style="margin:0 auto;justify-content:center;">🔄 נסה שוב</button>' +
+      '</div>';
+  } finally {
+    isFetchingTrending = false;
+    icon.textContent  = isFirst ? '🌐' : '🚀';
+    text.textContent  = isFirst ? 'AI & סייבר חמים' : 'טק & עסקים חמים';
+    document.getElementById('btn-trending').disabled  = false;
+    document.getElementById('btn-trending2').disabled = false;
+  }
+}
+
+function setLastUpdated(topic, count){
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mm = String(now.getMinutes()).padStart(2,'0');
+  const el  = document.getElementById('last-updated');
+  const txt = document.getElementById('last-updated-text');
+  if(el && txt){
+    el.style.display='flex';
+    txt.textContent = count + ' כותרות ' + topic + ' עודכנו בשעה ' + hh + ':' + mm;
+  }
+}
+
+function showSuccessBanner(count, topic){
+  // Remove previous banner if exists
+  const old = document.getElementById('success-banner');
+  if(old) old.remove();
+  const banner = document.createElement('div');
+  banner.id = 'success-banner';
+  banner.innerHTML =
+    '<div style="display:flex;align-items:center;gap:0.75rem;">' +
+      '<span style="font-size:1.5rem">✅</span>' +
+      '<div>' +
+        '<div style="font-size:0.9rem;font-weight:800;color:var(--text)">המידע נטען בהצלחה!</div>' +
+        '<div style="font-size:0.78rem;color:var(--text2);margin-top:0.1rem">' + count + ' נושאים חמים בתחום ' + topic + ' מוכנים לבחירה</div>' +
+      '</div>' +
+      '<button onclick="this.parentElement.parentElement.remove()" style="margin-right:auto;background:none;border:none;color:var(--text3);font-size:1.1rem;cursor:pointer;padding:0;">✕</button>' +
+    '</div>';
+  banner.style.cssText = 'background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.4);border-radius:12px;padding:0.9rem 1.1rem;margin-bottom:1rem;animation:fadeUp 0.3s ease;';
+  const list = document.getElementById('articles-list');
+  list.parentElement.insertBefore(banner, list);
+  // Auto-dismiss after 5s
+  setTimeout(() => { if(banner.parentElement) banner.remove(); }, 5000);
+}
+
+function showLoadingOverlay(title, sources){
+  const ov = document.getElementById('loading-overlay');
+  document.getElementById('loading-title').textContent=title;
+  document.getElementById('loading-sub').textContent=sources;
+  document.getElementById('loading-sources').textContent='';
+  document.getElementById('loading-bar-fill').style.width='0%';
+  ov.style.display='flex';
+  // Animate progress bar
+  let pct=0;
+  const iv=setInterval(()=>{
+    pct = Math.min(pct + (pct<70?4:1), 92);
+    document.getElementById('loading-bar-fill').style.width=pct+'%';
+    const srcList=['X/Twitter','Reddit','Instagram','Facebook','LinkedIn','HackerNews'];
+    const idx=Math.floor(pct/16);
+    if(srcList[idx]) document.getElementById('loading-sources').textContent='✓ '+srcList.slice(0,idx+1).join(' · ');
+  },200);
+  ov._progressIv=iv;
+}
+
+function hideLoadingOverlay(){
+  const ov=document.getElementById('loading-overlay');
+  clearInterval(ov._progressIv);
+  document.getElementById('loading-bar-fill').style.width='100%';
+  setTimeout(()=>{ ov.style.display='none'; },350);
+}
+
+// URL fetch → use AI to extract article info
+async function fetchFromUrl(){
+  const url = document.getElementById('url-input').value.trim();
+  if(!url){showToast('הכנס כתובת URL','error');return;}
+  document.getElementById('fetch-icon').innerHTML='<div class="spinner"></div>';
+  document.getElementById('btn-fetch-url').disabled=true;
+  try{
+    const raw = await callAI(`לפי כתובת ה-URL הזו: ${url}
+צור אובייקט JSON עם השדות: title (כותרת מניחה), source (שם האתר), date (תאריך משוער), summary (סיכום קצר 2-3 משפטים).
+ענה ב-JSON בלבד, ללא markdown.`);
+    const data = JSON.parse(raw.replace(/```json?|```/g,'').trim());
+    selectedArticle = {id:999,...data,score:88,cat:'ai',tags:['מ-URL']};
+    document.getElementById('chip-title').textContent=selectedArticle.title||url;
+    document.getElementById('chip-meta').textContent=(selectedArticle.source||'')+(selectedArticle.date?' • '+selectedArticle.date:'');
+    goStep(2);
+  }catch(e){
+    // fallback: just use URL as topic
+    selectedArticle={id:999,title:url,source:'קישור',date:'עכשיו',score:88,cat:'ai',tags:['URL']};
+    goStep(2);
+  }finally{
+    document.getElementById('fetch-icon').textContent='←';
+    document.getElementById('btn-fetch-url').disabled=false;
+  }
+}
+
+
+
+// ── HOOKS RENDER ──
+function renderHooks(hooks){
+  const list = document.getElementById('hooks-list');
+  list.innerHTML = hooks.map((h,i)=>`
+    <div class="hook-card" onclick="selectHook(this,${JSON.stringify(h)})">
+      <div class="hook-card-text">${h}</div>
+      <div class="hook-select">${i===0?'✓':'→'}</div>
+    </div>
+  `).join('');
+}
+function selectHook(el, hook){
+  selectedHook = hook;
+  document.querySelectorAll('.hook-card').forEach(c=>{
+    c.classList.remove('selected');
+    c.querySelector('.hook-select').textContent='→';
+  });
+  el.classList.add('selected');
+  el.querySelector('.hook-select').textContent='✓';
+  document.getElementById('btn-to-step3').disabled = false;
+}
+
+// ── HOOKS ──
+async function generateHooks(){
+  if(!selectedArticle){showToast('בחר כתבה תחילה','error');return;}
+  const icon = document.getElementById('regen-h-icon');
+  icon.innerHTML='<div class="spinner"></div>';
+  document.getElementById('btn-regen-h').disabled=true;
+  document.getElementById('hooks-list').innerHTML=
+    '<div style="text-align:center;padding:2rem;color:var(--text2);">'+
+    '<div class="spinner" style="margin:0 auto 0.75rem;border-color:rgba(124,58,237,0.3);border-top-color:var(--primary);width:24px;height:24px;"></div>'+
+    '<div style="font-size:0.85rem;">מחולל 5 Hooks...</div></div>';
+  try{
+    const prompt = 'אתה מומחה לכתיבה ויראלית בלינקדאין.\n' +
+      'כתוב בדיוק 5 משפטי פתיחה (Hooks) עבור הכתבה: "' + (selectedArticle.title||'') + '"\n\n' +
+      'כללים:\n' +
+      '- כל Hook שורה אחת, מקסימום 12 מילים\n' +
+      '- בעברית, ישיר, מעורר סקרנות\n' +
+      '- 5 סגנונות: עובדה מפתיעה, שאלה, מספרים, הצהרה, אישי\n\n' +
+      'ענה ב-JSON בלבד: {"hooks":["hook1","hook2","hook3","hook4","hook5"]}';
+    const raw = await callAI(prompt);
+    const m = raw.match(/\{[\s\S]*\}/);
+    const data = m ? JSON.parse(m[0]) : null;
+    const hooks = (data && data.hooks && data.hooks.length >= 3) ? data.hooks.slice(0,5) : null;
+    if(!hooks) throw new Error('no hooks');
+    renderHooks(hooks);
+    const firstCard = document.querySelector('.hook-card');
+    if(firstCard) selectHook(firstCard, hooks[0]);
+  }catch(e){
+    const fallback = [
+      '73% מהמנהלים חוששים — לא מהאקרים, מהעובדים שלהם.',
+      'Shadow AI: האיום הגדול ביותר ב-2026 לא מגיע מבחוץ.',
+      'ChatGPT בפנים הארגון? 73% מהמנהלים כבר יודעים.',
+      'כשה-AI הפנימי הופך לאיום — מה עושים?',
+      'סקר חדש: עובדים משתמשים ב-AI בלי לדווח למנהלים.',
+    ];
+    renderHooks(fallback);
+    const firstCard = document.querySelector('.hook-card');
+    if(firstCard) selectHook(firstCard, fallback[0]);
+  }finally{
+    icon.textContent='⚡';
+    document.getElementById('btn-regen-h').disabled=false;
+  }
+}
+async function proceedToStep3(){
+  if(!selectedHook){showToast('בחר hook תחילה','error');return;}
+  goStep(3);
+  await generatePost();
+}
+
+// ── GENERATE POST ──
+async function generatePost(){
+  const ta       = document.getElementById('post-textarea');
+  const label    = document.getElementById('post-editor-label');
+  const btnRegen = document.getElementById('btn-regen-post');
+  ta.value='';
+  ta.placeholder='⏳ כותב את הפוסט, המתן...';
+  if(label)    label.textContent='⏳ יוצר פוסט...';
+  if(btnRegen) btnRegen.disabled=true;
+  document.getElementById('s3-chip-title').textContent=selectedArticle?.title||'';
+  document.getElementById('s3-hook-preview').textContent=selectedHook||'';
+  document.getElementById('li-post-preview').textContent='...';
+  try{
+    const prompt =
+      'אתה מומחה לכתיבת פוסטים ויראליים בלינקדאין.\n\n' +
+      'כתוב פוסט על: "' + (selectedArticle?.title||'') + '"\n\n' +
+      'פתח עם ה-Hook: "' + (selectedHook||'') + '"\n\n' +
+      'דרישות: 150-250 מילים, עברית, Hook > עובדות > ערך > CTA, 5 האשטאגים בסוף.\n' +
+      'כתוב רק את הפוסט, ללא כותרות.';
+    const text = await callAI(prompt);
+    ta.value = text;
+    ta.placeholder='';
+    updateCharCount();
+    document.getElementById('li-post-preview').textContent = text;
+    if(label) label.textContent='✅ הפוסט מוכן!';
+  }catch(e){
+    ta.value='';
+    ta.placeholder='שגיאה. לחץ "צור מחדש" לנסות שוב.';
+    if(label) label.textContent='⚠️ שגיאה – לחץ "צור מחדש"';
+    showToast('שגיאה ביצירת פוסט – נסה שנית','error');
+  }finally{
+    if(btnRegen) btnRegen.disabled=false;
+  }
+}
+
+// ── FIX POST ──
+async function fixPost(){
+  const instruction = document.getElementById('fix-input').value.trim();
+  if(!instruction){showToast('כתוב הוראת תיקון','error');return;}
+  const ta = document.getElementById('post-textarea');
+  const current = ta.value;
+  document.getElementById('fix-icon').innerHTML='<div class="spinner"></div>';
+  document.getElementById('btn-fix').disabled=true;
+  try{
+    const prompt=`עדכן את הפוסט הבא לפי ההוראה:
+הוראה: ${instruction}
+
+פוסט מקורי:
+${current}
+
+כתוב רק את הפוסט המעודכן, ללא הסברים.`;
+    const text = await callAI(prompt);
+    ta.value = text;
+    updateCharCount();
+    document.getElementById('li-post-preview').textContent = text;
+    document.getElementById('fix-input').value='';
+    showToast('הפוסט עודכן ✓','success');
+  }catch(e){showToast('שגיאה בתיקון','error');}
+  finally{
+    document.getElementById('fix-icon').textContent='⚡';
+    document.getElementById('btn-fix').disabled=false;
+  }
+}
+
+// ── QUICK INSERTS ──
+function insertCTA(){insertAtCursor('\n\n—');}
+function insertCTAText(){insertAtCursor('\n\n👇 מה אתם חושבים? שתפו בתגובות!');}
+function insertHashtags(){insertAtCursor('\n\n#CyberSecurity #AI #LinkedIn #InfoSec #Innovation');}
+function insertShare(){insertAtCursor('\n\n♻ שתפו אם מצאתם ערך | 💾 שמרו למאוחר יותר');}
+function insertAtCursor(text){
+  const ta=document.getElementById('post-textarea');
+  ta.value+=text;updateCharCount();
+  document.getElementById('li-post-preview').textContent=ta.value;
+}
+
+function updateCharCount(){
+  const ta=document.getElementById('post-textarea');
+  const len=ta.value.length;
+  const el=document.getElementById('char-count');
+  el.textContent=`${len} / 3000`;
+  el.className='char-counter'+(len>3000?' over':len>2500?' warn':'');
+  document.getElementById('li-post-preview').textContent=ta.value;
+}
+
+// ── PROFILE UPDATE ──
+function updatePreviewProfile(){
+  const name=document.getElementById('profile-name').value||'השם שלך';
+  const role=document.getElementById('profile-role').value||'Cyber & AI Professional • Now';
+  document.getElementById('li-name').textContent=name;
+  document.getElementById('li-role').textContent=role;
+  document.getElementById('li-avatar').textContent=name.charAt(0)||'א';
+}
+
+// ── IMAGE SELECTION ──
+function selectImg(el,key){
+  document.querySelectorAll('.img-thumb').forEach(t=>t.classList.remove('selected'));
+  el.classList.add('selected');
+  const src=el.dataset.src;
+  const preview=document.getElementById('li-img-preview');
+  if(!src){preview.innerHTML='<span>🖼 ללא תמונה</span>';}
+  else{preview.innerHTML=`<img src="${src}" style="width:100%;height:160px;object-fit:cover;">`;}
+}
+
+// ── EMOJI ──
+const EMOJI_DATA = {
+  'טכנולוגיה':['💻','⚡','🔧','🛠','⚙️','🖥','📱','💾','🖨','🔌'],
+  'אבטחה':['🔒','🛡','🔐','🕵️','🎯','⚠️','🚨','🔑','🔓','🧩'],
+  'עסקים':['💼','📊','📈','📉','💡','🤝','🏆','✅','📋','✏️'],
+  'תגובות':['🙌','💪','👏','🔥','❤️','🚀','💯','⭐','👍','🎉'],
+  'חיצים':['→','←','↑','↓','⬇','⬆','▶','⏩','👉','👈'],
+};
+
+function buildEmojiPicker(){
+  const cats=document.getElementById('emoji-cats');
+  const grid=document.getElementById('emoji-grid');
+  const keys=Object.keys(EMOJI_DATA);
+  cats.innerHTML=keys.map((k,i)=>`<button class="emoji-cat-btn${i===0?' active':''}" onclick="showEmojiCat(this,'${k}')">${k}</button>`).join('');
+  showEmojiCat(cats.children[0],keys[0]);
+}
+function showEmojiCat(el,cat){
+  document.querySelectorAll('.emoji-cat-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  const grid=document.getElementById('emoji-grid');
+  grid.innerHTML=EMOJI_DATA[cat].map(e=>`<button class="e-btn" onclick="addEmoji('${e}')">${e}</button>`).join('');
+}
+function addEmoji(e){
+  const ta=document.getElementById('post-textarea');
+  ta.value+=e;updateCharCount();
+  document.getElementById('li-post-preview').textContent=ta.value;
+}
+
+// ── STEP NAVIGATION ──
+function goStep(n){
+  if(n>currentStep+1) return;
+  if(n===2&&!selectedArticle){showToast('בחר כתבה תחילה','error');return;}
+  document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(`panel-${n}`).classList.add('active');
+
+  for(let i=1;i<=4;i++){
+    const nav=document.getElementById(`step-nav-${i}`);
+    nav.classList.remove('active','done');
+    if(i<n)nav.classList.add('done');
+    else if(i===n)nav.classList.add('active');
+  }
+  for(let i=1;i<=3;i++){
+    const conn=document.getElementById(`conn-${i}`);
+    conn.classList.toggle('done',i<n);
+  }
+
+  const pcts=[25,50,75,100];
+  document.getElementById('pct-label').textContent=pcts[n-1]+'%';
+  document.getElementById('progress-fill').style.width=pcts[n-1]+'%';
+
+  currentStep=n;
+
+  if(n===4){
+    const ta=document.getElementById('post-textarea');
+    document.getElementById('li-post-preview').textContent=ta.value||'הפוסט יוצג כאן...';
+  }
+  if(n===2&&selectedArticle){
+    document.getElementById('chip-title').textContent=selectedArticle.title;
+    document.getElementById('chip-meta').textContent=selectedArticle.source+' • '+selectedArticle.date;
+    setTimeout(()=>generateHooks(), 100);
+  }
+}
+
+// ── API CALL ──
+async function callAI(prompt){
+  let res, errBody;
+  try {
+    res = await fetch(API,{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key': API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({
+        model:MODEL,
+        max_tokens:1024,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+  } catch(netErr){
+    throw new Error('שגיאת רשת: ' + netErr.message);
+  }
+  if(!res.ok){
+    try { errBody = await res.json(); } catch(_){}
+    const msg = errBody?.error?.message || 'HTTP ' + res.status;
+    throw new Error(msg);
+  }
+  const d = await res.json();
+  return d.content?.[0]?.text || '';
+}
+
+// ── PUBLISH / SCHEDULE ──
+function publishNow(){
+  if(!liConnected){openConnectModal();return;}
+  const btn=document.getElementById('btn-pub');
+  btn.disabled=true;
+  btn.innerHTML='<div class="spinner"></div> מפרסם...';
+  setTimeout(()=>{
+    btn.disabled=false;
+    btn.innerHTML='<svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> פרסם עכשיו בלינקדאין';
+    showToast('✅ הפוסט פורסם בהצלחה!','success');
+  },2000);
+}
+
+function schedulePost(){
+  if(!liConnected){openConnectModal();return;}
+  const d=document.getElementById('sched-date').value;
+  const t=document.getElementById('sched-time').value;
+  if(!d){showToast('בחר תאריך לתזמון','error');return;}
+  showToast(`📅 פוסט מתוזמן ל-${d} ${t}`,'success');
+}
+
+function saveDraft(){
+  const text=document.getElementById('post-textarea').value;
+  if(!text){return;}
+  localStorage.setItem('li_draft',text);
+  showToast('💾 טיוטה נשמרה','success');
+}
+function saveDraftFull(){saveDraft();}
+
+function copyPost(){
+  const text=document.getElementById('post-textarea').value;
+  if(!text)return;
+  navigator.clipboard.writeText(text);
+  showToast('📋 הפוסט הועתק!','success');
+}
+
+// ── LINKEDIN CONNECT ──
+let connectMode = 'manual';
+function openConnectModal(){document.getElementById('connect-modal').classList.add('open');}
+function closeModal(){document.getElementById('connect-modal').classList.remove('open');}
+
+function showConnTab(el, tab){
+  document.querySelectorAll('.conn-tab').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.conn-content').forEach(c=>c.style.display='none');
+  document.getElementById('conn-'+tab).style.display='block';
+}
+
+function connectZapier(){
+  const url=document.getElementById('zapier-url').value.trim();
+  if(!url){showToast('הכנס Zapier Webhook URL','error');return;}
+  localStorage.setItem('zapier_url',url);
+  connectMode='zapier'; liConnected=true;
+  setConnectedBtn('⚡ Zapier מחובר');
+  closeModal(); showToast('✅ Zapier מחובר!','success');
+}
+function connectBuffer(){
+  const token=document.getElementById('buffer-token').value.trim();
+  if(!token){showToast('הכנס Buffer Token','error');return;}
+  localStorage.setItem('buffer_token',token);
+  localStorage.setItem('buffer_profile',document.getElementById('buffer-profile').value.trim());
+  connectMode='buffer'; liConnected=true;
+  setConnectedBtn('📦 Buffer מחובר');
+  closeModal(); showToast('✅ Buffer מחובר!','success');
+}
+function connectManual(){
+  connectMode='manual'; liConnected=true;
+  setConnectedBtn('✋ מצב ידני פעיל');
+  closeModal(); showToast('✅ מצב ידני מופעל','success');
+}
+function setConnectedBtn(label){
+  const btn=document.getElementById('btn-li-connect');
+  btn.classList.add('connected');
+  btn.innerHTML=`<svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> ✓ ${label}`;
+}
+function simulateConnect(){connectManual();}
+
+// ── SETTINGS ──
+let reminders = JSON.parse(localStorage.getItem('li_reminders')||'[]');
+const DAYS_HE = ['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'];
+
+function openSettingsModal(){
+  loadSettingsForm();
+  document.getElementById('settings-modal').classList.add('open');
+}
+function closeSettingsModal(){document.getElementById('settings-modal').classList.remove('open');}
+
+function loadSettingsForm(){
+  const name=localStorage.getItem('li_name')||'';
+  const role=localStorage.getItem('li_role')||'';
+  document.getElementById('set-name').value=name;
+  document.getElementById('set-role').value=role;
+  document.getElementById('set-api-key').value=localStorage.getItem('claude_api_key')||'';
+  renderReminderList();
+  buildWeekSchedule();
+}
+
+function setSettingsLang(lang, el){
+  document.querySelectorAll('.settings-opt').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  currentLang=lang;
+}
+
+function saveSettings(){
+  const name=document.getElementById('set-name').value.trim();
+  const role=document.getElementById('set-role').value.trim();
+  const key=document.getElementById('set-api-key').value.trim();
+  if(name){localStorage.setItem('li_name',name);document.getElementById('li-name').textContent=name;document.getElementById('li-avatar').textContent=name.charAt(0);}
+  if(role){localStorage.setItem('li_role',role);document.getElementById('li-role').textContent=role;}
+  if(key){API_KEY=key;localStorage.setItem('claude_api_key',key);document.getElementById('api-key-banner').style.display='none';}
+  localStorage.setItem('li_reminders',JSON.stringify(reminders));
+  closeSettingsModal();
+  showToast('✅ הגדרות נשמרו','success');
+  scheduleAllReminders();
+}
+
+// ── REMINDERS ──
+function renderReminderList(){
+  const el=document.getElementById('reminder-list');
+  if(!reminders.length){el.innerHTML='<div style="font-size:0.78rem;color:var(--text3);padding:0.3rem 0;">אין תזכורות עדיין</div>';return;}
+  el.innerHTML=reminders.map((r,i)=>`
+    <div class="reminder-item">
+      <span class="reminder-day">${DAYS_HE[r.day]}</span>
+      <span class="reminder-time">${r.time}</span>
+      <span class="reminder-msg">${r.text||'זמן לפרסם!'}</span>
+      <button onclick="removeReminder(${i})" class="reminder-del">✕</button>
+    </div>`).join('');
+}
+
+function openReminderAdd(){
+  document.getElementById('reminder-modal').classList.add('open');
+  document.querySelectorAll('.day-btn').forEach(b=>b.classList.remove('active'));
+}
+function closeReminderModal(){document.getElementById('reminder-modal').classList.remove('open');}
+
+function addReminder(){
+  const days=[...document.querySelectorAll('.day-btn.active')].map(b=>+b.dataset.day);
+  if(!days.length){showToast('בחר יום','error');return;}
+  const time=document.getElementById('reminder-time').value;
+  const text=document.getElementById('reminder-text').value||'זמן לפרסם פוסט! 🔥';
+  days.forEach(day=>reminders.push({day,time,text}));
+  reminders.sort((a,b)=>a.day-b.day||a.time.localeCompare(b.time));
+  renderReminderList();
+  closeReminderModal();
+  showToast('🔔 תזכורת נוספה','success');
+}
+
+function removeReminder(i){reminders.splice(i,1);renderReminderList();}
+
+function scheduleAllReminders(){
+  if(!('Notification' in window)||reminders.length===0) return;
+  Notification.requestPermission().then(perm=>{
+    if(perm==='granted') showToast('🔔 תזכורות מופעלות','success');
+  });
+}
+
+// ── WEEK SCHEDULE ──
+function buildWeekSchedule(){
+  const el=document.getElementById('week-schedule');
+  const saved=JSON.parse(localStorage.getItem('li_week_schedule')||'{}');
+  el.innerHTML=DAYS_HE.map((d,i)=>`
+    <div class="week-day-row">
+      <span class="week-day-label">${d}</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="wd-${i}" ${saved[i]?'checked':''} onchange="toggleWeekDay(${i})">
+        <span class="toggle-slider"></span>
+      </label>
+      <input type="time" id="wt-${i}" value="${saved[i]||'09:00'}" ${!saved[i]?'disabled':''} class="week-time-input" />
+    </div>`).join('');
+}
+
+function toggleWeekDay(i){
+  const cb=document.getElementById('wd-'+i);
+  const ti=document.getElementById('wt-'+i);
+  ti.disabled=!cb.checked;
+}
+
+// ── LANGUAGE ──
+function setLang(lang){
+  currentLang=lang;
+  document.querySelectorAll('.lang-toggle button').forEach((b,i)=>{
+    b.classList.toggle('active',(lang==='he'&&i===0)||(lang==='en'&&i===1));
+  });
+}
+
+// ── TOAST ──
+function showToast(msg,type=''){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.className='toast show'+(type?' '+type:'');
+  setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+// ── API KEY MANAGEMENT ──
+function saveApiKey(){
+  const key = document.getElementById('set-api-key').value.trim();
+  if(!key){showToast('הכנס API Key','error');return;}
+  API_KEY = key;
+  localStorage.setItem('claude_api_key', key);
+  document.getElementById('api-key-banner').style.display='none';
+  showToast('✅ API Key נשמר!','success');
+}
+function saveBannerApiKey(){
+  const key = document.getElementById('set-api-key-banner').value.trim();
+  if(!key){showToast('הכנס API Key','error');return;}
+  API_KEY = key;
+  localStorage.setItem('claude_api_key', key);
+  document.getElementById('api-key-banner').style.display='none';
+  showToast('✅ API Key נשמר! טוען טרנדים...','success');
+  if(!trendingFetched){trendingFetched=true;fetchTrending('ai-cyber');}
+}
+
+// ── INIT ──
+let trendingFetched = false;
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('articles-section').style.display='block';
+  buildEmojiPicker();
+  const tm=new Date();tm.setDate(tm.getDate()+1);
+  document.getElementById('sched-date').value=tm.toISOString().split('T')[0];
+  const n=localStorage.getItem('li_name'); if(n){document.getElementById('li-name').textContent=n;document.getElementById('li-avatar').textContent=n.charAt(0);}
+  const r=localStorage.getItem('li_role'); if(r) document.getElementById('li-role').textContent=r;
+  // Show static articles immediately
+  document.getElementById('articles-count').textContent=ARTICLES.length;
+  document.getElementById('articles-subtitle').textContent='בחר כתבה · מיין לפי קטגוריה, תאריך, מעורבות';
+  applyFilters();
+  // Show API key banner if missing
+  if(!API_KEY){
+    document.getElementById('api-key-banner').style.display='flex';
+  }
+  // Fetch AI trending only if API key is set
+  if(API_KEY && !trendingFetched){
+    trendingFetched=true;
+    fetchTrending('ai-cyber');
+  }
+});
+
+['connect-modal','settings-modal','reminder-modal'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){
+    if(e.target===this) this.classList.remove('open');
+  });
+});
+
+document.addEventListener('click',function(e){
+  if(e.target.classList.contains('day-btn')){
+    e.target.classList.toggle('active');
+  }
+});
+</script>
+</body>
+</html>
