@@ -867,6 +867,33 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{
 </head>
 <body>
 
+<!-- LOGIN SCREEN -->
+<div id="login-screen" style="display:flex;min-height:100vh;align-items:center;justify-content:center;padding:1rem;">
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:2.5rem 2rem;width:360px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+    <div style="text-align:center;margin-bottom:2rem;">
+      <div style="width:52px;height:52px;background:linear-gradient(135deg,#5b21b6,#7c3aed);border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.4rem;color:#fff;margin:0 auto 0.75rem;box-shadow:0 0 24px rgba(124,58,237,0.5);">in</div>
+      <h2 style="font-size:1.1rem;font-weight:800;">יוצר פוסטים לינקדאין</h2>
+      <p style="font-size:0.78rem;color:var(--text3);margin-top:0.25rem;">כניסה לחשבון</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.75rem;">
+      <input id="login-email" type="email" placeholder="אימייל" dir="ltr" autocomplete="email"
+        style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:0.65rem 0.9rem;color:var(--text);font-family:'Heebo',sans-serif;font-size:0.88rem;outline:none;transition:border-color 0.2s;"
+        onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"
+        onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()" />
+      <input id="login-pass" type="password" placeholder="סיסמה" dir="ltr" autocomplete="current-password"
+        style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:0.65rem 0.9rem;color:var(--text);font-family:'Heebo',sans-serif;font-size:0.88rem;outline:none;transition:border-color 0.2s;"
+        onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"
+        onkeydown="if(event.key==='Enter')doLogin()" />
+      <div id="login-err" style="display:none;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);border-radius:8px;padding:0.5rem 0.75rem;font-size:0.8rem;color:#fca5a5;text-align:center;"></div>
+      <button onclick="doLogin()" style="padding:0.7rem;background:linear-gradient(135deg,var(--primary-dark),var(--primary));border:none;border-radius:10px;color:#fff;font-family:'Heebo',sans-serif;font-size:0.92rem;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(124,58,237,0.45);transition:all 0.2s;"
+        onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">כניסה →</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP ROOT (hidden until login) -->
+<div id="app-root" style="display:none;">
+
 <!-- HEADER -->
 <header>
   <div class="logo">
@@ -889,6 +916,8 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{
       <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
       <span class="btn-label">חבר לינקדאין</span>
     </button>
+    <span id="run-counter" style="font-size:0.72rem;font-weight:700;color:var(--text3);background:var(--card2);border:1px solid var(--border);border-radius:999px;padding:0.25rem 0.7rem;white-space:nowrap;">0/3 הרצות</span>
+    <button class="btn-settings" onclick="logout()" aria-label="התנתק" title="התנתק">🚪</button>
     <button class="btn-settings" onclick="openSettingsModal()" aria-label="פתח הגדרות">⚙️</button>
   </div>
 </header>
@@ -1409,6 +1438,11 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{
 const API = "https://api.anthropic.com/v1/messages";
 const MODEL = "claude-sonnet-4-20250514";
 let API_KEY = localStorage.getItem('claude_api_key') || '';
+
+// ── AUTH & RATE LIMIT CONFIG ──
+const AUTH_EMAIL    = "asafapelbaum@gmail.com";
+const AUTH_HASH     = "1d40c57157d4aa2b04ad94de36750538fc91b90932af19e2bde48ea7a65450c6";
+const DAILY_RUN_LIMIT = 3; // max AI calls per day
 let currentStep = 1;
 let selectedArticle = null;
 let selectedHook = null;
@@ -2094,6 +2128,11 @@ function goStep(n){
 
 // ── API CALL ──
 async function callAI(prompt){
+  if(!checkRateLimit()) throw new Error('daily limit reached');
+  incrementRuns();
+  const remaining = DAILY_RUN_LIMIT - getRunsToday();
+  if(remaining >= 0) showToast(`נותרו ${remaining} הרצות להיום`,'');
+
   let res, errBody;
   try {
     res = await fetch(API,{
@@ -2315,6 +2354,49 @@ function showToast(msg,type=''){
   setTimeout(()=>el.classList.remove('show'),3000);
 }
 
+// ── AUTH ──
+async function hashString(str){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function doLogin(){
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const pass  = document.getElementById('login-pass').value;
+  const err   = document.getElementById('login-err');
+  if(email !== AUTH_EMAIL){ err.textContent='אימייל שגוי'; err.style.display='block'; return; }
+  const hash = await hashString(pass);
+  if(hash !== AUTH_HASH){ err.textContent='סיסמה שגויה'; err.style.display='block'; return; }
+  localStorage.setItem('li_auth', '1');
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app-root').style.display='block';
+  initApp();
+}
+function checkAuth(){
+  if(localStorage.getItem('li_auth')==='1'){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app-root').style.display='block';
+    return true;
+  }
+  return false;
+}
+function logout(){
+  localStorage.removeItem('li_auth');
+  location.reload();
+}
+
+// ── RATE LIMIT ──
+function getTodayKey(){ return 'li_runs_'+new Date().toISOString().slice(0,10); }
+function getRunsToday(){ return parseInt(localStorage.getItem(getTodayKey())||'0'); }
+function incrementRuns(){ localStorage.setItem(getTodayKey(), getRunsToday()+1); }
+function checkRateLimit(){
+  const runs = getRunsToday();
+  if(runs >= DAILY_RUN_LIMIT){
+    showToast(`הגעת למגבלת ${DAILY_RUN_LIMIT} הרצות היום 🚫`,'error');
+    return false;
+  }
+  return true;
+}
+
 // ── API KEY MANAGEMENT ──
 function saveApiKey(){
   const key = document.getElementById('set-api-key').value.trim();
@@ -2336,26 +2418,25 @@ function saveBannerApiKey(){
 
 // ── INIT ──
 let trendingFetched = false;
-document.addEventListener('DOMContentLoaded',()=>{
+function initApp(){
   document.getElementById('articles-section').style.display='block';
   buildEmojiPicker();
   const tm=new Date();tm.setDate(tm.getDate()+1);
   document.getElementById('sched-date').value=tm.toISOString().split('T')[0];
   const n=localStorage.getItem('li_name'); if(n){document.getElementById('li-name').textContent=n;document.getElementById('li-avatar').textContent=n.charAt(0);}
   const r=localStorage.getItem('li_role'); if(r) document.getElementById('li-role').textContent=r;
-  // Show static articles immediately
   document.getElementById('articles-count').textContent=ARTICLES.length;
   document.getElementById('articles-subtitle').textContent='בחר כתבה · מיין לפי קטגוריה, תאריך, מעורבות';
   applyFilters();
-  // Show API key banner if missing
-  if(!API_KEY){
-    document.getElementById('api-key-banner').style.display='flex';
-  }
-  // Fetch AI trending only if API key is set
-  if(API_KEY && !trendingFetched){
-    trendingFetched=true;
-    fetchTrending('ai-cyber');
-  }
+  if(!API_KEY){ document.getElementById('api-key-banner').style.display='flex'; }
+  if(API_KEY && !trendingFetched){ trendingFetched=true; fetchTrending('ai-cyber'); }
+  // Show run counter
+  const runs=getRunsToday();
+  document.getElementById('run-counter').textContent=`${runs}/${DAILY_RUN_LIMIT} הרצות היום`;
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  if(!checkAuth()) return;
+  initApp();
 });
 
 ['connect-modal','settings-modal','reminder-modal'].forEach(id=>{
@@ -2370,5 +2451,6 @@ document.addEventListener('click',function(e){
   }
 });
 </script>
+</div><!-- /app-root -->
 </body>
 </html>
