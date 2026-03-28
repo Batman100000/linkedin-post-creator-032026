@@ -492,9 +492,27 @@ main {
   display:flex;align-items:center;gap:0.4rem;
   background:transparent;border:none;
   color:var(--text3);font-family:'Heebo',sans-serif;font-size:0.82rem;font-weight:600;
-  cursor:pointer;margin-bottom:1.5rem;transition:color 0.15s;
+  cursor:pointer;transition:color 0.15s;padding:0;
 }
 .back-btn:hover{color:var(--text);}
+.step-nav-row {
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.25rem;
+  padding:0.5rem 0.75rem;
+  background:var(--card2);border:1px solid var(--border);border-radius:10px;
+}
+.step-nav-row .nav-step-label {
+  font-size:0.75rem;color:var(--text3);font-weight:600;letter-spacing:0.03em;
+}
+.btn-nav {
+  display:flex;align-items:center;gap:0.35rem;
+  background:transparent;border:1px solid var(--border);border-radius:8px;
+  color:var(--text2);font-family:'Heebo',sans-serif;font-size:0.8rem;font-weight:700;
+  cursor:pointer;padding:0.3rem 0.75rem;transition:all 0.15s;
+}
+.btn-nav:hover{border-color:var(--primary);color:var(--primary-light);background:rgba(124,58,237,0.08);}
+.btn-nav:disabled{opacity:0.3;cursor:not-allowed;}
+.btn-nav.forward{background:rgba(124,58,237,0.1);border-color:var(--primary);color:var(--primary-light);}
 
 .selected-article-chip {
   background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);
@@ -916,7 +934,14 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{
       <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
       <span class="btn-label">חבר לינקדאין</span>
     </button>
-    <span id="run-counter" style="font-size:0.72rem;font-weight:700;color:var(--text3);background:var(--card2);border:1px solid var(--border);border-radius:999px;padding:0.25rem 0.7rem;white-space:nowrap;">0/3 הרצות</span>
+    <span id="proxy-status-badge" title="שרת ה-proxy המקומי שומר על ה-API Key שלך" style="display:inline-flex;align-items:center;gap:0.35rem;font-size:0.72rem;font-weight:700;background:var(--card2);border:1px solid var(--border);border-radius:999px;padding:0.25rem 0.7rem;white-space:nowrap;cursor:default;color:var(--text3);">
+      <span id="proxy-dot" style="width:7px;height:7px;border-radius:50%;background:#6b7280;display:inline-block;flex-shrink:0;"></span>
+      <span id="proxy-label">בודק...</span>
+    </span>
+    <button id="btn-start-proxy" onclick="startProxyGuide()" title="הפעל את שרת הפרוקסי" style="display:none;font-size:0.72rem;font-weight:700;padding:0.25rem 0.7rem;border-radius:999px;border:1px solid rgba(34,197,94,0.4);background:rgba(34,197,94,0.08);color:#4ade80;cursor:pointer;white-space:nowrap;">▶ הפעל פרוקסי</button>
+    <button id="btn-stop-proxy" onclick="stopProxy()" title="כבה את שרת הפרוקסי" style="display:none;font-size:0.72rem;font-weight:700;padding:0.25rem 0.7rem;border-radius:999px;border:1px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.08);color:#f87171;cursor:pointer;white-space:nowrap;">⏹ נתק פרוקסי</button>
+    <span id="run-counter" title="" style="font-size:0.72rem;font-weight:700;color:var(--text3);background:var(--card2);border:1px solid var(--border);border-radius:999px;padding:0.25rem 0.7rem;white-space:nowrap;cursor:default;">0/20 הרצות</span>
+    <span title="גרסת האפליקציה" style="font-size:0.65rem;font-weight:600;color:var(--text3);opacity:0.5;white-space:nowrap;cursor:default;">v2.5</span>
     <button class="btn-settings" onclick="logout()" aria-label="התנתק" title="התנתק">🚪</button>
     <button class="btn-settings" onclick="openSettingsModal()" aria-label="פתח הגדרות">⚙️</button>
   </div>
@@ -954,6 +979,11 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{
 
 <!-- ══════════ STEP 1 ══════════ -->
 <div class="step-panel active" id="panel-1">
+  <div class="step-nav-row">
+    <button class="btn-nav" disabled>← חזרה</button>
+    <span class="nav-step-label">שלב 1 מתוך 4 — בחירת נושא</span>
+    <button class="btn-nav forward" onclick="goStep(2)">הוקס ←</button>
+  </div>
   <div class="step1-header">
     <div>
       <h2>🔥 בחר נושא לפוסט</h2>
@@ -961,45 +991,32 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{
     </div>
   </div>
 
-  <div class="url-box">
-    <div class="url-box-title">🔗 הדבק קישור ליצירת פוסט</div>
-    <div class="url-input-row">
-      <div class="url-input-wrap">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-        <input type="url" id="url-input" placeholder="https://example.com/article..." dir="ltr" />
-      </div>
-      <button class="btn-primary" onclick="fetchFromUrl()" id="btn-fetch-url">
-        <span id="fetch-icon">←</span> צור פוסט
-      </button>
-    </div>
-    <div class="divider-row">או כתוב נושא חופשי</div>
-    <div class="topic-input-row">
-      <textarea id="topic-input" placeholder="למשל: 73% מהמנהלים חוששים מ-AI בפנים – מה זה אומר לנו?"></textarea>
-    </div>
-    <button class="btn-primary" style="margin-top:0.75rem;width:100%;justify-content:center;" onclick="fetchTopicArticles()">
-      <span id="topic-icon">🔍</span> מצא כתבות רלוונטיות
-    </button>
-  </div>
-
   <div id="articles-section" style="display:none">
     <div class="articles-header">
       <div>
         <div class="articles-title">🔥 <span id="articles-count">—</span> כותרות חמות</div>
         <div class="articles-subtitle" id="articles-subtitle">טוען נושאים חמים...</div>
-        <div id="last-updated" style="display:none;font-size:0.68rem;color:var(--accent);font-weight:600;margin-top:0.25rem;display:flex;align-items:center;gap:0.3rem;">
-          <span>✅</span><span id="last-updated-text"></span>
+        <div id="last-updated" style="display:none;font-size:0.68rem;color:var(--accent);font-weight:600;margin-top:0.25rem;display:flex;align-items:center;gap:0.3rem;flex-wrap:wrap;">
+          <span>🔄</span>
+          <span>רענון אחרון:</span>
+          <span id="last-updated-text" style="color:var(--text2)"></span>
+          <span style="color:var(--border2)">·</span>
+          <span style="color:var(--text3)">📅 תאריך כתבות: לפי כל כתבה</span>
         </div>
       </div>
       <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
-        <button class="btn-trending" id="btn-trending" onclick="window._userRequestedRefresh=true;fetchTrending('ai-cyber')">
-          <span id="trending-icon">🌐</span>
-          <span id="trending-text">AI &amp; סייבר חמים</span>
+        <button class="btn-trending" id="btn-trending" onclick="fetchTrending('ai-cyber',true)" title="הבא כתבות חדשות בנושא AI וסייבר">
+          <span id="trending-icon">📡</span>
+          <span id="trending-text">הבא כתבות — AI &amp; סייבר</span>
         </button>
-        <button class="btn-trending btn-trending-alt" id="btn-trending2" onclick="window._userRequestedRefresh=true;fetchTrending('tech-business')">
-          <span id="trending-icon2">🚀</span>
-          <span id="trending-text2">טק &amp; עסקים חמים</span>
+        <button class="btn-trending btn-trending-alt" id="btn-trending2" onclick="fetchTrending('tech-business',true)" title="הבא כתבות חדשות בנושא טק ועסקים">
+          <span id="trending-icon2">📡</span>
+          <span id="trending-text2">הבא כתבות — טק &amp; עסקים</span>
         </button>
         <button class="btn-sm" onclick="refreshArticles()" title="רענן">🔄</button>
+        <button class="btn-sm" id="btn-show-last10" onclick="showLast10Articles()" title="הצג 10 כתבות אחרונות שנשלפו" style="display:none;background:rgba(251,191,36,0.1);border-color:rgba(251,191,36,0.4);color:var(--gold);">
+          🕐 אחרונות
+        </button>
       </div>
     </div>
 
@@ -1065,12 +1082,46 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{
     </div>
 
     <div class="articles-list" id="articles-list" role="list" aria-label="רשימת כתבות" aria-live="polite"></div>
+
+    <!-- Load more button -->
+    <div id="load-more-wrap" style="display:none;text-align:center;margin-top:1rem;">
+      <button id="btn-load-more" onclick="loadMoreArticles()"
+        style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.4rem;background:var(--card2);border:1px solid var(--border2);border-radius:10px;color:var(--text2);font-family:inherit;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;">
+        <span id="load-more-icon">➕</span> הבא לי עוד 10 כתבות
+      </button>
+    </div>
   </div>
+
+  <!-- URL Box — moved below article list -->
+  <div class="url-box" style="margin-top:1.5rem;">
+    <div class="url-box-title">🔗 הדבק קישור ליצירת פוסט</div>
+    <div class="url-input-row">
+      <div class="url-input-wrap">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        <input type="url" id="url-input" placeholder="https://example.com/article..." dir="ltr" />
+      </div>
+      <button class="btn-primary" onclick="fetchFromUrl()" id="btn-fetch-url">
+        <span id="fetch-icon">←</span> צור פוסט
+      </button>
+    </div>
+    <div class="divider-row">או כתוב נושא חופשי</div>
+    <div class="topic-input-row">
+      <textarea id="topic-input" placeholder="למשל: 73% מהמנהלים חוששים מ-AI בפנים – מה זה אומר לנו?"></textarea>
+    </div>
+    <button class="btn-primary" style="margin-top:0.75rem;width:100%;justify-content:center;" onclick="fetchTopicArticles()">
+      <span id="topic-icon">🔍</span> מצא כתבות רלוונטיות
+    </button>
+  </div>
+
 </div>
 
 <!-- ══════════ STEP 2 ══════════ -->
 <div class="step-panel" id="panel-2">
-  <button class="back-btn" onclick="goStep(1)">← חזרה</button>
+  <div class="step-nav-row">
+    <button class="btn-nav" onclick="goStep(1)">← חזרה</button>
+    <span class="nav-step-label">שלב 2 מתוך 4 — בחירת Hook</span>
+    <button class="btn-nav forward" onclick="proceedToStep3()">צור פוסט ←</button>
+  </div>
 
   <div class="selected-article-chip" id="selected-chip">
     <div style="flex:1">
@@ -1096,6 +1147,11 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{
     </div>
   </div>
 
+  <!-- Deselect hook button - shown only when a hook is selected -->
+  <div id="btn-deselect-hook" onclick="clearHookSelection()" style="display:none;align-items:center;gap:0.5rem;margin-bottom:0.75rem;padding:0.5rem 0.9rem;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.35);border-radius:10px;cursor:pointer;color:var(--red);font-size:0.82rem;font-weight:600;width:fit-content;transition:all 0.2s;">
+    <span>✕</span> <span>בטל בחירת Hook</span>
+  </div>
+
   <div class="hooks-footer">
     <button class="btn-regen-all" onclick="generateHooks()">
       🎯 מחולל 20 Hooks – הצעות
@@ -1108,7 +1164,11 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{
 
 <!-- ══════════ STEP 3 ══════════ -->
 <div class="step-panel" id="panel-3">
-  <button class="back-btn" onclick="goStep(2)">← חזרה</button>
+  <div class="step-nav-row">
+    <button class="btn-nav" onclick="goStep(2)">← חזרה</button>
+    <span class="nav-step-label">שלב 3 מתוך 4 — עריכת פוסט</span>
+    <button class="btn-nav forward" onclick="goStep(4)">פרסום ←</button>
+  </div>
 
   <div class="selected-article-chip">
     <div style="flex:1">
@@ -1156,7 +1216,11 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{
 
 <!-- ══════════ STEP 4 ══════════ -->
 <div class="step-panel" id="panel-4">
-  <button class="back-btn" onclick="goStep(3)">← חזרה</button>
+  <div class="step-nav-row">
+    <button class="btn-nav" onclick="goStep(3)">← חזרה</button>
+    <span class="nav-step-label">שלב 4 מתוך 4 — פרסום</span>
+    <button class="btn-nav" disabled>סיום ✓</button>
+  </div>
 
   <div class="step4-layout">
     <!-- Left: Preview -->
@@ -1435,14 +1499,16 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{
 <div class="toast" id="toast"></div>
 
 <script>
-const API = "https://api.anthropic.com/v1/messages";
+// ── Proxy mode: API key lives in .env on your machine, NOT in the browser ──
+const PROXY_URL = 'http://localhost:3001/api/claude';
 const MODEL = "claude-sonnet-4-20250514";
-let API_KEY = localStorage.getItem('claude_api_key') || '';
+let proxyAvailable = false; // checked on init
+let API_KEY = ''; // kept only for legacy fallback if proxy is down
 
 // ── AUTH & RATE LIMIT CONFIG ──
 const AUTH_EMAIL    = "asafapelbaum@gmail.com";
 const AUTH_HASH     = "1d40c57157d4aa2b04ad94de36750538fc91b90932af19e2bde48ea7a65450c6";
-const DAILY_RUN_LIMIT = 3; // max AI calls per day
+const DAILY_RUN_LIMIT = 20; // max AI calls per day
 let currentStep = 1;
 let selectedArticle = null;
 let selectedHook = null;
@@ -1451,16 +1517,16 @@ let liConnected = false;
 
 // ── ARTICLES DATA ──
 const ARTICLES = [
-  {id:1,score:85,title:"CISO Survey 2026: 73% מהמנהלים חוששים מ-AI מבפנים",source:"CSO Online",date:"Mar 8, 2026",cat:"ai",tags:["GenAI בארגונים"]},
-  {id:2,score:94,title:"IBM X-Force 2026: מתקפות AI מסלימות בזמן שפערי אבטחה בסיסיים ארגונים",source:"IBM / PR Newswire",date:"Mar 7, 2026",cat:"ai",tags:["תקיפות סייבר מונעות AI"]},
-  {id:3,score:93,title:"CrowdStrike מזהירה: AI Worms – הדור הבא של מתקפות",source:"CrowdStrike",date:"Mar 7, 2026",cat:"ai",tags:["תקיפות סייבר מונעות AI"]},
-  {id:4,score:86,title:"Google חוסמת קמפיין ריגול על ספקי טלקום ב-70 מדינות",source:"CyberInsider",date:"Mar 6, 2026",cat:"cyber",tags:["IoT/OT אבטחת"]},
-  {id:5,score:88,title:"סין חוסמת גישה ל-AI כדי לפרוץ +600 מכשירי FortiGate ב-55 מדינות",source:"CyberSecurity Dive",date:"Mar 5, 2026",cat:"cyber",tags:["תקיפות סייבר מונעות AI"]},
-  {id:6,score:97,title:"הסכנה האמיתית: AI יוצר פרצות אבטחה בקוד ייצור ללא ידיעת המפתחים",source:"The Hacker News",date:"Mar 5, 2026",cat:"high",tags:["GenAI בארגונים"]},
-  {id:7,score:78,title:"Quantum & הצפנה: עד 2030 RSA-2048 עשויה להיפרץ",source:"MIT Technology Review",date:"Mar 4, 2026",cat:"zero",tags:["Quantum & הצפנה"]},
-  {id:8,score:91,title:"Zero Trust 2026: 68% מהחברות לא מיישמות נכון",source:"Gartner Research",date:"Mar 3, 2026",cat:"zero",tags:["ארכיטקטורה & Zero Trust"]},
-  {id:9,score:82,title:"Ransomware-as-a-Service: הכלי החדש שמוריד חסמי כניסה לפשע",source:"Dark Reading",date:"Mar 2, 2026",cat:"cyber",tags:["כופרה & Ransomware"]},
-  {id:10,score:76,title:"AI Act האיחוד האירופי: מה זה אומר לחברות סייבר ישראליות?",source:"TechCrunch",date:"Mar 1, 2026",cat:"genai",tags:["AI Act & רגולציה"]},
+  {id:1,score:85,title:"CISO Survey 2026: 73% מהמנהלים חוששים מ-AI מבפנים",source:"CSO Online",_query:"CISO survey 2026 AI insider threats",date:"Mar 8, 2026",cat:"ai",tags:["GenAI בארגונים"]},
+  {id:2,score:94,title:"IBM X-Force 2026: מתקפות AI מסלימות בזמן שפערי אבטחה בסיסיים ארגונים",source:"IBM / PR Newswire",_query:"IBM X-Force 2026 AI cyberattacks report",date:"Mar 7, 2026",cat:"ai",tags:["תקיפות סייבר מונעות AI"]},
+  {id:3,score:93,title:"CrowdStrike מזהירה: AI Worms – הדור הבא של מתקפות",source:"CrowdStrike",_query:"CrowdStrike AI worms next generation attacks",date:"Mar 7, 2026",cat:"ai",tags:["תקיפות סייבר מונעות AI"]},
+  {id:4,score:86,title:"Google חוסמת קמפיין ריגול על ספקי טלקום ב-70 מדינות",source:"CyberInsider",_query:"Google blocks espionage campaign telecom 70 countries",date:"Mar 6, 2026",cat:"cyber",tags:["IoT/OT אבטחת"]},
+  {id:5,score:88,title:"סין חוסמת גישה ל-AI כדי לפרוץ +600 מכשירי FortiGate ב-55 מדינות",source:"CyberSecurity Dive",_query:"China AI FortiGate breach 55 countries 2026",date:"Mar 5, 2026",cat:"cyber",tags:["תקיפות סייבר מונעות AI"]},
+  {id:6,score:97,title:"הסכנה האמיתית: AI יוצר פרצות אבטחה בקוד ייצור ללא ידיעת המפתחים",source:"The Hacker News",_icon:"HN",_query:"AI generated insecure code production security vulnerabilities",date:"Mar 5, 2026",cat:"high",tags:["GenAI בארגונים"]},
+  {id:7,score:78,title:"Quantum & הצפנה: עד 2030 RSA-2048 עשויה להיפרץ",source:"MIT Technology Review",_query:"quantum computing RSA-2048 encryption broken 2030",date:"Mar 4, 2026",cat:"zero",tags:["Quantum & הצפנה"]},
+  {id:8,score:91,title:"Zero Trust 2026: 68% מהחברות לא מיישמות נכון",source:"Gartner Research",_query:"Gartner zero trust 2026 implementation failure",date:"Mar 3, 2026",cat:"zero",tags:["ארכיטקטורה & Zero Trust"]},
+  {id:9,score:82,title:"Ransomware-as-a-Service: הכלי החדש שמוריד חסמי כניסה לפשע",source:"Dark Reading",_query:"ransomware as a service RaaS low barrier entry 2026",date:"Mar 2, 2026",cat:"cyber",tags:["כופרה & Ransomware"]},
+  {id:10,score:76,title:"AI Act האיחוד האירופי: מה זה אומר לחברות סייבר ישראליות?",source:"TechCrunch",_query:"EU AI Act impact cybersecurity companies",date:"Mar 1, 2026",cat:"genai",tags:["AI Act & רגולציה"]},
 ];
 
 function scoreClass(s){return s>=90?'high':s>=80?'mid':'low';}
@@ -1471,29 +1537,199 @@ function tagClass(t){
   return'tag-biz';
 }
 
+// ── Build source-specific search URL ─────────────────────────────────────────
+// If the article has a _realUrl (from RSS), use it directly — it's a verified link.
+// Otherwise fall back to a search on the appropriate platform.
+function buildSourceUrl(a){
+  // ✅ Real URL from RSS feed — always use directly
+  if(a._realUrl && a._realUrl.startsWith('http')){
+    return { url: a._realUrl, label: a.source, isReal: true };
+  }
+  // Fallback: search with English query if available, else Hebrew title
+  const searchTerm = (a._query && a._query.length > 2) ? a._query : a.title;
+  const q = encodeURIComponent(searchTerm);
+  const icon = (a._icon || '').toUpperCase();
+  // Route to the appropriate platform
+  if(icon==='X' || /^x$/i.test(a.source) || /twitter/i.test(a.source))
+    return {url:'https://x.com/search?q='+q+'&src=typed_query&f=top', label:'𝕏 Twitter'};
+  if(icon==='R' || /reddit/i.test(a.source))
+    return {url:'https://www.reddit.com/search/?q='+q+'&sort=new', label:'Reddit'};
+  if(icon==='LI' || /linkedin/i.test(a.source))
+    return {url:'https://www.linkedin.com/search/results/content/?keywords='+q, label:'LinkedIn'};
+  if(icon==='HN' || /hacker.?news/i.test(a.source))
+    return {url:'https://hn.algolia.com/?q='+q, label:'HackerNews'};
+  if(icon==='IG' || /instagram/i.test(a.source))
+    return {url:'https://news.google.com/search?q='+q+'&hl=en', label:'Google News'};
+  if(icon==='FB' || /facebook/i.test(a.source))
+    return {url:'https://news.google.com/search?q='+q+'&hl=en', label:'Google News'};
+  // Default: Google News with English query
+  return {url:'https://news.google.com/search?q='+q+'&hl=en', label:'Google News'};
+}
+
 function renderArticles(list){
   const el = document.getElementById('articles-list');
   if(!list.length){
     el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--text3)">אין תוצאות לפילטר הנוכחי</div>';
     return;
   }
-  el.innerHTML = list.map(a=>`
-    <div class="article-card ${selectedArticle?.id===a.id?'selected':''}" onclick="selectArticle(${a.id})">
-      <div class="score-badge ${scoreClass(a.score)}">
-        <div class="score-num">${a.score}</div>
-        <div class="score-label">מעורבות ${scoreFlame(a.score)}</div>
-      </div>
-      <div class="article-body">
-        <div class="article-title">${a.isTrending?'<span class="trend-dot"></span>':''}${a.title}</div>
-        <div class="article-meta">
-          ${a.sourceIcon?`<span class="platform-icon">${a.sourceIcon}</span>`:''}
-          <span>${a.source}</span><span>•</span><span>${a.date}</span>
-          ${a.tags.map(t=>`<span class="tag ${tagClass(t)}">${t}</span>`).join('')}
+  el.innerHTML = list.map(a=>{
+    const src = buildSourceUrl(a);
+    const safeSrcUrl = src.url.replace(/'/g,"\\'");
+    const safeTitleJs = a.title.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"');
+    return `
+    <div style="display:flex;gap:0.5rem;align-items:stretch;">
+
+      <!-- ── Main clickable card ── -->
+      <div class="article-card ${selectedArticle?.id===a.id?'selected':''}"
+           onclick="selectArticle(${a.id})" style="flex:1;min-width:0;">
+        <div class="score-badge ${scoreClass(a.score)}">
+          <div class="score-num">${a.score}</div>
+          <div class="score-label">מעורבות ${scoreFlame(a.score)}</div>
         </div>
+        <div class="article-body">
+          <div class="article-title">${a.isTrending?'<span class="trend-dot"></span>':''}${a.title}</div>
+          <div class="article-meta">
+            ${a.sourceIcon?`<span class="platform-icon">${a.sourceIcon}</span>`:''}
+            <span>${a.source}</span><span>•</span>
+            <span title="תאריך פרסום הכתבה" style="color:var(--primary-light);font-size:0.75rem;">📅 ${a.date}</span>
+            ${a.fetchDate?`<span title="תאריך רענון" style="color:var(--text3);font-size:0.72rem;">🔄 ${a.fetchDate}</span>`:''}
+            ${a.tags.map(t=>`<span class="tag ${tagClass(t)}">${t}</span>`).join('')}
+          </div>
+        </div>
+        <button class="article-select-btn">${selectedArticle?.id===a.id?'✓':'→'}</button>
       </div>
-      <button class="article-select-btn">${selectedArticle?.id===a.id?'✓':'→'}</button>
-    </div>
-  `).join('');
+
+      <!-- ── Link column — completely separate, NO selectArticle ── -->
+      <div style="display:flex;flex-direction:column;gap:0.4rem;justify-content:center;min-width:80px;">
+        <a href="${src.url}" target="_blank" rel="noopener"
+           title="${src.isReal ? 'פתח כתבה מקורית ב-' + src.label : 'חפש כתבות בנושא זה ב-' + src.label}"
+           style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.1rem;font-size:0.72rem;color:${src.isReal ? 'var(--accent)' : 'var(--text2)'};text-decoration:none;padding:0.35rem 0.4rem;border:1px solid ${src.isReal ? 'rgba(192,132,252,0.35)' : 'var(--border)'};border-radius:8px;white-space:nowrap;transition:all 0.15s;background:${src.isReal ? 'rgba(192,132,252,0.06)' : 'rgba(124,58,237,0.04)'};font-weight:600;"
+           onmouseover="this.style.background='rgba(192,132,252,0.18)'"
+           onmouseout="this.style.background='${src.isReal ? 'rgba(192,132,252,0.06)' : 'rgba(124,58,237,0.04)'}'">
+          ${src.isReal ? '🔗 קרא' : '🔍 חפש'}
+          <span style="font-size:0.62rem;color:var(--text3);font-weight:400;margin-top:0.1rem;">${src.label}</span>
+        </a>
+        <button
+          onclick="navigator.clipboard.writeText('${safeSrcUrl}');showToast('✅ לינק הועתק!','success')"
+          title="העתק לינק (${src.label})"
+          style="display:flex;align-items:center;justify-content:center;gap:0.25rem;font-size:0.72rem;padding:0.35rem 0.5rem;background:rgba(124,58,237,0.06);border:1px solid var(--border);border-radius:8px;color:var(--text3);cursor:pointer;transition:all 0.15s;font-weight:600;"
+          onmouseover="this.style.background='rgba(124,58,237,0.15)';this.style.color='var(--primary-light)';this.style.borderColor='var(--primary)'"
+          onmouseout="this.style.background='rgba(124,58,237,0.06)';this.style.color='var(--text3)';this.style.borderColor='var(--border)'">
+          📋 העתק
+        </button>
+      </div>
+
+    </div>`;
+  }).join('');
+}
+
+// ── LAST 10 ARTICLES HISTORY ──
+const LAST10_KEY = 'li_last10_articles';
+
+function saveToLast10(items){
+  const existing = getLast10();
+  // Merge new items at the top, keep unique by title, cap at 10
+  const merged = [...items, ...existing]
+    .filter((a,i,arr) => arr.findIndex(b=>b.title===a.title)===i)
+    .slice(0,10);
+  localStorage.setItem(LAST10_KEY, JSON.stringify(merged));
+  // Show the "last 10" button
+  const btn = document.getElementById('btn-show-last10');
+  if(btn) btn.style.display = 'flex';
+}
+
+function getLast10(){
+  try { return JSON.parse(localStorage.getItem(LAST10_KEY)||'[]'); } catch(_){ return []; }
+}
+
+function showLast10Articles(){
+  const items = getLast10();
+  if(!items.length){ showToast('אין כתבות שמורות עדיין','error'); return; }
+  // Render them with a distinct banner
+  const list = document.getElementById('articles-list');
+  const loadMoreWrap = document.getElementById('load-more-wrap');
+  // Add a "last fetched" banner above the list
+  const old = document.getElementById('last10-banner');
+  if(old) old.remove();
+  const banner = document.createElement('div');
+  banner.id = 'last10-banner';
+  banner.innerHTML =
+    '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">' +
+      '<div style="display:flex;align-items:center;gap:0.5rem;">' +
+        '<span style="font-size:1.1rem">🕐</span>' +
+        '<div><div style="font-weight:800;font-size:0.9rem;color:var(--gold)">10 הכתבות האחרונות שנשלפו</div>' +
+        '<div style="font-size:0.75rem;color:var(--text3);margin-top:0.1rem;">נשמרו אוטומטית מסשנים קודמים</div></div>' +
+      '</div>' +
+      '<button onclick="document.getElementById(\'last10-banner\').remove();applyFilters();" style="background:none;border:1px solid var(--border);border-radius:8px;color:var(--text3);font-size:0.78rem;padding:0.25rem 0.6rem;cursor:pointer;">✕ סגור</button>' +
+    '</div>';
+  banner.style.cssText='background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.35);border-radius:12px;padding:0.75rem 1rem;margin-bottom:0.75rem;';
+  list.parentElement.insertBefore(banner, list);
+  // Render the last 10
+  ARTICLES.splice(0, ARTICLES.length, ...items);
+  renderArticles(items);
+  if(loadMoreWrap) loadMoreWrap.style.display='none';
+  showToast('🕐 מציג 10 כתבות אחרונות', 'success');
+}
+
+// ── LOAD MORE ARTICLES ──
+async function loadMoreArticles(){
+  if(!checkRateLimit()) return;
+  const btn  = document.getElementById('btn-load-more');
+  const icon = document.getElementById('load-more-icon');
+  btn.disabled = true;
+  icon.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;display:inline-block;"></div>';
+
+  const todayObj = new Date();
+  const todayStr = todayObj.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  const weekAgo  = new Date(Date.now()-7*24*60*60*1000).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  const existingTitles = ARTICLES.map(a=>a.title).join(' | ');
+
+  const prompt = [
+    'Return ONLY a JSON object. No explanation, no markdown.',
+    'Today is ' + todayStr + '. Generate 10 MORE trending topics from the LAST 7 DAYS.',
+    'Topics: AI, cybersecurity, data privacy, ransomware, machine learning, zero trust.',
+    'DO NOT repeat these existing titles: ' + existingTitles,
+    'JSON: {"trending":[{"id":1,"title":"כותרת בעברית","source":"X","icon":"X","query":"2-4 english keywords for web search","date":"' + todayStr + '","cat":"ai","tag":"AI","score":88}]}',
+    'Rules: title in Hebrew. query = 2-4 real English search keywords for this topic (used to find real articles online). icon must be one of: X (Twitter/X), R (Reddit), IG (Instagram), FB (Facebook), LI (LinkedIn), HN (HackerNews), W (Web/other). Set icon to match the actual source platform. cat from: ai,cyber,genai,zero. score 70-99. Exactly 10 items. Dates between ' + weekAgo + ' and ' + todayStr + '.'
+  ].join('\n');
+
+  try {
+    const raw = await callAI(prompt, true); // counts as a run
+    const data = safeParseJSON(raw);
+    const items = (data && data.trending ? data.trending : []).filter(t => t && t.title && t.title.length > 2);
+    if(!items.length) throw new Error('empty');
+
+    const iconMap = {X:'𝕏',R:'🔴',IG:'📸',FB:'f',LI:'in',HN:'🧡',W:'🌐'};
+    const refreshNow = new Date();
+    const refreshStr = refreshNow.toLocaleDateString('he-IL') + ' ' +
+      String(refreshNow.getHours()).padStart(2,'0') + ':' + String(refreshNow.getMinutes()).padStart(2,'0');
+
+    const moreItems = items.slice(0,10).map((t,i)=>({
+      id: 3000 + Date.now() + i,
+      title:      t.title,
+      source:     t.source || 'Web',
+      sourceIcon: iconMap[t.icon] || '🌐',
+      _icon:      t.icon || 'W',
+      _query:     t.query || t.title,
+      date:       t.date || todayStr,
+      fetchDate:  refreshStr,
+      cat:        t.cat || 'ai',
+      tags:       [t.tag || 'טרנד'],
+      score:      Math.max(70, Math.min(99, parseInt(t.score) || 80)),
+      isTrending: true,
+      trendMode:  'ai-cyber',
+    }));
+
+    ARTICLES.push(...moreItems);
+    saveToLast10([...moreItems, ...ARTICLES]);
+    applyFilters();
+    showToast('✅ ' + moreItems.length + ' כתבות חדשות נוספו!', 'success');
+  } catch(e) {
+    showToast('שגיאה בטעינת כתבות נוספות','error');
+  } finally {
+    btn.disabled = false;
+    icon.textContent = '➕';
+  }
 }
 
 // ── FILTER + SORT STATE ──
@@ -1631,6 +1867,52 @@ async function fetchTopicArticles(){
   btn.disabled=false;
 }
 
+// ── EMPTY STATE — prompt user to fetch ──
+function showFetchPromptState(){
+  const list = document.getElementById('articles-list');
+  if(!list) return;
+  list.innerHTML =
+    '<div style="text-align:center;padding:3rem 1rem;">' +
+      '<div style="font-size:3rem;margin-bottom:0.75rem">📰</div>' +
+      '<div style="font-size:1rem;font-weight:800;color:var(--text);margin-bottom:0.4rem">אין כתבות טעונות</div>' +
+      '<div style="font-size:0.82rem;color:var(--text3);margin-bottom:1.5rem;line-height:1.6">לחץ על הכפתור כדי להביא כתבות חדשות</div>' +
+      '<button onclick="fetchTrending(\'ai-cyber\',true)" class="btn-primary" style="margin:0 auto;justify-content:center;font-size:0.95rem;padding:0.65rem 1.5rem;">' +
+        '📡 הבא כתבות חדשות' +
+      '</button>' +
+    '</div>';
+  document.getElementById('articles-count').textContent = '—';
+  document.getElementById('articles-subtitle').textContent = 'לחץ "הבא כתבות חדשות" להתחיל';
+}
+
+// ── COOLDOWN BANNER ──
+function showCooldownBanner(minsAgo, mode){
+  const old = document.getElementById('cooldown-banner');
+  if(old) old.remove();
+  const banner = document.createElement('div');
+  banner.id = 'cooldown-banner';
+  banner.innerHTML =
+    '<div style="display:flex;align-items:center;justify-content:space-between;gap:0.75rem;flex-wrap:wrap;">' +
+      '<div style="display:flex;align-items:center;gap:0.5rem;">' +
+        '<span style="font-size:1.1rem">⏱️</span>' +
+        '<div>' +
+          '<div style="font-weight:700;font-size:0.85rem;color:var(--text)">הכתבות עדכניות — נשלפו לפני ' + minsAgo + ' דקות</div>' +
+          '<div style="font-size:0.75rem;color:var(--text3);margin-top:0.1rem;">רענון אוטומטי כל 30 דקות</div>' +
+        '</div>' +
+      '</div>' +
+      '<button onclick="hideCooldownBanner();fetchTrending(\'' + mode + '\', true)" ' +
+        'style="display:flex;align-items:center;gap:0.4rem;background:rgba(124,58,237,0.15);border:1px solid var(--primary);border-radius:9px;color:var(--primary-light);font-family:inherit;font-size:0.8rem;font-weight:700;padding:0.35rem 0.85rem;cursor:pointer;white-space:nowrap;">' +
+        '🔄 הבא לי כתבות עכשיו' +
+      '</button>' +
+    '</div>';
+  banner.style.cssText='background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.25);border-radius:12px;padding:0.75rem 1rem;margin-bottom:0.75rem;';
+  const list = document.getElementById('articles-list');
+  if(list) list.parentElement.insertBefore(banner, list);
+}
+function hideCooldownBanner(){
+  const b = document.getElementById('cooldown-banner');
+  if(b) b.remove();
+}
+
 // ── TRENDING ──
 let trendingLoaded = false;
 let lastFetchTime = 0; // timestamp of last successful fetch
@@ -1697,103 +1979,178 @@ function safeParseJSON(raw){
 
 let isFetchingTrending = false;
 
-async function fetchTrending(mode='ai-cyber'){
+async function fetchTrending(mode='ai-cyber', forceNow=false){
   if(isFetchingTrending){ showToast('⏳ כבר מבצע סריקה...',''); return; }
-  // Use cached data if fetched in the last 30 minutes (unless user explicitly clicked)
   const CACHE_MS = 30 * 60 * 1000;
-  if(trendingLoaded && lastFetchTime && (Date.now()-lastFetchTime)<CACHE_MS && !window._userRequestedRefresh){
-    showToast('✅ הנתונים עדכניים, אין צורך לרענן','success');
+  const timeSince = lastFetchTime ? Date.now() - lastFetchTime : Infinity;
+  if(trendingLoaded && timeSince < CACHE_MS && !forceNow && !window._userRequestedRefresh){
+    showCooldownBanner(Math.floor(timeSince/60000), mode);
     return;
   }
   window._userRequestedRefresh = false;
+  hideCooldownBanner();
   isFetchingTrending = true;
-  const isFirst = mode==='ai-cyber';
-  const btnId = isFirst ? 'btn-trending' : 'btn-trending2';
-  const iconId = isFirst ? 'trending-icon' : 'trending-icon2';
-  const textId = isFirst ? 'trending-text' : 'trending-text2';
-  const btn=document.getElementById(btnId);
-  const icon=document.getElementById(iconId);
-  const text=document.getElementById(textId);
 
-  // Disable both buttons
-  document.getElementById('btn-trending').disabled=true;
-  document.getElementById('btn-trending2').disabled=true;
-  icon.innerHTML='<div class="spinner" style="border-color:rgba(255,255,255,0.3);border-top-color:#fff;width:13px;height:13px;"></div>';
-  text.textContent='טוען...';
-
-  showLoadingOverlay(
-    isFirst ? '🔍 סורק AI & סייבר...' : '🔍 סורק טק & עסקים...',
-    isFirst ? 'X, Reddit, LinkedIn, HackerNews, Dark Reading' : 'X, Reddit, TechCrunch, Wired, HackerNews'
-  );
-  document.getElementById('articles-section').style.display='block';
-  document.getElementById('articles-count').textContent='...';
-  document.getElementById('articles-subtitle').textContent='סורק טרנדים חמים ברשתות...';
-
-  // Build simple prompt - no JSON literals inside template to avoid parse issues
-  const topicEn  = isFirst ? 'AI, cybersecurity, machine learning, data breaches, ransomware, zero trust' : 'technology, startups, fintech, business, career, productivity';
-  const catList  = isFirst ? 'ai, cyber, genai, zero' : 'tech, biz, career, fintech';
+  const isFirst    = mode === 'ai-cyber';
+  const icon       = document.getElementById(isFirst ? 'trending-icon'  : 'trending-icon2');
+  const text       = document.getElementById(isFirst ? 'trending-text'  : 'trending-text2');
+  const catList    = isFirst ? 'ai,cyber,genai,zero' : 'tech,biz,career,fintech';
   const defaultCat = isFirst ? 'ai' : 'tech';
+  const ICON_MAP   = {X:'𝕏', R:'🔴', IG:'📸', FB:'f', LI:'in', HN:'🧡', W:'🌐'};
+  const SOURCE_ICON_MAP = {
+    'The Hacker News':'🧡','BleepingComputer':'🔵','Krebs on Security':'🟢',
+    'Dark Reading':'🔴','TechCrunch AI':'🟣','SecurityWeek':'🟠',
+  };
 
-  const prompt = [
-    'Return ONLY a JSON object. No explanation, no markdown, no text before or after.',
-    'Generate 8 trending topics about: ' + topicEn,
-    'JSON format (copy exactly):',
-    '{"trending":[{"id":1,"title":"כותרת בעברית","source":"X","icon":"X","date":"Mar 21, 2026","cat":"' + (isFirst?'ai':'tech') + '","tag":"AI","score":88}]}',
-    'Rules: title in Hebrew. icon: X R IG FB LI HN W. cat from: ' + catList + '. score 70-99. Exactly 8 items.'
-  ].join('\n');
+  document.getElementById('btn-trending').disabled  = true;
+  document.getElementById('btn-trending2').disabled = true;
+  icon.innerHTML = '<div class="spinner" style="border-color:rgba(255,255,255,0.3);border-top-color:#fff;width:13px;height:13px;"></div>';
+  text.textContent = 'טוען...';
+  showLoadingOverlay('📡 שולף כתבות אמיתיות...', 'The Hacker News · BleepingComputer · Krebs · Dark Reading · TechCrunch');
+  document.getElementById('articles-section').style.display = 'block';
+  document.getElementById('articles-count').textContent     = '...';
+  document.getElementById('articles-subtitle').textContent  = 'שולף כתבות אמיתיות מאתרי סייבר ו-AI...';
+
+  const refreshNow = new Date();
+  const refreshStr = refreshNow.toLocaleDateString('he-IL') + ' ' +
+    String(refreshNow.getHours()).padStart(2,'0') + ':' + String(refreshNow.getMinutes()).padStart(2,'0');
+  const todayStr = refreshNow.toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
 
   try {
-    const raw = await callAI(prompt);
-    hideLoadingOverlay();
+    // ── Step 1: Fetch REAL articles via RSS (proxy does the heavy lifting) ──
+    let rssArticles = [];
+    try {
+      const rssRes = await fetch('http://localhost:3001/api/news');
+      if(rssRes.ok){
+        const rssData = await rssRes.json();
+        rssArticles = (rssData.articles || []).filter(a => a.title && a.url && a.url.startsWith('http'));
+      }
+    } catch(rssErr) {
+      console.warn('[fetchTrending] RSS fetch failed:', rssErr.message);
+    }
 
-    const data = safeParseJSON(raw);
-    const items = (data && data.trending ? data.trending : []).filter(t => t && t.title && t.title.length > 2);
+    let newItems = [];
 
-    if(!items.length) throw new Error('Empty response — raw: ' + raw.slice(0,200));
+    if(rssArticles.length >= 3) {
+      // ── Step 2: Ask Claude to score + translate to Hebrew ──
+      // Filter by topic if needed: for ai-cyber take all; for tech/biz we'll take all too (proxy mixes feeds)
+      const pool = rssArticles.slice(0, 20);
+      const articleLines = pool.map((a,i) => (i+1) + '. ' + a.title + ' (' + a.source + ')').join('\n');
 
-    const iconMap = {X:'𝕏', R:'🔴', IG:'📸', FB:'f', LI:'in', HN:'🧡', W:'🌐'};
-    const newItems = items.slice(0,8).map((t,i)=>({
-      id: (isFirst ? 1000 : 2000) + i,
-      title:      t.title,
-      source:     t.source || 'Web',
-      sourceIcon: iconMap[t.icon] || '🌐',
-      date:       t.date || 'Mar 21, 2026',
-      cat:        (catList.includes(t.cat) ? t.cat : defaultCat),
-      tags:       [t.tag || 'טרנד'],
-      score:      Math.max(70, Math.min(99, parseInt(t.score) || 80)),
-      isTrending: true,
-      trendMode:  mode,
-    }));
+      const prompt = [
+        'You are given real recent news articles. For each, return JSON with:',
+        '- h: concise Hebrew headline (6-9 words, journalistic style)',
+        '- score: LinkedIn engagement score 70-99 (higher = more impactful)',
+        '- cat: one of ' + catList,
+        '- tag: one short Hebrew topic tag (e.g. "סייבר", "AI", "כופרה")',
+        '',
+        'Articles:',
+        articleLines,
+        '',
+        'Return ONLY valid JSON (no markdown): {"r":[{"h":"...","score":88,"cat":"cyber","tag":"סייבר"},...]}'
+      ].join('\n');
+
+      const raw = await callAI(prompt, true);
+      hideLoadingOverlay();
+      const data = safeParseJSON(raw);
+      const results = (data && (data.r || data.results)) ? (data.r || data.results) : [];
+
+      newItems = pool.slice(0, results.length).map((a, i) => {
+        const r = results[i] || {};
+        return {
+          id:         (isFirst ? 1000 : 2000) + i,
+          title:      r.h || a.title,         // Hebrew title from Claude
+          titleEn:    a.title,                 // original English for reference
+          source:     a.source,
+          sourceIcon: SOURCE_ICON_MAP[a.source] || '🌐',
+          _icon:      a.icon || 'W',
+          _realUrl:   a.url,                   // ← REAL URL, verified from RSS
+          date:       a.date ? new Date(a.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : todayStr,
+          fetchDate:  refreshStr,
+          cat:        catList.split(',').map(s=>s.trim()).includes(r.cat) ? r.cat : defaultCat,
+          tags:       [r.tag || 'סייבר'],
+          score:      Math.max(70, Math.min(99, parseInt(r.score) || 80)),
+          isTrending: true,
+          trendMode:  mode,
+        };
+      }).filter(a => a._realUrl);
+
+    } else {
+      // ── Fallback: Claude-only (no proxy / RSS failed) ──
+      hideLoadingOverlay();
+      const topicEn = isFirst
+        ? 'AI, cybersecurity, data breaches, ransomware, zero trust'
+        : 'technology, startups, fintech, business, career';
+      const prompt = [
+        'Return ONLY a JSON object. No markdown.',
+        'Today is ' + todayStr + '. Generate 8 trending topics about: ' + topicEn,
+        '{"trending":[{"title":"כותרת בעברית","source":"Dark Reading","icon":"W","date":"' + todayStr + '","cat":"' + defaultCat + '","tag":"סייבר","score":88}]}',
+        'Rules: title in Hebrew. icon: X R IG FB LI HN W. cat from: ' + catList + '. Exactly 8 items.'
+      ].join('\n');
+      const raw  = await callAI(prompt, true);
+      const data = safeParseJSON(raw);
+      const items = (data && data.trending ? data.trending : []).filter(t => t && t.title);
+      newItems = items.slice(0,8).map((t,i) => ({
+        id:         (isFirst ? 1000 : 2000) + i,
+        title:      t.title,
+        source:     t.source || 'Web',
+        sourceIcon: ICON_MAP[t.icon] || '🌐',
+        _icon:      t.icon || 'W',
+        date:       t.date || todayStr,
+        fetchDate:  refreshStr,
+        cat:        catList.split(',').map(s=>s.trim()).includes(t.cat) ? t.cat : defaultCat,
+        tags:       [t.tag || 'טרנד'],
+        score:      Math.max(70, Math.min(99, parseInt(t.score) || 80)),
+        isTrending: true,
+        trendMode:  mode,
+      }));
+    }
+
+    if(!newItems.length) throw new Error('לא הצלחנו לטעון כתבות');
 
     lastFetchTime = Date.now();
+    localStorage.setItem('li_last_fetch_time', String(lastFetchTime));
     ARTICLES.splice(0, ARTICLES.length, ...newItems);
     trendingLoaded = true;
     resetFilterState();
     renderArticles(newItems);
 
-    // Update header
-    document.getElementById('articles-count').textContent = newItems.length;
-    document.getElementById('articles-subtitle').textContent = 'בחר כתבה · סן לפי קטגוריה, תאריך, מעורבות';
-    setLastUpdated(isFirst ? 'AI & סייבר' : 'טק & עסקים', newItems.length);
+    // Compare known vs new
+    const knownKey    = 'li_known_articles_' + (isFirst ? 'first' : 'second');
+    const knownTitles = JSON.parse(localStorage.getItem(knownKey) || '[]');
+    const newCount    = newItems.filter(a => !knownTitles.includes(a.title)).length;
+    localStorage.setItem(knownKey, JSON.stringify(newItems.map(a => a.title)));
 
-    // Success banner
-    showSuccessBanner(newItems.length, isFirst ? 'AI & סייבר' : 'טק & עסקים');
-    showToast('✅ ' + newItems.length + ' נושאים נטענו בהצלחה!', 'success');
+    const topic = isFirst ? 'AI & סייבר' : 'טק & עסקים';
+    document.getElementById('articles-count').textContent    = newItems.length;
+    document.getElementById('articles-subtitle').textContent = 'בחר כתבה · מיין לפי קטגוריה, תאריך, מעורבות';
+    setLastUpdated(topic, newItems.length, newCount);
+    showSuccessBanner(newItems.length, topic, newCount);
+    showToast('✅ ' + newItems.length + ' כתבות אמיתיות · ' + newCount + ' חדשות!', 'success');
+    saveToLast10(newItems);
+    const loadMoreWrap = document.getElementById('load-more-wrap');
+    if(loadMoreWrap) loadMoreWrap.style.display = 'block';
 
   } catch(e) {
     hideLoadingOverlay();
     console.error('[fetchTrending]', e.message);
-    const isLimit = e.message.toLowerCase().includes('limit') || e.message.toLowerCase().includes('concurrent') || e.message.includes('529') || e.message.includes('429');
-    document.getElementById('articles-count').textContent = '—';
+    const isDailyLimit = /daily limit/i.test(e.message);
+    const isServerLoad = /concurrent|529|429/i.test(e.message);
+    document.getElementById('articles-count').textContent    = '—';
     document.getElementById('articles-subtitle').textContent = 'לא הצלחנו לטעון';
+    const errIcon = isDailyLimit ? '🚫' : '⚠️';
+    const errTitle = isDailyLimit ? 'הגעת למגבלת ההרצות היומית' : 'שגיאה בטעינת הכתבות';
+    const errBody = isDailyLimit
+      ? `השתמשת ב-${DAILY_RUN_LIMIT}/${DAILY_RUN_LIMIT} הרצות היום. המגבלה מתאפסת בחצות.`
+      : isServerLoad
+        ? 'יש עומס על השרת. המתן כ-10 שניות ונסה שוב.'
+        : 'בדוק שהפרוקסי פועל ונסה שוב.';
     document.getElementById('articles-list').innerHTML =
       '<div style="text-align:center;padding:3rem 1rem;">' +
-        '<div style="font-size:2.5rem;margin-bottom:0.75rem">⚠️</div>' +
-        '<div style="font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:0.4rem">שגיאה בטעינת הטרנדים</div>' +
-        '<div style="font-size:0.8rem;color:var(--text2);margin-bottom:1.5rem;line-height:1.6">' +
-          (isLimit ? 'יש עומס על השרת. המתן כ-10 שניות ונסה שוב.' : 'בדוק חיבור לאינטרנט ונסה שוב.') +
-        '</div>' +
-        '<button class="btn-primary" onclick="fetchTrending(\'' + mode + '\')" style="margin:0 auto;justify-content:center;">🔄 נסה שוב</button>' +
+        '<div style="font-size:2.5rem;margin-bottom:0.75rem">' + errIcon + '</div>' +
+        '<div style="font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:0.4rem">' + errTitle + '</div>' +
+        '<div style="font-size:0.8rem;color:var(--text2);margin-bottom:1.5rem;line-height:1.6">' + errBody + '</div>' +
+        (isDailyLimit ? '' : '<button class="btn-primary" onclick="fetchTrending(\'' + mode + '\')" style="margin:0 auto;justify-content:center;">🔄 נסה שוב</button>') +
       '</div>';
   } finally {
     isFetchingTrending = false;
@@ -1804,32 +2161,39 @@ async function fetchTrending(mode='ai-cyber'){
   }
 }
 
-function setLastUpdated(topic, count){
+function setLastUpdated(topic, count, newCount){
   const now = new Date();
   const hh = String(now.getHours()).padStart(2,'0');
   const mm = String(now.getMinutes()).padStart(2,'0');
+  const dd = now.toLocaleDateString('he-IL');
   const el  = document.getElementById('last-updated');
   const txt = document.getElementById('last-updated-text');
   if(el && txt){
     el.style.display='flex';
-    txt.textContent = count + ' כותרות ' + topic + ' עודכנו בשעה ' + hh + ':' + mm;
+    const newStr = (typeof newCount === 'number' && newCount > 0) ? ' · ' + newCount + ' כתבות חדשות נמצאו 🆕' : '';
+    txt.textContent = count + ' כותרות ' + topic + ' עודכנו ב-' + dd + ' בשעה ' + hh + ':' + mm + newStr;
   }
 }
 
-function showSuccessBanner(count, topic){
+function showSuccessBanner(count, topic, newCount){
   // Remove previous banner if exists
   const old = document.getElementById('success-banner');
   if(old) old.remove();
+  const now = new Date();
+  const timeStr = now.toLocaleDateString('he-IL') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  const newStr = (typeof newCount === 'number' && newCount > 0)
+    ? '<span style="background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.4);border-radius:6px;padding:0.15rem 0.5rem;margin-right:0.4rem;color:var(--green);font-weight:700;">' + newCount + ' כתבות חדשות נמצאו 🆕</span>'
+    : '<span style="color:var(--text3);font-size:0.75rem;">אין כתבות חדשות מההרצה הקודמת</span>';
   const banner = document.createElement('div');
   banner.id = 'success-banner';
   banner.innerHTML =
-    '<div style="display:flex;align-items:center;gap:0.75rem;">' +
+    '<div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">' +
       '<span style="font-size:1.5rem">✅</span>' +
-      '<div>' +
-        '<div style="font-size:0.9rem;font-weight:800;color:var(--text)">המידע נטען בהצלחה!</div>' +
-        '<div style="font-size:0.78rem;color:var(--text2);margin-top:0.1rem">' + count + ' נושאים חמים בתחום ' + topic + ' מוכנים לבחירה</div>' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div style="font-size:0.9rem;font-weight:800;color:var(--text)">המידע נטען בהצלחה! · ' + timeStr + '</div>' +
+        '<div style="font-size:0.78rem;color:var(--text2);margin-top:0.25rem;display:flex;align-items:center;flex-wrap:wrap;gap:0.3rem;">' + count + ' נושאים בתחום ' + topic + ' · ' + newStr + '</div>' +
       '</div>' +
-      '<button onclick="this.parentElement.parentElement.remove()" style="margin-right:auto;background:none;border:none;color:var(--text3);font-size:1.1rem;cursor:pointer;padding:0;">✕</button>' +
+      '<button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;color:var(--text3);font-size:1.1rem;cursor:pointer;padding:0;flex-shrink:0;">✕</button>' +
     '</div>';
   banner.style.cssText = 'background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.4);border-radius:12px;padding:0.9rem 1.1rem;margin-bottom:1rem;animation:fadeUp 0.3s ease;';
   const list = document.getElementById('articles-list');
@@ -1910,6 +2274,19 @@ function selectHook(el, hook){
   el.classList.add('selected');
   el.querySelector('.hook-select').textContent='✓';
   document.getElementById('btn-to-step3').disabled = false;
+  const dbtn = document.getElementById('btn-deselect-hook');
+  if(dbtn) dbtn.style.display = 'flex';
+}
+function clearHookSelection(){
+  selectedHook = null;
+  document.querySelectorAll('.hook-card').forEach(c=>{
+    c.classList.remove('selected');
+    c.querySelector('.hook-select').textContent='→';
+  });
+  document.getElementById('btn-to-step3').disabled = true;
+  const dbtn = document.getElementById('btn-deselect-hook');
+  if(dbtn) dbtn.style.display = 'none';
+  showToast('בחירת ה-Hook בוטלה','success');
 }
 
 // ── HOOKS ──
@@ -2127,31 +2504,76 @@ function goStep(n){
 }
 
 // ── API CALL ──
-async function callAI(prompt){
-  if(!checkRateLimit()) throw new Error('daily limit reached');
-  incrementRuns();
-  const remaining = DAILY_RUN_LIMIT - getRunsToday();
-  if(remaining >= 0) showToast(`נותרו ${remaining} הרצות להיום`,'');
+// ── Check if local proxy is running ────────────────────────────────────────
+async function checkProxy(){
+  try {
+    const r = await fetch('http://localhost:3001/health', { signal: AbortSignal.timeout(1500) });
+    proxyAvailable = r.ok;
+  } catch(_){ proxyAvailable = false; }
+  updateProxyStatus();
+}
+function updateProxyStatus(){
+  const banner   = document.getElementById('api-key-banner');
+  const dot      = document.getElementById('proxy-dot');
+  const label    = document.getElementById('proxy-label');
+  const btnStart = document.getElementById('btn-start-proxy');
+  const btnStop  = document.getElementById('btn-stop-proxy');
+  if(proxyAvailable){
+    if(banner) banner.style.display = 'none';
+    if(dot)   { dot.style.background = '#4ade80'; }
+    if(label) { label.textContent = 'פרוקסי פעיל'; label.style.color = 'var(--green)'; }
+    if(btnStart) btnStart.style.display = 'none';
+    if(btnStop)  btnStop.style.display  = 'inline-flex';
+  } else {
+    API_KEY = localStorage.getItem('claude_api_key') || '';
+    if(!API_KEY && banner) banner.style.display = 'flex';
+    if(dot)   { dot.style.background = '#f87171'; }
+    if(label) { label.textContent = 'פרוקסי כבוי'; label.style.color = '#f87171'; }
+    if(btnStart) btnStart.style.display = 'inline-flex';
+    if(btnStop)  btnStop.style.display  = 'none';
+  }
+}
+
+// countAsRun=true only for article fetches (fetchTrending / fetchTopicArticles)
+// Post generation, hooks, URL analysis do NOT count as a run
+async function callAI(prompt, countAsRun=false){
+  if(countAsRun){
+    if(!checkRateLimit()) throw new Error('daily limit reached');
+    incrementRuns();
+    const remaining = DAILY_RUN_LIMIT - getRunsToday();
+    if(remaining >= 0) showToast(`נותרו ${remaining} הרצות להיום`,'');
+  }
 
   let res, errBody;
-  try {
-    res = await fetch(API,{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key': API_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true'
-      },
-      body:JSON.stringify({
-        model:MODEL,
-        max_tokens:1024,
-        messages:[{role:'user',content:prompt}]
-      })
-    });
-  } catch(netErr){
-    throw new Error('שגיאת רשת: ' + netErr.message);
+
+  // ── Path 1: Local proxy (secure — key never in browser) ──
+  if(proxyAvailable){
+    try {
+      res = await fetch(PROXY_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, max_tokens: 1024 })
+      });
+    } catch(netErr){ throw new Error('שגיאת רשת לפרוקסי: ' + netErr.message); }
+
+  // ── Path 2: Direct (legacy — key stored in localStorage) ──
+  } else {
+    API_KEY = localStorage.getItem('claude_api_key') || '';
+    if(!API_KEY) throw new Error('הפרוקסי לא פעיל ואין API Key מוגדר. הפעל את start-proxy.bat');
+    try {
+      res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': API_KEY,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({ model: MODEL, max_tokens: 1024, messages:[{ role:'user', content:prompt }] })
+      });
+    } catch(netErr){ throw new Error('שגיאת רשת: ' + netErr.message); }
   }
+
   if(!res.ok){
     try { errBody = await res.json(); } catch(_){}
     const msg = errBody?.error?.message || 'HTTP ' + res.status;
@@ -2347,6 +2769,73 @@ function setLang(lang){
 }
 
 // ── TOAST ──
+// ── Proxy control ────────────────────────────────────────────────────────────
+async function stopProxy(){
+  const btn = document.getElementById('btn-stop-proxy');
+  if(btn){ btn.textContent = '⏳ מנתק...'; btn.disabled = true; }
+  try { await fetch('http://localhost:3001/shutdown', { method:'POST' }); } catch(_){}
+  setTimeout(async () => {
+    await checkProxy();
+    if(!proxyAvailable){
+      showToast('✅ הפרוקסי נותק בהצלחה','success');
+    } else {
+      showToast('⚠️ הפרוקסי עדיין פועל','');
+    }
+    if(btn){ btn.textContent = '⏹ נתק פרוקסי'; btn.disabled = false; }
+  }, 1200);
+}
+
+function startProxyGuide(){
+  // Show a modal with the start command
+  const existing = document.getElementById('proxy-guide-modal');
+  if(existing) { existing.remove(); return; }
+  const modal = document.createElement('div');
+  modal.id = 'proxy-guide-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;';
+  modal.innerHTML = `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.5rem;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+        <div style="font-weight:800;font-size:1rem;color:var(--text);">▶ הפעלת הפרוקסי</div>
+        <button onclick="document.getElementById('proxy-guide-modal').remove()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:1.2rem;">✕</button>
+      </div>
+      <div style="font-size:0.82rem;color:var(--text2);line-height:1.7;margin-bottom:1rem;">
+        פתח <b>start-proxy.bat</b> בתיקיית CLAUDECODE:
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1rem;font-family:monospace;font-size:0.78rem;color:#a78bfa;margin-bottom:1rem;direction:ltr;">
+        C:\\Users\\asafa\\OneDrive\\Desktop\\CLAUDECODE\\start-proxy.bat
+      </div>
+      <div style="font-size:0.78rem;color:var(--text3);margin-bottom:1.25rem;">לחלופין לחץ לחיצה כפולה על הקובץ ב-Explorer.</div>
+      <div style="display:flex;gap:0.5rem;">
+        <button onclick="pollUntilProxyUp();document.getElementById('proxy-guide-modal').remove()" style="flex:1;padding:0.6rem;border-radius:8px;border:1px solid rgba(34,197,94,0.4);background:rgba(34,197,94,0.1);color:#4ade80;font-weight:700;cursor:pointer;font-size:0.82rem;">
+          ✅ הפעלתי — בדוק חיבור
+        </button>
+        <button onclick="document.getElementById('proxy-guide-modal').remove()" style="padding:0.6rem 1rem;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text2);font-weight:600;cursor:pointer;font-size:0.82rem;">
+          סגור
+        </button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => { if(e.target === modal) modal.remove(); });
+}
+
+function pollUntilProxyUp(){
+  showToast('⏳ מחכה לפרוקסי...','');
+  const dot = document.getElementById('proxy-dot');
+  if(dot) dot.style.background = '#fbbf24'; // yellow = checking
+  let attempts = 0;
+  const iv = setInterval(async () => {
+    attempts++;
+    await checkProxy();
+    if(proxyAvailable){
+      clearInterval(iv);
+      showToast('✅ הפרוקסי פעיל!','success');
+    } else if(attempts >= 15){
+      clearInterval(iv);
+      showToast('⚠️ הפרוקסי לא מגיב. בדוק שהוא הופעל.','');
+    }
+  }, 1500);
+}
+
 function showToast(msg,type=''){
   const el=document.getElementById('toast');
   el.textContent=msg;
@@ -2387,7 +2876,28 @@ function logout(){
 // ── RATE LIMIT ──
 function getTodayKey(){ return 'li_runs_'+new Date().toISOString().slice(0,10); }
 function getRunsToday(){ return parseInt(localStorage.getItem(getTodayKey())||'0'); }
-function incrementRuns(){ localStorage.setItem(getTodayKey(), getRunsToday()+1); }
+function incrementRuns(){
+  localStorage.setItem(getTodayKey(), getRunsToday()+1);
+  localStorage.setItem('li_last_run_time', new Date().toISOString());
+  updateRunCounter();
+}
+function updateRunCounter(){
+  const runs = getRunsToday();
+  const lastRunStr = localStorage.getItem('li_last_run_time');
+  const el = document.getElementById('run-counter');
+  if(!el) return;
+  if(lastRunStr){
+    const d = new Date(lastRunStr);
+    const dateStr = d.toLocaleDateString('he-IL');
+    const timeStr = String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+    el.textContent = `${runs}/${DAILY_RUN_LIMIT} הרצות`;
+    el.title = `הרצה אחרונה: ${dateStr} בשעה ${timeStr}`;
+    el.style.color = runs >= DAILY_RUN_LIMIT ? 'var(--red)' : 'var(--text3)';
+  } else {
+    el.textContent = `${runs}/${DAILY_RUN_LIMIT} הרצות`;
+    el.title = 'לא הורץ עדיין היום';
+  }
+}
 function checkRateLimit(){
   const runs = getRunsToday();
   if(runs >= DAILY_RUN_LIMIT){
@@ -2412,8 +2922,7 @@ function saveBannerApiKey(){
   API_KEY = key;
   localStorage.setItem('claude_api_key', key);
   document.getElementById('api-key-banner').style.display='none';
-  showToast('✅ API Key נשמר! טוען טרנדים...','success');
-  if(!trendingFetched){trendingFetched=true;fetchTrending('ai-cyber');}
+  showToast('✅ API Key נשמר!','success');
 }
 
 // ── INIT ──
@@ -2428,11 +2937,58 @@ function initApp(){
   document.getElementById('articles-count').textContent=ARTICLES.length;
   document.getElementById('articles-subtitle').textContent='בחר כתבה · מיין לפי קטגוריה, תאריך, מעורבות';
   applyFilters();
-  if(!API_KEY){ document.getElementById('api-key-banner').style.display='flex'; }
-  if(API_KEY && !trendingFetched){ trendingFetched=true; fetchTrending('ai-cyber'); }
-  // Show run counter
-  const runs=getRunsToday();
-  document.getElementById('run-counter').textContent=`${runs}/${DAILY_RUN_LIMIT} הרצות היום`;
+  // Show last-10 button if history exists
+  if(getLast10().length > 0){
+    const btn = document.getElementById('btn-show-last10');
+    if(btn) btn.style.display = 'flex';
+  }
+
+  // Restore lastFetchTime from localStorage so cooldown persists across reloads
+  const savedFetchTime = parseInt(localStorage.getItem('li_last_fetch_time') || '0');
+  if(savedFetchTime) lastFetchTime = savedFetchTime;
+
+  // ── Cache migration: clear old AI-generated articles (no _realUrl) ──
+  const cachedArticles = getLast10();
+  const hasRealUrls = cachedArticles.length > 0 && cachedArticles.some(a => a._realUrl);
+  if(cachedArticles.length > 0 && !hasRealUrls){
+    // Old cache — wipe it so user gets real RSS articles on next fetch
+    localStorage.removeItem(LAST10_KEY);
+    localStorage.removeItem('li_last_fetch_time');
+    lastFetchTime = 0;
+    console.log('[init] cleared old AI-generated article cache');
+  }
+
+  // Check proxy — but do NOT auto-fetch. Show button or cached articles instead.
+  checkProxy().then(() => {
+    if(!proxyAvailable){
+      API_KEY = localStorage.getItem('claude_api_key') || '';
+      if(!API_KEY) document.getElementById('api-key-banner').style.display='flex';
+    }
+    // Show last fetched articles if available, or empty state with fetch button
+    const last10 = getLast10();
+    const CACHE_MS = 30 * 60 * 1000;
+    const timeSince = lastFetchTime ? Date.now() - lastFetchTime : Infinity;
+
+    if(last10.length > 0){
+      // Show saved articles
+      ARTICLES.splice(0, ARTICLES.length, ...last10);
+      renderArticles(last10);
+      document.getElementById('articles-count').textContent = last10.length;
+      document.getElementById('articles-subtitle').textContent = 'כתבות אחרונות ששמורות · לחץ "הבא חדשות" לרענון';
+      trendingLoaded = true;
+      const loadMoreWrap = document.getElementById('load-more-wrap');
+      if(loadMoreWrap) loadMoreWrap.style.display = 'block';
+      if(timeSince < CACHE_MS){
+        const minsAgo = Math.floor(timeSince/60000);
+        showCooldownBanner(minsAgo, 'ai-cyber');
+      }
+    } else {
+      // No saved articles — show empty state with fetch button
+      showFetchPromptState();
+    }
+  });
+  // Show run counter with last run time
+  updateRunCounter();
 }
 document.addEventListener('DOMContentLoaded',()=>{
   if(!checkAuth()) return;

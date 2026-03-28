@@ -1,0 +1,10 @@
+# ── Secrets — NEVER commit these ──
+.env
+*.env
+*.key
+*.pem
+key.txt
+
+# ── Node ──
+node_modules/
+npm-debug.log*
