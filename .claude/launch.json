@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "dpo-whisperer",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": ["-Command", "cd 'C:\\Users\\asafa\\OneDrive\\Desktop\\dpo-whisperer-updated\\dpo-whisperer-updated'; npx vite"],
+      "port": 8080,
+      "autoPort": false
+    }
+  ]
+}
