@@ -1871,15 +1871,44 @@ async function fetchTopicArticles(){
 function showFetchPromptState(){
   const list = document.getElementById('articles-list');
   if(!list) return;
+
+  const tier1 = ['OpenAI','Google DeepMind','Meta AI','Microsoft AI','NVIDIA','Anthropic','GitHub'];
+  const tier2 = ['MIT Tech Review','Reuters','TechCrunch','Wired','CNBC','The Decoder','KDnuggets','The Hacker News','BleepingComputer','Krebs on Security','Dark Reading','SecurityWeek'];
+  const tier3 = ['Hugging Face','GitHub Blog','arXiv AI'];
+
+  const sourcePill = (name) =>
+    `<span style="display:inline-block;font-size:0.65rem;font-weight:600;padding:0.18rem 0.55rem;border-radius:999px;background:var(--card2);border:1px solid var(--border);color:var(--text2);margin:0.18rem 0.15rem;white-space:nowrap;">${name}</span>`;
+
   list.innerHTML =
-    '<div style="text-align:center;padding:3rem 1rem;">' +
-      '<div style="font-size:3rem;margin-bottom:0.75rem">📰</div>' +
-      '<div style="font-size:1rem;font-weight:800;color:var(--text);margin-bottom:0.4rem">אין כתבות טעונות</div>' +
-      '<div style="font-size:0.82rem;color:var(--text3);margin-bottom:1.5rem;line-height:1.6">לחץ על הכפתור כדי להביא כתבות חדשות</div>' +
-      '<button onclick="fetchTrending(\'ai-cyber\',true)" class="btn-primary" style="margin:0 auto;justify-content:center;font-size:0.95rem;padding:0.65rem 1.5rem;">' +
-        '📡 הבא כתבות חדשות' +
-      '</button>' +
+    '<div style="padding:2rem 1.5rem;max-width:600px;margin:0 auto;">' +
+      '<div style="text-align:center;margin-bottom:1.5rem;">' +
+        '<div style="font-size:2.5rem;margin-bottom:0.5rem">📡</div>' +
+        '<div style="font-size:1rem;font-weight:800;color:var(--text);margin-bottom:0.3rem">מוכן לשלוף כתבות אמיתיות</div>' +
+        '<div style="font-size:0.78rem;color:var(--text3);">יסרוק 25 מקורות ויביא כ-75 כתבות עדכניות</div>' +
+      '</div>' +
+
+      '<div style="margin-bottom:1rem;">' +
+        '<div style="font-size:0.68rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem;">Tier 1 — מקורות רשמיים</div>' +
+        '<div style="line-height:1.8;">' + tier1.map(sourcePill).join('') + '</div>' +
+      '</div>' +
+
+      '<div style="margin-bottom:1rem;">' +
+        '<div style="font-size:0.68rem;font-weight:700;color:var(--primary-light);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem;">Tier 2 — מדיה ואבטחה</div>' +
+        '<div style="line-height:1.8;">' + tier2.map(sourcePill).join('') + '</div>' +
+      '</div>' +
+
+      '<div style="margin-bottom:1.5rem;">' +
+        '<div style="font-size:0.68rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem;">Tier 3 — מחקר ופיתוח</div>' +
+        '<div style="line-height:1.8;">' + tier3.map(sourcePill).join('') + '</div>' +
+      '</div>' +
+
+      '<div style="text-align:center;">' +
+        '<button onclick="fetchTrending(\'ai-cyber\',true)" class="btn-primary" style="margin:0 auto;justify-content:center;font-size:0.95rem;padding:0.65rem 1.75rem;">' +
+          '📡 הבא כתבות חדשות' +
+        '</button>' +
+      '</div>' +
     '</div>';
+
   document.getElementById('articles-count').textContent = '—';
   document.getElementById('articles-subtitle').textContent = 'לחץ "הבא כתבות חדשות" להתחיל';
 }
@@ -2783,16 +2812,24 @@ function setLang(lang){
 async function stopProxy(){
   const btn = document.getElementById('btn-stop-proxy');
   if(btn){ btn.textContent = '⏳ מנתק...'; btn.disabled = true; }
-  try { await fetch('http://localhost:3001/shutdown', { method:'POST' }); } catch(_){}
+  try {
+    await fetch('http://localhost:3001/shutdown', {
+      method: 'POST',
+      signal: AbortSignal.timeout(3000)
+    });
+  } catch(_){
+    // Expected — server closes connection immediately after responding
+  }
+  // Wait for server to fully shut down then verify
   setTimeout(async () => {
     await checkProxy();
     if(!proxyAvailable){
       showToast('✅ הפרוקסי נותק בהצלחה','success');
     } else {
-      showToast('⚠️ הפרוקסי עדיין פועל','');
+      showToast('⚠️ לא הצלחנו לנתק — נסה לסגור את החלון של start-proxy.bat','');
+      if(btn){ btn.textContent = '⏹ נתק פרוקסי'; btn.disabled = false; }
     }
-    if(btn){ btn.textContent = '⏹ נתק פרוקסי'; btn.disabled = false; }
-  }, 1200);
+  }, 1800);
 }
 
 function startProxyGuide(){

@@ -201,9 +201,15 @@ const server = http.createServer((req, res) => {
   // ── Graceful shutdown ──
   if (req.method === 'POST' && req.url === '/shutdown') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ status: 'shutting down' }));
-    console.log('\n🛑  Shutdown requested from browser. Bye!\n');
-    setTimeout(() => process.exit(0), 200);
+    res.end(JSON.stringify({ status: 'ok' }), () => {
+      console.log('\n🛑  Shutdown requested from browser. Closing server...\n');
+      server.close(() => {
+        console.log('✅  Server closed. Bye!\n');
+        process.exit(0);
+      });
+      // Force exit after 1.5s if server.close() hangs (open connections)
+      setTimeout(() => process.exit(0), 1500);
+    });
     return;
   }
 
