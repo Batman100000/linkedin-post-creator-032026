@@ -1036,11 +1036,12 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{
       <div class="filter-row">
         <span class="filter-row-label">קטגוריה</span>
         <div class="filter-chips-wrap">
-          <span class="filter-chip cat-chip active" data-cat="all"   onclick="setCat(this,'all')">הכל 🔥</span>
-          <span class="filter-chip cat-chip" data-cat="ai"    onclick="setCat(this,'ai')">סייבר &amp; AI 💻</span>
-          <span class="filter-chip cat-chip" data-cat="genai" onclick="setCat(this,'genai')">GenAI 🤖</span>
-          <span class="filter-chip cat-chip" data-cat="cyber" onclick="setCat(this,'cyber')">כופרה ⚡</span>
-          <span class="filter-chip cat-chip" data-cat="zero"  onclick="setCat(this,'zero')">Zero Trust 🏛</span>
+          <span class="filter-chip cat-chip active" data-cat="all"        onclick="setCat(this,'all')">הכל 🔥</span>
+          <span class="filter-chip cat-chip" data-cat="ai"         onclick="setCat(this,'ai')">סייבר &amp; AI 💻</span>
+          <span class="filter-chip cat-chip" data-cat="genai"      onclick="setCat(this,'genai')">GenAI 🤖</span>
+          <span class="filter-chip cat-chip" data-cat="cyber"      onclick="setCat(this,'cyber')">כופרה ⚡</span>
+          <span class="filter-chip cat-chip" data-cat="zero"       onclick="setCat(this,'zero')">Zero Trust 🏛</span>
+          <span class="filter-chip cat-chip" data-cat="cyber-only" onclick="setCat(this,'cyber-only')" title="כתבות מאתרי סייבר בלבד">🛡️ סייבר בלבד</span>
         </div>
       </div>
 
@@ -1740,11 +1741,19 @@ let filterEngMax = 999;
 let sortField   = null; // 'date' | 'score'
 let sortDir     = {};   // {date:'desc', score:'desc'}
 
+const CYBER_SOURCES = new Set([
+  'The Hacker News','BleepingComputer','Krebs on Security','Dark Reading',
+  'SecurityWeek','CyberInsider','CyberSecurity Dive','CSO Online','Threatpost',
+]);
+
 function applyFilters(){
   const now = new Date('2026-03-21');
   let list = ARTICLES.filter(a=>{
     // category
-    if(filterCat!=='all' && a.cat!==filterCat) return false;
+    if(filterCat==='cyber-only'){
+      // Show only articles from known cybersecurity sources
+      if(!CYBER_SOURCES.has(a.source)) return false;
+    } else if(filterCat!=='all' && a.cat!==filterCat) return false;
     // date range
     if(filterDays>0){
       const diff=(now-new Date(a.date))/(1000*60*60*24);
