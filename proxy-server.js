@@ -28,14 +28,42 @@ if (!API_KEY) {
   process.exit(1);
 }
 
-// ── RSS sources — real cybersecurity & AI news ───────────────────────────────
+// ── RSS sources — Tier 1 (Official), Tier 2 (Media), Tier 3 (Dev/Research) ──
+// Failures are caught silently — partial results are still returned.
 const RSS_SOURCES = [
-  { url: 'https://feeds.feedburner.com/TheHackersNews',               source: 'The Hacker News',   icon: 'HN' },
-  { url: 'https://www.bleepingcomputer.com/feed/',                    source: 'BleepingComputer',   icon: 'W'  },
-  { url: 'https://krebsonsecurity.com/feed/',                         source: 'Krebs on Security',  icon: 'W'  },
-  { url: 'https://www.darkreading.com/rss.xml',                       source: 'Dark Reading',       icon: 'W'  },
-  { url: 'https://techcrunch.com/tag/artificial-intelligence/feed/',  source: 'TechCrunch AI',      icon: 'W'  },
-  { url: 'https://www.securityweek.com/feed/',                        source: 'SecurityWeek',       icon: 'W'  },
+
+  // ── Tier 1 — Official company blogs ──────────────────────────────────────
+  { url: 'https://openai.com/blog/rss/',                               source: 'OpenAI',             icon: 'W', tier: 1 },
+  { url: 'https://deepmind.google/blog/rss.xml',                       source: 'Google DeepMind',    icon: 'W', tier: 1 },
+  { url: 'https://ai.meta.com/blog/rss/',                              source: 'Meta AI',            icon: 'W', tier: 1 },
+  { url: 'https://blogs.microsoft.com/ai/feed/',                       source: 'Microsoft AI',       icon: 'W', tier: 1 },
+  { url: 'https://blogs.nvidia.com/feed/',                             source: 'NVIDIA',             icon: 'W', tier: 1 },
+  { url: 'https://www.anthropic.com/rss.xml',                          source: 'Anthropic',          icon: 'W', tier: 1 },
+  { url: 'https://github.blog/ai-and-ml/feed/',                        source: 'GitHub',             icon: 'W', tier: 1 },
+
+  // ── Tier 2 — Trusted media & analysis ────────────────────────────────────
+  { url: 'https://www.technologyreview.com/feed/',                     source: 'MIT Tech Review',    icon: 'W', tier: 2 },
+  { url: 'https://feeds.reuters.com/reuters/technologyNews',           source: 'Reuters',            icon: 'W', tier: 2 },
+  { url: 'https://techcrunch.com/tag/artificial-intelligence/feed/',   source: 'TechCrunch',         icon: 'W', tier: 2 },
+  { url: 'https://techcrunch.com/category/security/feed/',             source: 'TechCrunch Security',icon: 'W', tier: 2 },
+  { url: 'https://www.wired.com/feed/tag/artificial-intelligence/rss', source: 'Wired AI',           icon: 'W', tier: 2 },
+  { url: 'https://www.wired.com/feed/category/security/latest/rss',   source: 'Wired Security',     icon: 'W', tier: 2 },
+  { url: 'https://www.cnbc.com/id/19854910/device/rss/rss.html',       source: 'CNBC Tech',          icon: 'W', tier: 2 },
+  { url: 'https://the-decoder.com/feed/',                              source: 'The Decoder',        icon: 'W', tier: 2 },
+  { url: 'https://www.kdnuggets.com/feed',                             source: 'KDnuggets',          icon: 'W', tier: 2 },
+  { url: 'https://feeds.npr.org/1019/rss.xml',                         source: 'NPR Tech',           icon: 'W', tier: 2 },
+
+  // ── Tier 2 — Cybersecurity ────────────────────────────────────────────────
+  { url: 'https://feeds.feedburner.com/TheHackersNews',                source: 'The Hacker News',    icon: 'HN', tier: 2 },
+  { url: 'https://www.bleepingcomputer.com/feed/',                     source: 'BleepingComputer',   icon: 'W',  tier: 2 },
+  { url: 'https://krebsonsecurity.com/feed/',                          source: 'Krebs on Security',  icon: 'W',  tier: 2 },
+  { url: 'https://www.darkreading.com/rss.xml',                        source: 'Dark Reading',       icon: 'W',  tier: 2 },
+  { url: 'https://www.securityweek.com/feed/',                         source: 'SecurityWeek',       icon: 'W',  tier: 2 },
+
+  // ── Tier 3 — Developer & research ────────────────────────────────────────
+  { url: 'https://huggingface.co/blog/feed.xml',                       source: 'Hugging Face',       icon: 'W', tier: 3 },
+  { url: 'https://github.blog/feed/',                                  source: 'GitHub Blog',        icon: 'W', tier: 3 },
+  { url: 'https://rss.arxiv.org/rss/cs.AI',                            source: 'arXiv AI',           icon: 'W', tier: 3 },
 ];
 
 // ── Fetch a URL, following up to 5 redirects ─────────────────────────────────
@@ -106,15 +134,26 @@ function parseRSSItems(xml, source, icon, max) {
 function handleNewsRequest(res) {
   const fetches = RSS_SOURCES.map(s =>
     fetchURL(s.url)
-      .then(r => parseRSSItems(r.body, s.source, s.icon, 6))
+      .then(r => parseRSSItems(r.body, s.source, s.icon, 4).map(a => ({ ...a, tier: s.tier || 2 })))
       .catch(err => {
         console.warn('[rss] failed:', s.source, '-', err.message);
         return [];
       })
   );
   Promise.all(fetches).then(results => {
-    const articles = results.flat();
-    console.log('[rss] fetched', articles.length, 'real articles');
+    // Flatten, sort by tier (1 first), deduplicate by URL
+    const seen = new Set();
+    const articles = results
+      .flat()
+      .sort((a, b) => (a.tier || 2) - (b.tier || 2))
+      .filter(a => {
+        if (seen.has(a.url)) return false;
+        seen.add(a.url);
+        return true;
+      });
+    const byTier = { 1: 0, 2: 0, 3: 0 };
+    articles.forEach(a => byTier[a.tier || 2]++);
+    console.log(`[rss] fetched ${articles.length} articles — T1:${byTier[1]} T2:${byTier[2]} T3:${byTier[3]}`);
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ articles }));
   }).catch(err => {

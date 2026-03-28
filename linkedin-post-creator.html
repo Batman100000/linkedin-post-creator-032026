@@ -941,7 +941,7 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{
     <button id="btn-start-proxy" onclick="startProxyGuide()" title="הפעל את שרת הפרוקסי" style="display:none;font-size:0.72rem;font-weight:700;padding:0.25rem 0.7rem;border-radius:999px;border:1px solid rgba(34,197,94,0.4);background:rgba(34,197,94,0.08);color:#4ade80;cursor:pointer;white-space:nowrap;">▶ הפעל פרוקסי</button>
     <button id="btn-stop-proxy" onclick="stopProxy()" title="כבה את שרת הפרוקסי" style="display:none;font-size:0.72rem;font-weight:700;padding:0.25rem 0.7rem;border-radius:999px;border:1px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.08);color:#f87171;cursor:pointer;white-space:nowrap;">⏹ נתק פרוקסי</button>
     <span id="run-counter" title="" style="font-size:0.72rem;font-weight:700;color:var(--text3);background:var(--card2);border:1px solid var(--border);border-radius:999px;padding:0.25rem 0.7rem;white-space:nowrap;cursor:default;">0/20 הרצות</span>
-    <span title="גרסת האפליקציה" style="font-size:0.65rem;font-weight:600;color:var(--text3);opacity:0.5;white-space:nowrap;cursor:default;">v2.5</span>
+    <span title="גרסת האפליקציה" style="font-size:0.65rem;font-weight:600;color:var(--text3);opacity:0.5;white-space:nowrap;cursor:default;">v2.6</span>
     <button class="btn-settings" onclick="logout()" aria-label="התנתק" title="התנתק">🚪</button>
     <button class="btn-settings" onclick="openSettingsModal()" aria-label="פתח הגדרות">⚙️</button>
   </div>
@@ -1998,8 +1998,18 @@ async function fetchTrending(mode='ai-cyber', forceNow=false){
   const defaultCat = isFirst ? 'ai' : 'tech';
   const ICON_MAP   = {X:'𝕏', R:'🔴', IG:'📸', FB:'f', LI:'in', HN:'🧡', W:'🌐'};
   const SOURCE_ICON_MAP = {
+    // Tier 1 — Official
+    'OpenAI':'🤖','Google DeepMind':'🧠','Meta AI':'🦙','Microsoft AI':'🪟',
+    'NVIDIA':'💚','Anthropic':'🟠','GitHub':'🐙',
+    // Tier 2 — Media
+    'MIT Tech Review':'🏛️','Reuters':'📰','TechCrunch':'🟣','TechCrunch Security':'🟣',
+    'TechCrunch AI':'🟣','Wired AI':'⚡','Wired Security':'⚡','CNBC Tech':'📺',
+    'The Decoder':'🔍','KDnuggets':'📊','NPR Tech':'🎙️',
+    // Tier 2 — Cybersecurity
     'The Hacker News':'🧡','BleepingComputer':'🔵','Krebs on Security':'🟢',
-    'Dark Reading':'🔴','TechCrunch AI':'🟣','SecurityWeek':'🟠',
+    'Dark Reading':'🔴','SecurityWeek':'🟠',
+    // Tier 3 — Developer / Research
+    'Hugging Face':'🤗','GitHub Blog':'🐙','arXiv AI':'📄',
   };
 
   document.getElementById('btn-trending').disabled  = true;
