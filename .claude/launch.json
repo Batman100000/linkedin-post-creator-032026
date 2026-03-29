@@ -2,11 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "dpo-whisperer",
-      "runtimeExecutable": "powershell",
-      "runtimeArgs": ["-Command", "cd 'C:\\Users\\asafa\\OneDrive\\Desktop\\dpo-whisperer-updated\\dpo-whisperer-updated'; npx vite"],
-      "port": 8080,
-      "autoPort": false
+      "name": "linkedin-server",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8000"],
+      "port": 8000
     }
   ]
 }

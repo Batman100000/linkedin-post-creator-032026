@@ -1633,14 +1633,14 @@ function saveToLast10(items){
   const merged = [...items, ...existing]
     .filter((a,i,arr) => arr.findIndex(b=>b.title===a.title)===i)
     .slice(0,10);
-  localStorage.setItem(LAST10_KEY, JSON.stringify(merged));
+  sessionStorage.setItem(LAST10_KEY, JSON.stringify(merged));
   // Show the "last 10" button
   const btn = document.getElementById('btn-show-last10');
   if(btn) btn.style.display = 'flex';
 }
 
 function getLast10(){
-  try { return JSON.parse(localStorage.getItem(LAST10_KEY)||'[]'); } catch(_){ return []; }
+  try { return JSON.parse(sessionStorage.getItem(LAST10_KEY)||'[]'); } catch(_){ return []; }
 }
 
 function showLast10Articles(){
@@ -2157,7 +2157,7 @@ async function fetchTrending(mode='ai-cyber', forceNow=false){
     if(!newItems.length) throw new Error('לא הצלחנו לטעון כתבות');
 
     lastFetchTime = Date.now();
-    localStorage.setItem('li_last_fetch_time', String(lastFetchTime));
+    sessionStorage.setItem('li_last_fetch_time', String(lastFetchTime));
     ARTICLES.splice(0, ARTICLES.length, ...newItems);
     trendingLoaded = true;
     resetFilterState();
@@ -2165,9 +2165,9 @@ async function fetchTrending(mode='ai-cyber', forceNow=false){
 
     // Compare known vs new
     const knownKey    = 'li_known_articles_' + (isFirst ? 'first' : 'second');
-    const knownTitles = JSON.parse(localStorage.getItem(knownKey) || '[]');
+    const knownTitles = JSON.parse(sessionStorage.getItem(knownKey) || '[]');
     const newCount    = newItems.filter(a => !knownTitles.includes(a.title)).length;
-    localStorage.setItem(knownKey, JSON.stringify(newItems.map(a => a.title)));
+    sessionStorage.setItem(knownKey, JSON.stringify(newItems.map(a => a.title)));
 
     const topic = isFirst ? 'AI & סייבר' : 'טק & עסקים';
     document.getElementById('articles-count').textContent    = newItems.length;
@@ -2573,7 +2573,7 @@ function updateProxyStatus(){
     if(btnStart) btnStart.style.display = 'none';
     if(btnStop)  btnStop.style.display  = 'inline-flex';
   } else {
-    API_KEY = localStorage.getItem('claude_api_key') || '';
+    API_KEY = sessionStorage.getItem('claude_api_key') || '';
     if(!API_KEY && banner) banner.style.display = 'flex';
     if(dot)   { dot.style.background = '#f87171'; }
     if(label) { label.textContent = 'פרוקסי כבוי'; label.style.color = '#f87171'; }
@@ -2604,9 +2604,9 @@ async function callAI(prompt, countAsRun=false){
       });
     } catch(netErr){ throw new Error('שגיאת רשת לפרוקסי: ' + netErr.message); }
 
-  // ── Path 2: Direct (legacy — key stored in localStorage) ──
+  // ── Path 2: Direct (legacy — key stored in sessionStorage) ──
   } else {
-    API_KEY = localStorage.getItem('claude_api_key') || '';
+    API_KEY = sessionStorage.getItem('claude_api_key') || '';
     if(!API_KEY) throw new Error('הפרוקסי לא פעיל ואין API Key מוגדר. הפעל את start-proxy.bat');
     try {
       res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -2655,7 +2655,7 @@ function schedulePost(){
 function saveDraft(){
   const text=document.getElementById('post-textarea').value;
   if(!text){return;}
-  localStorage.setItem('li_draft',text);
+  sessionStorage.setItem('li_draft',text);
   showToast('💾 טיוטה נשמרה','success');
 }
 function saveDraftFull(){saveDraft();}
@@ -2682,7 +2682,7 @@ function showConnTab(el, tab){
 function connectZapier(){
   const url=document.getElementById('zapier-url').value.trim();
   if(!url){showToast('הכנס Zapier Webhook URL','error');return;}
-  localStorage.setItem('zapier_url',url);
+  sessionStorage.setItem('zapier_url',url);
   connectMode='zapier'; liConnected=true;
   setConnectedBtn('⚡ Zapier מחובר');
   closeModal(); showToast('✅ Zapier מחובר!','success');
@@ -2690,8 +2690,8 @@ function connectZapier(){
 function connectBuffer(){
   const token=document.getElementById('buffer-token').value.trim();
   if(!token){showToast('הכנס Buffer Token','error');return;}
-  localStorage.setItem('buffer_token',token);
-  localStorage.setItem('buffer_profile',document.getElementById('buffer-profile').value.trim());
+  sessionStorage.setItem('buffer_token',token);
+  sessionStorage.setItem('buffer_profile',document.getElementById('buffer-profile').value.trim());
   connectMode='buffer'; liConnected=true;
   setConnectedBtn('📦 Buffer מחובר');
   closeModal(); showToast('✅ Buffer מחובר!','success');
@@ -2709,7 +2709,7 @@ function setConnectedBtn(label){
 function simulateConnect(){connectManual();}
 
 // ── SETTINGS ──
-let reminders = JSON.parse(localStorage.getItem('li_reminders')||'[]');
+let reminders = JSON.parse(sessionStorage.getItem('li_reminders')||'[]');
 const DAYS_HE = ['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'];
 
 function openSettingsModal(){
@@ -2719,11 +2719,11 @@ function openSettingsModal(){
 function closeSettingsModal(){document.getElementById('settings-modal').classList.remove('open');}
 
 function loadSettingsForm(){
-  const name=localStorage.getItem('li_name')||'';
-  const role=localStorage.getItem('li_role')||'';
+  const name=sessionStorage.getItem('li_name')||'';
+  const role=sessionStorage.getItem('li_role')||'';
   document.getElementById('set-name').value=name;
   document.getElementById('set-role').value=role;
-  document.getElementById('set-api-key').value=localStorage.getItem('claude_api_key')||'';
+  document.getElementById('set-api-key').value=sessionStorage.getItem('claude_api_key')||'';
   renderReminderList();
   buildWeekSchedule();
 }
@@ -2738,10 +2738,10 @@ function saveSettings(){
   const name=document.getElementById('set-name').value.trim();
   const role=document.getElementById('set-role').value.trim();
   const key=document.getElementById('set-api-key').value.trim();
-  if(name){localStorage.setItem('li_name',name);document.getElementById('li-name').textContent=name;document.getElementById('li-avatar').textContent=name.charAt(0);}
-  if(role){localStorage.setItem('li_role',role);document.getElementById('li-role').textContent=role;}
-  if(key){API_KEY=key;localStorage.setItem('claude_api_key',key);document.getElementById('api-key-banner').style.display='none';}
-  localStorage.setItem('li_reminders',JSON.stringify(reminders));
+  if(name){sessionStorage.setItem('li_name',name);document.getElementById('li-name').textContent=name;document.getElementById('li-avatar').textContent=name.charAt(0);}
+  if(role){sessionStorage.setItem('li_role',role);document.getElementById('li-role').textContent=role;}
+  if(key){API_KEY=key;sessionStorage.setItem('claude_api_key',key);document.getElementById('api-key-banner').style.display='none';}
+  sessionStorage.setItem('li_reminders',JSON.stringify(reminders));
   closeSettingsModal();
   showToast('✅ הגדרות נשמרו','success');
   scheduleAllReminders();
@@ -2790,7 +2790,7 @@ function scheduleAllReminders(){
 // ── WEEK SCHEDULE ──
 function buildWeekSchedule(){
   const el=document.getElementById('week-schedule');
-  const saved=JSON.parse(localStorage.getItem('li_week_schedule')||'{}');
+  const saved=JSON.parse(sessionStorage.getItem('li_week_schedule')||'{}');
   el.innerHTML=DAYS_HE.map((d,i)=>`
     <div class="week-day-row">
       <span class="week-day-label">${d}</span>
@@ -2911,13 +2911,13 @@ async function doLogin(){
   if(email !== AUTH_EMAIL){ err.textContent='אימייל שגוי'; err.style.display='block'; return; }
   const hash = await hashString(pass);
   if(hash !== AUTH_HASH){ err.textContent='סיסמה שגויה'; err.style.display='block'; return; }
-  localStorage.setItem('li_auth', '1');
+  sessionStorage.setItem('li_auth', '1');
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app-root').style.display='block';
   initApp();
 }
 function checkAuth(){
-  if(localStorage.getItem('li_auth')==='1'){
+  if(sessionStorage.getItem('li_auth')==='1'){
     document.getElementById('login-screen').style.display='none';
     document.getElementById('app-root').style.display='block';
     return true;
@@ -2925,21 +2925,21 @@ function checkAuth(){
   return false;
 }
 function logout(){
-  localStorage.removeItem('li_auth');
+  sessionStorage.removeItem('li_auth');
   location.reload();
 }
 
 // ── RATE LIMIT ──
 function getTodayKey(){ return 'li_runs_'+new Date().toISOString().slice(0,10); }
-function getRunsToday(){ return parseInt(localStorage.getItem(getTodayKey())||'0'); }
+function getRunsToday(){ return parseInt(sessionStorage.getItem(getTodayKey())||'0'); }
 function incrementRuns(){
-  localStorage.setItem(getTodayKey(), getRunsToday()+1);
-  localStorage.setItem('li_last_run_time', new Date().toISOString());
+  sessionStorage.setItem(getTodayKey(), getRunsToday()+1);
+  sessionStorage.setItem('li_last_run_time', new Date().toISOString());
   updateRunCounter();
 }
 function updateRunCounter(){
   const runs = getRunsToday();
-  const lastRunStr = localStorage.getItem('li_last_run_time');
+  const lastRunStr = sessionStorage.getItem('li_last_run_time');
   const el = document.getElementById('run-counter');
   if(!el) return;
   if(lastRunStr){
@@ -2968,7 +2968,7 @@ function saveApiKey(){
   const key = document.getElementById('set-api-key').value.trim();
   if(!key){showToast('הכנס API Key','error');return;}
   API_KEY = key;
-  localStorage.setItem('claude_api_key', key);
+  sessionStorage.setItem('claude_api_key', key);
   document.getElementById('api-key-banner').style.display='none';
   showToast('✅ API Key נשמר!','success');
 }
@@ -2976,7 +2976,7 @@ function saveBannerApiKey(){
   const key = document.getElementById('set-api-key-banner').value.trim();
   if(!key){showToast('הכנס API Key','error');return;}
   API_KEY = key;
-  localStorage.setItem('claude_api_key', key);
+  sessionStorage.setItem('claude_api_key', key);
   document.getElementById('api-key-banner').style.display='none';
   showToast('✅ API Key נשמר!','success');
 }
@@ -2988,8 +2988,22 @@ function initApp(){
   buildEmojiPicker();
   const tm=new Date();tm.setDate(tm.getDate()+1);
   document.getElementById('sched-date').value=tm.toISOString().split('T')[0];
-  const n=localStorage.getItem('li_name'); if(n){document.getElementById('li-name').textContent=n;document.getElementById('li-avatar').textContent=n.charAt(0);}
-  const r=localStorage.getItem('li_role'); if(r) document.getElementById('li-role').textContent=r;
+
+  // Load API Key from config.txt automatically
+  fetch('config.txt')
+    .then(r => r.text())
+    .then(key => {
+      key = key.trim();
+      if(key) {
+        API_KEY = key;
+        sessionStorage.setItem('claude_api_key', key);
+        document.getElementById('api-key-banner').style.display='none';
+      }
+    })
+    .catch(e => console.log('config.txt not found or error:', e));
+
+  const n=sessionStorage.getItem('li_name'); if(n){document.getElementById('li-name').textContent=n;document.getElementById('li-avatar').textContent=n.charAt(0);}
+  const r=sessionStorage.getItem('li_role'); if(r) document.getElementById('li-role').textContent=r;
   document.getElementById('articles-count').textContent=ARTICLES.length;
   document.getElementById('articles-subtitle').textContent='בחר כתבה · מיין לפי קטגוריה, תאריך, מעורבות';
   applyFilters();
@@ -2999,8 +3013,8 @@ function initApp(){
     if(btn) btn.style.display = 'flex';
   }
 
-  // Restore lastFetchTime from localStorage so cooldown persists across reloads
-  const savedFetchTime = parseInt(localStorage.getItem('li_last_fetch_time') || '0');
+  // Restore lastFetchTime from sessionStorage so cooldown persists across reloads
+  const savedFetchTime = parseInt(sessionStorage.getItem('li_last_fetch_time') || '0');
   if(savedFetchTime) lastFetchTime = savedFetchTime;
 
   // ── Cache migration: clear old AI-generated articles (no _realUrl) ──
@@ -3008,8 +3022,8 @@ function initApp(){
   const hasRealUrls = cachedArticles.length > 0 && cachedArticles.some(a => a._realUrl);
   if(cachedArticles.length > 0 && !hasRealUrls){
     // Old cache — wipe it so user gets real RSS articles on next fetch
-    localStorage.removeItem(LAST10_KEY);
-    localStorage.removeItem('li_last_fetch_time');
+    sessionStorage.removeItem(LAST10_KEY);
+    sessionStorage.removeItem('li_last_fetch_time');
     lastFetchTime = 0;
     console.log('[init] cleared old AI-generated article cache');
   }
@@ -3017,7 +3031,7 @@ function initApp(){
   // Check proxy — but do NOT auto-fetch. Show button or cached articles instead.
   checkProxy().then(() => {
     if(!proxyAvailable){
-      API_KEY = localStorage.getItem('claude_api_key') || '';
+      API_KEY = sessionStorage.getItem('claude_api_key') || '';
       if(!API_KEY) document.getElementById('api-key-banner').style.display='flex';
     }
     // Show last fetched articles if available, or empty state with fetch button

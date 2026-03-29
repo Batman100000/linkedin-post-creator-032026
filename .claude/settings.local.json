@@ -44,7 +44,8 @@
       "Bash(netstat -ano)",
       "Bash(taskkill /PID 31844 /F)",
       "Bash(cmd /c \"taskkill /PID 31844 /F\")",
-      "Bash(echo \"exit: $?\")"
+      "Bash(echo \"exit: $?\")",
+      "Bash(start \"\" \"file:///C:/Users/asafa/OneDrive/Desktop/CLAUDECODE/linkedin-post-creator.html\")"
     ]
   }
 }
