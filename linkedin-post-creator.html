@@ -548,6 +548,7 @@ main {
 }
 .hook-card:hover{border-color:var(--border2);transform:translateX(-2px);}
 .hook-card.selected{border-color:var(--primary);background:rgba(124,58,237,0.1);}
+.hook-card.selected:hover{background:rgba(248,113,113,0.08);border-color:var(--red);}
 .hook-card-text{font-size:0.88rem;line-height:1.6;flex:1;color:var(--text);}
 .hook-select {
   width:32px;height:32px;border-radius:8px;flex-shrink:0;
@@ -885,8 +886,8 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
-<div id="login-screen" style="display:flex;min-height:100vh;align-items:center;justify-content:center;padding:1rem;">
+<!-- LOGIN SCREEN (disabled) -->
+<div id="login-screen" style="display:none;min-height:100vh;align-items:center;justify-content:center;padding:1rem;">
   <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:2.5rem 2rem;width:360px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
     <div style="text-align:center;margin-bottom:2rem;">
       <div style="width:52px;height:52px;background:linear-gradient(135deg,#5b21b6,#7c3aed);border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.4rem;color:#fff;margin:0 auto 0.75rem;box-shadow:0 0 24px rgba(124,58,237,0.5);">in</div>
@@ -909,8 +910,8 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{
   </div>
 </div>
 
-<!-- APP ROOT (hidden until login) -->
-<div id="app-root" style="display:none;">
+<!-- APP ROOT -->
+<div id="app-root" style="display:block;">
 
 <!-- HEADER -->
 <header>
@@ -934,14 +935,15 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{
       <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
       <span class="btn-label">חבר לינקדאין</span>
     </button>
-    <span id="proxy-status-badge" title="שרת ה-proxy המקומי שומר על ה-API Key שלך" style="display:inline-flex;align-items:center;gap:0.35rem;font-size:0.72rem;font-weight:700;background:var(--card2);border:1px solid var(--border);border-radius:999px;padding:0.25rem 0.7rem;white-space:nowrap;cursor:default;color:var(--text3);">
-      <span id="proxy-dot" style="width:7px;height:7px;border-radius:50%;background:#6b7280;display:inline-block;flex-shrink:0;"></span>
+    <span id="proxy-status-badge" onclick="showProxyExplain()" title="לחץ להסבר" style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.75rem;font-weight:700;border-radius:999px;padding:0.3rem 0.8rem;white-space:nowrap;cursor:pointer;transition:all 0.2s;">
+      <span id="proxy-dot" style="width:8px;height:8px;border-radius:50%;background:#6b7280;display:inline-block;flex-shrink:0;"></span>
       <span id="proxy-label">בודק...</span>
     </span>
-    <button id="btn-start-proxy" onclick="startProxyGuide()" title="הפעל את שרת הפרוקסי" style="display:none;font-size:0.72rem;font-weight:700;padding:0.25rem 0.7rem;border-radius:999px;border:1px solid rgba(34,197,94,0.4);background:rgba(34,197,94,0.08);color:#4ade80;cursor:pointer;white-space:nowrap;">▶ הפעל פרוקסי</button>
-    <button id="btn-stop-proxy" onclick="stopProxy()" title="כבה את שרת הפרוקסי" style="display:none;font-size:0.72rem;font-weight:700;padding:0.25rem 0.7rem;border-radius:999px;border:1px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.08);color:#f87171;cursor:pointer;white-space:nowrap;">⏹ נתק פרוקסי</button>
+    <button id="btn-start-proxy" style="display:none;"></button>
+    <button id="btn-stop-proxy" style="display:none;"></button>
+    <button id="btn-api-key" onclick="toggleApiKeyPanel()" title="הגדר Claude API Key" style="font-size:0.72rem;font-weight:700;padding:0.25rem 0.7rem;border-radius:999px;border:1px solid rgba(124,58,237,0.5);background:rgba(124,58,237,0.12);color:var(--primary-light);cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;">🔑 <span id="api-key-btn-label">API Key</span></button>
     <span id="run-counter" title="" style="font-size:0.72rem;font-weight:700;color:var(--text3);background:var(--card2);border:1px solid var(--border);border-radius:999px;padding:0.25rem 0.7rem;white-space:nowrap;cursor:default;">0/20 הרצות</span>
-    <span title="גרסת האפליקציה" style="font-size:0.65rem;font-weight:600;color:var(--text3);opacity:0.5;white-space:nowrap;cursor:default;">v2.6</span>
+    <span title="גרסת האפליקציה" style="font-size:0.65rem;font-weight:600;color:var(--text3);opacity:0.5;white-space:nowrap;cursor:default;">v2.9</span>
     <button class="btn-settings" onclick="logout()" aria-label="התנתק" title="התנתק">🚪</button>
     <button class="btn-settings" onclick="openSettingsModal()" aria-label="פתח הגדרות">⚙️</button>
   </div>
@@ -1502,7 +1504,7 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{
 <script>
 // ── Proxy mode: API key lives in .env on your machine, NOT in the browser ──
 const PROXY_URL = 'http://localhost:3001/api/claude';
-const MODEL = "claude-sonnet-4-20250514";
+const MODEL = "claude-haiku-4-5-20251001";
 let proxyAvailable = false; // checked on init
 let API_KEY = ''; // kept only for legacy fallback if proxy is down
 
@@ -1513,6 +1515,7 @@ const DAILY_RUN_LIMIT = 20; // max AI calls per day
 let currentStep = 1;
 let selectedArticle = null;
 let selectedHook = null;
+let _renderedHooks = [];
 let currentLang = 'he';
 let liConnected = false;
 
@@ -1985,6 +1988,37 @@ function animateSources(){
 }
 
 // ── SAFE JSON PARSE ──
+// ── Simple RSS/Atom XML parser (regex-based, no DOM) ─────────────────────────
+function parseRssXml(xml, sourceName, sourceIcon, max){
+  if(!max) max = 6;
+  const items = [];
+  const itemRx = /<(?:item|entry)[\s>]([\s\S]*?)<\/(?:item|entry)>/gi;
+  let m;
+  while((m = itemRx.exec(xml)) !== null && items.length < max){
+    const body = m[1];
+    // title — try CDATA first, then plain
+    const titleM = body.match(/<title[^>]*><!\[CDATA\[([\s\S]*?)\]\]><\/title>/i)
+                || body.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+    const title = titleM ? titleM[1].replace(/<[^>]+>/g,'').trim() : '';
+    // link — RSS uses <link>, Atom uses <link href="...">
+    let link = '';
+    const linkAttr = body.match(/<link[^>]+href=["']([^"']+)["']/i);
+    if(linkAttr) link = linkAttr[1];
+    else {
+      const linkTag = body.match(/<link[^>]*>([\s\S]*?)<\/link>/i);
+      if(linkTag) link = linkTag[1].trim();
+    }
+    if(!link) { const g = body.match(/<guid[^>]*>([\s\S]*?)<\/guid>/i); if(g) link = g[1].trim(); }
+    // date
+    const dateM = body.match(/<(?:pubDate|published|dc:date)[^>]*>([\s\S]*?)<\/(?:pubDate|published|dc:date)>/i);
+    const date = dateM ? dateM[1].trim() : '';
+    if(title && link && link.startsWith('http')){
+      items.push({ title, url: link, date, source: sourceName, icon: sourceIcon });
+    }
+  }
+  return items;
+}
+
 function safeParseJSON(raw){
   if(!raw) return null;
   // 1. strip markdown fences
@@ -2124,34 +2158,76 @@ async function fetchTrending(mode='ai-cyber', forceNow=false){
       }).filter(a => a._realUrl);
 
     } else {
-      // ── Fallback: Claude-only (no proxy / RSS failed) ──
-      hideLoadingOverlay();
-      const topicEn = isFirst
-        ? 'AI, cybersecurity, data breaches, ransomware, zero trust'
-        : 'technology, startups, fintech, business, career';
-      const prompt = [
-        'Return ONLY a JSON object. No markdown.',
-        'Today is ' + todayStr + '. Generate 8 trending topics about: ' + topicEn,
-        '{"trending":[{"title":"כותרת בעברית","source":"Dark Reading","icon":"W","date":"' + todayStr + '","cat":"' + defaultCat + '","tag":"סייבר","score":88}]}',
-        'Rules: title in Hebrew. icon: X R IG FB LI HN W. cat from: ' + catList + '. Exactly 8 items.'
-      ].join('\n');
-      const raw  = await callAI(prompt, true);
-      const data = safeParseJSON(raw);
-      const items = (data && data.trending ? data.trending : []).filter(t => t && t.title);
-      newItems = items.slice(0,8).map((t,i) => ({
-        id:         (isFirst ? 1000 : 2000) + i,
-        title:      t.title,
-        source:     t.source || 'Web',
-        sourceIcon: ICON_MAP[t.icon] || '🌐',
-        _icon:      t.icon || 'W',
-        date:       t.date || todayStr,
-        fetchDate:  refreshStr,
-        cat:        catList.split(',').map(s=>s.trim()).includes(t.cat) ? t.cat : defaultCat,
-        tags:       [t.tag || 'טרנד'],
-        score:      Math.max(70, Math.min(99, parseInt(t.score) || 80)),
-        isTrending: true,
-        trendMode:  mode,
-      }));
+      // ── Fallback: fetch real RSS via allorigins.win CORS proxy (no key needed) ──
+      const RSS_FALLBACK = [
+        { url: 'https://thehackernews.com/feeds/posts/default',            name: 'The Hacker News',  icon: 'HN' },
+        { url: 'https://www.bleepingcomputer.com/feed/',                   name: 'BleepingComputer', icon: 'W'  },
+        { url: 'https://techcrunch.com/tag/artificial-intelligence/feed/', name: 'TechCrunch AI',    icon: 'W'  },
+        { url: 'https://krebsonsecurity.com/feed/',                        name: 'Krebs on Security',icon: 'W'  },
+        { url: 'https://www.securityweek.com/feed/',                       name: 'SecurityWeek',     icon: 'W'  },
+        { url: 'https://www.wired.com/feed/tag/artificial-intelligence/rss',name:'Wired AI',         icon: 'W'  },
+      ];
+      const fallbackResults = await Promise.allSettled(
+        RSS_FALLBACK.map(src =>
+          fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(src.url))
+            .then(r => r.ok ? r.json() : null)
+            .then(d => d?.contents ? parseRssXml(d.contents, src.name, src.icon) : [])
+            .catch(() => [])
+        )
+      );
+      fallbackResults.forEach((r, i) => {
+        const src = RSS_FALLBACK[i];
+        if(r.status === 'fulfilled') console.log('[rss fallback] ✅', src.name, '→', r.value.length, 'articles');
+        else console.warn('[rss fallback] ❌', src.name, '→', r.reason);
+      });
+      rssArticles = fallbackResults
+        .flatMap(r => r.status === 'fulfilled' ? r.value : [])
+        .filter(a => a.title && a.url && a.url.startsWith('http'));
+      console.log('[rss fallback] total valid articles:', rssArticles.length);
+
+      if (rssArticles.length >= 3) {
+        // Re-run the Claude scoring path now that we have real articles
+        const pool = rssArticles.slice(0, 20);
+        const articleLines = pool.map((a,i) => (i+1) + '. ' + a.title + ' (' + a.source + ')').join('\n');
+        const prompt = [
+          'You are given real recent news articles. For each, return JSON with:',
+          '- h: concise Hebrew headline (6-9 words, journalistic style)',
+          '- score: LinkedIn engagement score 70-99 (higher = more impactful)',
+          '- cat: one of ' + catList,
+          '- tag: one short Hebrew topic tag (e.g. "סייבר", "AI", "כופרה")',
+          '',
+          'Articles:',
+          articleLines,
+          '',
+          'Return ONLY valid JSON (no markdown): {"r":[{"h":"...","score":88,"cat":"cyber","tag":"סייבר"},...]}'
+        ].join('\n');
+        const raw = await callAI(prompt, true);
+        hideLoadingOverlay();
+        const data = safeParseJSON(raw);
+        const results = (data && (data.r || data.results)) ? (data.r || data.results) : [];
+        newItems = pool.slice(0, results.length).map((a, i) => {
+          const r = results[i] || {};
+          return {
+            id:         (isFirst ? 1000 : 2000) + i,
+            title:      r.h || a.title,
+            titleEn:    a.title,
+            source:     a.source,
+            sourceIcon: SOURCE_ICON_MAP[a.source] || '🌐',
+            _icon:      a.icon || 'W',
+            _realUrl:   a.url,
+            date:       a.date ? new Date(a.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : todayStr,
+            fetchDate:  refreshStr,
+            cat:        catList.split(',').map(s=>s.trim()).includes(r.cat) ? r.cat : defaultCat,
+            tags:       [r.tag || 'סייבר'],
+            score:      Math.max(70, Math.min(99, parseInt(r.score) || 80)),
+            isTrending: true,
+            trendMode:  mode,
+          };
+        }).filter(a => a._realUrl);
+      } else {
+        hideLoadingOverlay();
+        throw new Error('לא הצלחנו לטעון כתבות — בדוק חיבור לאינטרנט ונסה שוב');
+      }
     }
 
     if(!newItems.length) throw new Error('לא הצלחנו לטעון כתבות');
@@ -2188,11 +2264,14 @@ async function fetchTrending(mode='ai-cyber', forceNow=false){
     document.getElementById('articles-subtitle').textContent = 'לא הצלחנו לטעון';
     const errIcon = isDailyLimit ? '🚫' : '⚠️';
     const errTitle = isDailyLimit ? 'הגעת למגבלת ההרצות היומית' : 'שגיאה בטעינת הכתבות';
+    const noKey = /api key|פרוקסי לא פעיל|no api/i.test(e.message);
     const errBody = isDailyLimit
       ? `השתמשת ב-${DAILY_RUN_LIMIT}/${DAILY_RUN_LIMIT} הרצות היום. המגבלה מתאפסת בחצות.`
       : isServerLoad
         ? 'יש עומס על השרת. המתן כ-10 שניות ונסה שוב.'
-        : 'בדוק שהפרוקסי פועל ונסה שוב.';
+        : noKey
+          ? 'לחץ על 🔑 API Key בפינה הימנית ושמור את המפתח שלך.'
+          : e.message;
     document.getElementById('articles-list').innerHTML =
       '<div style="text-align:center;padding:3rem 1rem;">' +
         '<div style="font-size:2.5rem;margin-bottom:0.75rem">' + errIcon + '</div>' +
@@ -2305,15 +2384,22 @@ async function fetchFromUrl(){
 
 // ── HOOKS RENDER ──
 function renderHooks(hooks){
+  _renderedHooks = hooks;
   const list = document.getElementById('hooks-list');
   list.innerHTML = hooks.map((h,i)=>`
-    <div class="hook-card" onclick="selectHook(this,${JSON.stringify(h)})">
+    <div class="hook-card" data-idx="${i}" onclick="selectHook(this)">
       <div class="hook-card-text">${h}</div>
-      <div class="hook-select">${i===0?'✓':'→'}</div>
+      <div class="hook-select">→</div>
     </div>
   `).join('');
 }
-function selectHook(el, hook){
+function selectHook(el){
+  const hook = _renderedHooks[parseInt(el.dataset.idx)];
+  // Toggle off if clicking the already-selected hook
+  if(el.classList.contains('selected')){
+    clearHookSelection();
+    return;
+  }
   selectedHook = hook;
   document.querySelectorAll('.hook-card').forEach(c=>{
     c.classList.remove('selected');
@@ -2362,7 +2448,7 @@ async function generateHooks(){
     if(!hooks) throw new Error('no hooks');
     renderHooks(hooks);
     const firstCard = document.querySelector('.hook-card');
-    if(firstCard) selectHook(firstCard, hooks[0]);
+    if(firstCard) selectHook(firstCard);
   }catch(e){
     const fallback = [
       '73% מהמנהלים חוששים — לא מהאקרים, מהעובדים שלהם.',
@@ -2373,7 +2459,7 @@ async function generateHooks(){
     ];
     renderHooks(fallback);
     const firstCard = document.querySelector('.hook-card');
-    if(firstCard) selectHook(firstCard, fallback[0]);
+    if(firstCard) selectHook(firstCard);
   }finally{
     icon.textContent='⚡';
     document.getElementById('btn-regen-h').disabled=false;
@@ -2561,25 +2647,40 @@ async function checkProxy(){
   updateProxyStatus();
 }
 function updateProxyStatus(){
-  const banner   = document.getElementById('api-key-banner');
-  const dot      = document.getElementById('proxy-dot');
-  const label    = document.getElementById('proxy-label');
-  const btnStart = document.getElementById('btn-start-proxy');
-  const btnStop  = document.getElementById('btn-stop-proxy');
+  const banner  = document.getElementById('api-key-banner');
+  const dot     = document.getElementById('proxy-dot');
+  const label   = document.getElementById('proxy-label');
+  const badge   = document.getElementById('proxy-status-badge');
+  API_KEY = sessionStorage.getItem('claude_api_key') || API_KEY;
+
   if(proxyAvailable){
+    // 🟢 State 1: proxy running — most secure
     if(banner) banner.style.display = 'none';
-    if(dot)   { dot.style.background = '#4ade80'; }
-    if(label) { label.textContent = 'פרוקסי פעיל'; label.style.color = 'var(--green)'; }
-    if(btnStart) btnStart.style.display = 'none';
-    if(btnStop)  btnStop.style.display  = 'inline-flex';
+    if(dot)    dot.style.background = '#4ade80';
+    if(label){ label.textContent = '🟢 פרוקסי פעיל'; label.style.color = '#4ade80'; }
+    if(badge){ badge.style.background='rgba(52,211,153,0.1)'; badge.style.border='1px solid rgba(52,211,153,0.4)'; }
+  } else if(API_KEY){
+    // 🟡 State 2: no proxy but API key set — works, key in browser
+    if(banner) banner.style.display = 'none';
+    if(dot)    dot.style.background = '#fbbf24';
+    if(label){ label.textContent = '🟡 Key ישיר'; label.style.color = '#fbbf24'; }
+    if(badge){ badge.style.background='rgba(251,191,36,0.1)'; badge.style.border='1px solid rgba(251,191,36,0.4)'; }
   } else {
-    API_KEY = sessionStorage.getItem('claude_api_key') || '';
-    if(!API_KEY && banner) banner.style.display = 'flex';
-    if(dot)   { dot.style.background = '#f87171'; }
-    if(label) { label.textContent = 'פרוקסי כבוי'; label.style.color = '#f87171'; }
-    if(btnStart) btnStart.style.display = 'inline-flex';
-    if(btnStop)  btnStop.style.display  = 'none';
+    // 🔴 State 3: nothing configured — won't work
+    if(banner) banner.style.display = 'flex';
+    if(dot)    dot.style.background = '#f87171';
+    if(label){ label.textContent = '🔴 לא מוגדר'; label.style.color = '#f87171'; }
+    if(badge){ badge.style.background='rgba(248,113,113,0.1)'; badge.style.border='1px solid rgba(248,113,113,0.4)'; }
   }
+}
+function showProxyExplain(){
+  const state = proxyAvailable ? 'proxy' : (API_KEY ? 'key' : 'none');
+  const msgs = {
+    proxy: '🟢 פרוקסי פעיל\n\nשרת Node.js מקומי פועל ומנהל את ה-API Key.\nהמפתח מאובטח — לא נחשף בדפדפן.',
+    key:   '🟡 מצב Key ישיר\n\nהאפליקציה מתחברת ישירות ל-Claude API עם ה-Key שהגדרת.\nעובד מצויין — פשוט פחות מאובטח מפרוקסי.',
+    none:  '🔴 לא מוגדר\n\nלא הוגדר API Key ואין פרוקסי פעיל.\nלחץ על "🔑 API Key" בסרגל ולהכנס את המפתח שלך.',
+  };
+  alert(msgs[state]);
 }
 
 // countAsRun=true only for article fetches (fetchTrending / fetchTopicArticles)
@@ -2917,12 +3018,7 @@ async function doLogin(){
   initApp();
 }
 function checkAuth(){
-  if(sessionStorage.getItem('li_auth')==='1'){
-    document.getElementById('login-screen').style.display='none';
-    document.getElementById('app-root').style.display='block';
-    return true;
-  }
-  return false;
+  return true;
 }
 function logout(){
   sessionStorage.removeItem('li_auth');
@@ -2970,6 +3066,7 @@ function saveApiKey(){
   API_KEY = key;
   sessionStorage.setItem('claude_api_key', key);
   document.getElementById('api-key-banner').style.display='none';
+  updateApiKeyBtn();
   showToast('✅ API Key נשמר!','success');
 }
 function saveBannerApiKey(){
@@ -2978,7 +3075,34 @@ function saveBannerApiKey(){
   API_KEY = key;
   sessionStorage.setItem('claude_api_key', key);
   document.getElementById('api-key-banner').style.display='none';
+  updateApiKeyBtn();
   showToast('✅ API Key נשמר!','success');
+}
+function toggleApiKeyPanel(){
+  const banner = document.getElementById('api-key-banner');
+  const isVisible = banner.style.display === 'flex';
+  if(isVisible){ banner.style.display='none'; return; }
+  // Pre-fill if key already saved
+  const saved = sessionStorage.getItem('claude_api_key') || '';
+  document.getElementById('set-api-key-banner').value = saved;
+  banner.style.display = 'flex';
+}
+function updateApiKeyBtn(){
+  const saved = sessionStorage.getItem('claude_api_key') || API_KEY;
+  const lbl = document.getElementById('api-key-btn-label');
+  const btn = document.getElementById('btn-api-key');
+  if(!lbl || !btn) return;
+  if(saved){
+    lbl.textContent = 'Key ✓';
+    btn.style.borderColor = 'rgba(52,211,153,0.5)';
+    btn.style.background  = 'rgba(52,211,153,0.1)';
+    btn.style.color       = '#34d399';
+  } else {
+    lbl.textContent = 'API Key';
+    btn.style.borderColor = 'rgba(124,58,237,0.5)';
+    btn.style.background  = 'rgba(124,58,237,0.12)';
+    btn.style.color       = 'var(--primary-light)';
+  }
 }
 
 // ── INIT ──
@@ -2998,9 +3122,12 @@ function initApp(){
         API_KEY = key;
         sessionStorage.setItem('claude_api_key', key);
         document.getElementById('api-key-banner').style.display='none';
+        updateApiKeyBtn();
       }
     })
     .catch(e => console.log('config.txt not found or error:', e));
+
+  updateApiKeyBtn();
 
   const n=sessionStorage.getItem('li_name'); if(n){document.getElementById('li-name').textContent=n;document.getElementById('li-avatar').textContent=n.charAt(0);}
   const r=sessionStorage.getItem('li_role'); if(r) document.getElementById('li-role').textContent=r;
