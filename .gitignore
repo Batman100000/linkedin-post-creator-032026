@@ -8,3 +8,6 @@ key.txt
 # ── Node ──
 node_modules/
 npm-debug.log*
+
+# ── Runtime logs ──
+*.log
