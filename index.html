@@ -532,9 +532,9 @@ function createSpiderChart() {
     const scores = calculateBeforeAfterScores();
     if (!scores) return '';
 
-    const size = 400;
+    const size = 700;
     const center = size / 2;
-    const radius = 100;
+    const radius = 180;
     const layers = 5;
     const maxScore = 100;
 
@@ -551,6 +551,11 @@ function createSpiderChart() {
 
     const beforeVals = [scores.before[1], scores.before[2], scores.before[3], scores.before[4], scores.before[5]];
     const afterVals = [scores.after[1], scores.after[2], scores.after[3], scores.after[4], scores.after[5]];
+
+    // Calculate overall risk reduction
+    const beforeTotal = beforeVals.reduce((a,b) => a+b, 0);
+    const afterTotal = afterVals.reduce((a,b) => a+b, 0);
+    const riskReduction = Math.round(((beforeTotal - afterTotal) / beforeTotal) * 100);
 
     points.forEach((p, i) => {
         const beforeR = (beforeVals[i] / maxScore) * radius;
@@ -569,30 +574,41 @@ function createSpiderChart() {
             const y = center + gridR * Math.sin(p.angle);
             gridPath += (i === 0 ? 'M' : 'L') + x + ',' + y;
         }
-        gridLines.push(`<path d="${gridPath}" stroke="rgba(71,85,105,0.3)" stroke-width="1" fill="none"/>`);
+        gridLines.push(`<path d="${gridPath}" stroke="rgba(71,85,105,0.4)" stroke-width="2" fill="none"/>`);
     }
 
     const axisLines = points.map((p, i) => {
-        return `<line x1="${center}" y1="${center}" x2="${p.x}" y2="${p.y}" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>`;
+        return `<line x1="${center}" y1="${center}" x2="${p.x}" y2="${p.y}" stroke="rgba(71,85,105,0.3)" stroke-width="2"/>`;
     }).join('');
 
     const layerLabels = ['Data', 'Model/LLM', 'App', 'Infra', 'Compliance'];
     const labels = points.map((p, i) => {
-        const offset = 30;
+        const offset = 55;
         const x = center + (radius + offset) * Math.cos(p.angle);
         const y = center + (radius + offset) * Math.sin(p.angle);
-        return `<text x="${x}" y="${y}" text-anchor="middle" font-size="12" font-weight="600" fill="#cbd5e1">${layerLabels[i]}</text>`;
+        return `<text x="${x}" y="${y}" text-anchor="middle" font-size="16" font-weight="800" fill="#f1f5f9">${layerLabels[i]}</text>`;
     }).join('');
 
+    // Risk reduction box on the right side
+    const riskReductionBox = `
+        <rect x="${center + radius + 80}" y="${center - 80}" width="180" height="160" rx="16" fill="rgba(34,197,94,0.12)" stroke="#22c55e" stroke-width="3.5"/>
+        <text x="${center + radius + 170}" y="${center - 40}" text-anchor="middle" font-size="18" font-weight="900" fill="#22c55e" letter-spacing="1">RISK REDUCED</text>
+        <text x="${center + radius + 170}" y="${center + 35}" text-anchor="middle" font-size="64" font-weight="900" fill="#86efac">${riskReduction}%</text>
+        <text x="${center + radius + 170}" y="${center + 80}" text-anchor="middle" font-size="13" font-weight="700" fill="#cbd5e1">Through</text>
+        <text x="${center + radius + 170}" y="${center + 100}" text-anchor="middle" font-size="13" font-weight="700" fill="#cbd5e1">Recommended</text>
+        <text x="${center + radius + 170}" y="${center + 120}" text-anchor="middle" font-size="13" font-weight="700" fill="#cbd5e1">Controls</text>
+    `;
+
     const svg = `
-    <svg viewBox="0 0 ${size} ${size}" class="spider-svg">
+    <svg viewBox="0 0 ${size + 280} ${size + 50}" class="spider-svg" style="margin: 30px auto; display: block; max-width: 100%; height: auto;">
         <g>${gridLines.join('')}</g>
         <g>${axisLines}</g>
-        <polygon points="${beforePoints.join(' ')}" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="2" opacity="0.8"/>
-        <polygon points="${afterPoints.join(' ')}" fill="rgba(34,197,94,0.15)" stroke="#22c55e" stroke-width="2" opacity="0.8"/>
-        ${points.map((p, i) => `<circle cx="${center + (beforeVals[i]/maxScore)*radius*Math.cos(p.angle)}" cy="${center + (beforeVals[i]/maxScore)*radius*Math.sin(p.angle)}" r="3" fill="#ef4444"/>`).join('')}
-        ${points.map((p, i) => `<circle cx="${center + (afterVals[i]/maxScore)*radius*Math.cos(p.angle)}" cy="${center + (afterVals[i]/maxScore)*radius*Math.sin(p.angle)}" r="3" fill="#22c55e"/>`).join('')}
+        <polygon points="${beforePoints.join(' ')}" fill="rgba(255,255,255,0.08)" stroke="#e0e7ff" stroke-width="5.5" opacity="0.95" stroke-linejoin="round"/>
+        <polygon points="${afterPoints.join(' ')}" fill="rgba(34,197,94,0.18)" stroke="#22c55e" stroke-width="5.5" opacity="1" stroke-linejoin="round"/>
+        ${points.map((p, i) => `<circle cx="${center + (beforeVals[i]/maxScore)*radius*Math.cos(p.angle)}" cy="${center + (beforeVals[i]/maxScore)*radius*Math.sin(p.angle)}" r="7" fill="#e0e7ff" stroke="#f1f5f9" stroke-width="2.5"/>`).join('')}
+        ${points.map((p, i) => `<circle cx="${center + (afterVals[i]/maxScore)*radius*Math.cos(p.angle)}" cy="${center + (afterVals[i]/maxScore)*radius*Math.sin(p.angle)}" r="7" fill="#22c55e" stroke="#86efac" stroke-width="2.5"/>`).join('')}
         ${labels}
+        ${riskReductionBox}
     </svg>`;
 
     return svg;
