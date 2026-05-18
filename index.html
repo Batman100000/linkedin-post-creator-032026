@@ -420,12 +420,28 @@ const masterControls = [
     { id: "A2", layer: "3. APPLICATION", type: "Preventive", title: "BOLA Prevention", description: "Test API calls for authorization.", trigger: c => c.autonomy === 'agentic', nist: "MANAGE-3", iso: "A.8.3" },
     { id: "I1", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "API Key Vaulting", description: "Secrets vault with rotation.", trigger: c => c.hosting === 'vendor-api', nist: "MANAGE-1", iso: "A.7.3" },
     { id: "I2", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Network Segmentation", description: "VPC isolation.", trigger: c => c.hosting === 'private', nist: "MANAGE-1", iso: "A.7.3" },
+    { id: "I3", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Rate Limiting", description: "Throttle requests to prevent DDoS.", trigger: c => c.hosting === 'vendor-api', nist: "MANAGE-1", iso: "A.7.1" },
+    { id: "I4", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Vulnerability Scanning", description: "Automated scanning & remediation.", trigger: c => true, nist: "MEASURE-3", iso: "A.7.2" },
+    { id: "I5", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "IDS/IPS Monitoring", description: "Intrusion detection & prevention.", trigger: c => c.hosting === 'private', nist: "MEASURE-1", iso: "A.7.4" },
+    { id: "I6", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Endpoint Detection", description: "EDR with threat response.", trigger: c => true, nist: "MEASURE-2", iso: "A.7.2" },
+    { id: "I7", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Supply Chain Verification", description: "SBOM verification & vendor audits.", trigger: c => c.autonomy === 'agentic', nist: "MAP-1", iso: "A.7.1" },
+    { id: "I8", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Infrastructure Hardening", description: "OS patching & security baselines.", trigger: c => true, nist: "MANAGE-2", iso: "A.7.2" },
     { id: "C1", layer: "5. COMPLIANCE", type: "Directive", title: "Audit Logs", description: "Immutable signed logs.", trigger: c => c.sensitivity === 'critical', nist: "GOVERN-1", iso: "A.8.2" },
     { id: "C2", layer: "5. COMPLIANCE", type: "Directive", title: "DPIA", description: "Data Protection Impact Assessment.", trigger: c => c.sensitivity === 'critical', nist: "MAP-3", iso: "A.8.2" }
 ];
 
 let currentFramework = '5layer';
 let assessmentData = null;
+let implementedControls = new Set();
+
+function toggleControl(controlId) {
+    const checkbox = document.getElementById(`ctrl-${controlId}`);
+    if (checkbox.checked) {
+        implementedControls.add(controlId);
+    } else {
+        implementedControls.delete(controlId);
+    }
+}
 
 function selectLayer(id) {
     document.querySelectorAll('.layer-ring').forEach((r,i) => r.classList.toggle('dimmed', i+1 !== id));
@@ -775,7 +791,7 @@ function renderGuidelinesWithSpider() {
                         </div>
                         <div class="controls-column">
                             <div class="column-header" style="color: #22c55e;">🟢 Recommended Controls</div>
-                            ${lc.length===0 ? '<p style="color:#94a3b8;">No specialized controls needed.</p>' : lc.map(c=>`<div class="control-item" style="border-left-color:#22c55e;background:rgba(34,197,94,0.08);"><div class="control-title">${c.title}</div><div style="font-size:0.9rem;color:#cbd5e1;margin-top:6px;">${c.description}</div></div>`).join('')}
+                            ${lc.length===0 ? '<p style="color:#94a3b8;">No specialized controls needed.</p>' : lc.map(c=>`<div class="control-item" style="border-left-color:#22c55e;background:rgba(34,197,94,0.08);display:flex;gap:10px;align-items:flex-start;"><input type="checkbox" id="ctrl-${c.id}" onchange="toggleControl('${c.id}')" style="margin-top:4px;cursor:pointer;accent-color:#22c55e;"/><div style="flex:1;"><label for="ctrl-${c.id}" style="cursor:pointer;"><div class="control-title" style="margin:0;">${c.title}</div></label><div style="font-size:0.9rem;color:#cbd5e1;margin-top:6px;">${c.description}</div></div></div>`).join('')}
                         </div>
                     </div>
                 </div>
