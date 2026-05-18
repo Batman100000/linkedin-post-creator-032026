@@ -246,7 +246,11 @@
         .framework-tabs { display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
         .fw-tab { padding: 10px 16px; background: rgba(71,85,105,0.2); border: 2px solid rgba(71,85,105,0.4); border-radius: 8px; cursor: pointer; font-weight: 600; color: #cbd5e1; transition: all 0.3s ease; }
         .fw-tab.active { border-color: #3b82f6; background: rgba(59,130,246,0.2); color: #60a5fa; }
+        .layer-btn { padding: 12px 18px; border-radius: 8px; cursor: pointer; font-weight: 700; color: #f1f5f9; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .layer-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+        .layer-btn-active { box-shadow: 0 0 20px rgba(255,255,255,0.4) !important; transform: scale(1.05); }
         @media (max-width: 1200px) { .visualizer-layout { grid-template-columns: 1fr; } .threats-controls-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { .layer-btn { padding: 10px 12px; font-size: 0.85rem; } }
         @media (max-width: 768px) {
             .fw-selector { grid-template-columns: 1fr; }
             .modal-content { padding: 24px; }
@@ -303,6 +307,13 @@
                     <circle cx="350" cy="350" r="42" fill="rgba(251,191,36,0.15)" stroke="rgba(251,191,36,0.35)" stroke-width="1.5" pointer-events="none"/>
                 </svg>
                 <div class="tip-text">💡 Click any layer to explore threats & controls</div>
+                <div style="display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center;">
+                    <button class="layer-btn layer-btn-active" onclick="selectLayer(1)" data-layer="1" style="background: linear-gradient(135deg, #d97706 0%, #92400e 100%); border: 2px solid #d97706;">📊 Layer 1: Data</button>
+                    <button class="layer-btn" onclick="selectLayer(2)" data-layer="2" style="background: linear-gradient(135deg, #059669 0%, #064e3b 100%); border: 2px solid #059669;">🧠 Layer 2: Model/LLM</button>
+                    <button class="layer-btn" onclick="selectLayer(3)" data-layer="3" style="background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%); border: 2px solid #2563eb;">⚙️ Layer 3: Application</button>
+                    <button class="layer-btn" onclick="selectLayer(4)" data-layer="4" style="background: linear-gradient(135deg, #9333ea 0%, #581c87 100%); border: 2px solid #9333ea;">🌐 Layer 4: Infrastructure</button>
+                    <button class="layer-btn" onclick="selectLayer(5)" data-layer="5" style="background: linear-gradient(135deg, #db2777 0%, #831843 100%); border: 2px solid #db2777;">📋 Layer 5: Compliance</button>
+                </div>
             </div>
 
             <div class="inspector-panel">
@@ -410,6 +421,16 @@ let assessmentData = null;
 function selectLayer(id) {
     document.querySelectorAll('.layer-ring').forEach((r,i) => r.classList.toggle('dimmed', i+1 !== id));
     document.querySelectorAll('.layer-ring').forEach((r,i) => { if(i+1 === id) r.classList.add('active'); else r.classList.remove('active'); });
+
+    // Update button highlighting
+    document.querySelectorAll('.layer-btn').forEach(btn => {
+        if(btn.getAttribute('data-layer') == id) {
+            btn.classList.add('layer-btn-active');
+        } else {
+            btn.classList.remove('layer-btn-active');
+        }
+    });
+
     const d = layersData[id];
     document.getElementById('layerTag').textContent = d.tag;
     document.getElementById('layerTitle').textContent = d.title;
