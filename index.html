@@ -775,7 +775,7 @@ function renderGuidelinesWithSpider() {
                         </div>
                         <div class="controls-column">
                             <div class="column-header" style="color: #22c55e;">🟢 Recommended Controls</div>
-                            ${lc.length===0 ? '<p style="color:#94a3b8;">No specialized controls needed.</p>' : lc.map(c=>`<div class="control-item" style="border-left-color:#22c55e;background:rgba(34,197,94,0.08);"><div class="control-title">${c.title}</div></div>`).join('')}
+                            ${lc.length===0 ? '<p style="color:#94a3b8;">No specialized controls needed.</p>' : lc.map(c=>`<div class="control-item" style="border-left-color:#22c55e;background:rgba(34,197,94,0.08);"><div class="control-title">${c.title}</div><div style="font-size:0.9rem;color:#cbd5e1;margin-top:6px;">${c.description}</div></div>`).join('')}
                         </div>
                     </div>
                 </div>
