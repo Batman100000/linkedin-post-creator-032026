@@ -453,7 +453,10 @@ function toggleControl(controlId) {
 }
 
 function showThreatControls(threat, layerId) {
-    const layerNames = {1:'DATA', 2:'MODEL / LLM', 3:'APPLICATION', 4:'INFRASTRUCTURE', 5:'COMPLIANCE'};
+    const layerData = layersData[layerId];
+    const threats = layerData ? layerData.threats : [];
+    const threatNum = threats.indexOf(threat) + 1;
+
     const filteredControls = masterControls.filter(c => {
         const cLayerId = parseInt(c.layer.charAt(0));
         return cLayerId === layerId && (c.mitigates||[]).includes(threat);
@@ -461,10 +464,13 @@ function showThreatControls(threat, layerId) {
 
     let html = '';
     if (filteredControls.length === 0) {
-        html = `<div style="padding:12px;background:rgba(34,197,94,0.1);border-left:4px solid #22c55e;border-radius:6px;color:#cbd5e1;"><strong>✓ "${threat}" mitigation:</strong><br/>Review all recommended controls above for comprehensive coverage.</div>`;
+        html = `<div style="padding:12px;background:rgba(34,197,94,0.1);border-left:4px solid #22c55e;border-radius:6px;color:#cbd5e1;margin-bottom:12px;"><span style="background:#ef4444;color:white;font-weight:bold;padding:2px 8px;border-radius:4px;font-size:0.85rem;">T${threatNum}</span> <strong>"${threat}"</strong><br/><span style="margin-left:30px;font-size:0.9rem;">Review all recommended controls above for comprehensive coverage.</span></div>`;
     } else {
-        html = `<div style="padding:12px;background:rgba(34,197,94,0.15);border-left:4px solid #22c55e;border-radius:6px;margin-bottom:12px;color:#22c55e;"><strong>✓ Controls that mitigate "${threat}":</strong></div>`;
-        html += filteredControls.map(ctrl => `<div class="layer-control-item" style="border-left-color:#22c55e;background:rgba(34,197,94,0.1);"><strong>${ctrl.title}</strong><br/><span style="font-size:0.85rem;color:#cbd5e1;">${ctrl.description}</span></div>`).join('');
+        html = `<div style="padding:12px;background:rgba(34,197,94,0.15);border-left:4px solid #22c55e;border-radius:6px;margin-bottom:12px;color:#22c55e;"><span style="background:#ef4444;color:white;font-weight:bold;padding:2px 8px;border-radius:4px;font-size:0.85rem;margin-right:8px;">T${threatNum}</span><strong>"${threat}" is addressed by:</strong></div>`;
+        html += filteredControls.map((ctrl, idx) => {
+            const ctrlNum = masterControls.filter(c => parseInt(c.layer.charAt(0)) === layerId).indexOf(ctrl) + 1;
+            return `<div class="layer-control-item" style="border-left-color:#22c55e;background:rgba(34,197,94,0.1);"><div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:#22c55e;color:white;font-weight:bold;padding:2px 8px;border-radius:4px;min-width:24px;text-align:center;font-size:0.85rem;margin-top:2px;">C${ctrlNum}</span><div style="flex:1;"><strong>${ctrl.title}</strong><br/><span style="font-size:0.85rem;color:#cbd5e1;">${ctrl.description}</span></div></div></div>`;
+        }).join('');
     }
 
     document.getElementById(`controls-layer-${layerId}`).innerHTML = html;
@@ -577,13 +583,19 @@ document.getElementById('riskForm').addEventListener('submit', function(e) {
             <div class="threats-controls-grid">
                 <div class="threats-column">
                     <div class="column-header threats-header">⚠️ Threats to Address</div>
-                    ${threats.map((t, idx) => `<div class="threat-item" style="cursor:pointer;transition:all 0.2s ease;" onclick="showThreatControls('${t}',${layer.id})" onmouseover="this.style.background='rgba(239,68,68,0.2)'" onmouseout="this.style.background='rgba(239,68,68,0.1)'">${t}</div>`).join('')}
+                    ${threats.map((t, idx) => {
+                        const threatNum = idx + 1;
+                        return `<div class="threat-item" style="cursor:pointer;transition:all 0.2s ease;display:flex;gap:10px;align-items:flex-start;" onclick="showThreatControls('${t}',${layer.id})" onmouseover="this.style.background='rgba(239,68,68,0.2)'" onmouseout="this.style.background='rgba(239,68,68,0.1)'"><span style="background:#ef4444;color:white;font-weight:bold;padding:2px 8px;border-radius:4px;min-width:24px;text-align:center;font-size:0.85rem;">${threatNum}</span><span>${t}</span></div>`;
+                    }).join('')}
                 </div>
                 <div class="controls-column">
                     <div class="column-header controls-header">✓ Recommended Controls</div>
                     <div id="controls-layer-${layer.id}">
                         ${controls.length === 0 ? '<p style="color:#94a3b8;">No specialized controls needed.</p>' :
-                        controls.map(ctrl => `<div class="layer-control-item"><strong>${ctrl.title}</strong><br/><span style="font-size:0.85rem;color:#cbd5e1;">${ctrl.description}</span><div style="margin-top:8px;font-size:0.8rem;color:#22c55e;">Mitigates: ${(ctrl.mitigates||[]).join(', ')}</div></div>`).join('')}
+                        controls.map((ctrl, cIdx) => {
+                            const mitigatesThreats = threats.filter((t, tIdx) => (ctrl.mitigates||[]).includes(t)).map(t => threats.indexOf(t) + 1);
+                            return `<div class="layer-control-item"><div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:#22c55e;color:white;font-weight:bold;padding:2px 8px;border-radius:4px;min-width:24px;text-align:center;font-size:0.85rem;margin-top:2px;">${cIdx + 1}</span><div style="flex:1;"><strong>${ctrl.title}</strong><br/><span style="font-size:0.85rem;color:#cbd5e1;">${ctrl.description}</span><div style="margin-top:8px;font-size:0.8rem;color:#22c55e;"><strong>Closes Threat${mitigatesThreats.length===1?'':'s'}:</strong> ${mitigatesThreats.length > 0 ? mitigatesThreats.join(', ') : 'N/A'}</div></div></div></div>`;
+                        }).join('')}
                     </div>
                 </div>
             </div>
