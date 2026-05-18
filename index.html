@@ -709,11 +709,10 @@ function createSpiderChart() {
 
     // Risk reduction box on the right side
     const riskReductionBox = `
-        <rect x="${center + radius + 60}" y="${center - 90}" width="220" height="180" rx="16" fill="rgba(34,197,94,0.12)" stroke="#22c55e" stroke-width="3.5"/>
         <text x="${center + radius + 170}" y="${center - 50}" text-anchor="middle" font-size="14" font-weight="800" fill="#22c55e" letter-spacing="0.5">RISK REDUCED</text>
         <text x="${center + radius + 170}" y="${center + 45}" text-anchor="middle" font-size="80" font-weight="900" fill="#86efac">${riskReduction}%</text>
-        <text x="${center + radius + 170}" y="${center + 95}" text-anchor="middle" font-size="11" font-weight="600" fill="#cbd5e1">With recommended</text>
-        <text x="${center + radius + 170}" y="${center + 110}" text-anchor="middle" font-size="11" font-weight="600" fill="#cbd5e1">controls implemented</text>
+        <text x="${center + radius + 170}" y="${center + 120}" text-anchor="middle" font-size="11" font-weight="600" fill="#cbd5e1">With recommended</text>
+        <text x="${center + radius + 170}" y="${center + 135}" text-anchor="middle" font-size="11" font-weight="600" fill="#cbd5e1">controls implemented</text>
     `;
 
     const svg = `
