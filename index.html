@@ -412,22 +412,31 @@ const layersData = {
 };
 
 const masterControls = [
-    { id: "D1", layer: "1. DATA", type: "Preventive", title: "PII Scrubbing", description: "Auto-redact SSNs, cards, health records.", trigger: c => c.sensitivity === 'critical', nist: "MAP-2", iso: "A.10.6" },
-    { id: "D2", layer: "1. DATA", type: "Preventive", title: "Encryption", description: "AES-256 at rest, TLS 1.3 in transit.", trigger: c => true, nist: "MANAGE-1", iso: "A.10.7" },
-    { id: "M1", layer: "2. MODEL / LLM", type: "Preventive", title: "Prompt Hardening", description: "XML tags, non-overridable directives.", trigger: c => c.users === 'public', nist: "MANAGE-2", iso: "A.9.2" },
-    { id: "M2", layer: "2. MODEL / LLM", type: "Preventive", title: "Input Filtering", description: "LlamaGuard/NeMo scanning.", trigger: c => c.users === 'public', nist: "MEASURE-2", iso: "A.9.4" },
-    { id: "A1", layer: "3. APPLICATION", type: "Preventive", title: "HITL Gates", description: "Approval for state-changing actions.", trigger: c => c.autonomy === 'agentic', nist: "MANAGE-3", iso: "A.8.3" },
-    { id: "A2", layer: "3. APPLICATION", type: "Preventive", title: "BOLA Prevention", description: "Test API calls for authorization.", trigger: c => c.autonomy === 'agentic', nist: "MANAGE-3", iso: "A.8.3" },
-    { id: "I1", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "API Key Vaulting", description: "Secrets vault with rotation.", trigger: c => c.hosting === 'vendor-api', nist: "MANAGE-1", iso: "A.7.3" },
-    { id: "I2", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Network Segmentation", description: "VPC isolation.", trigger: c => c.hosting === 'private', nist: "MANAGE-1", iso: "A.7.3" },
-    { id: "I3", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Rate Limiting", description: "Throttle requests to prevent DDoS.", trigger: c => c.hosting === 'vendor-api', nist: "MANAGE-1", iso: "A.7.1" },
-    { id: "I4", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Vulnerability Scanning", description: "Automated scanning & remediation.", trigger: c => true, nist: "MEASURE-3", iso: "A.7.2" },
-    { id: "I5", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "IDS/IPS Monitoring", description: "Intrusion detection & prevention.", trigger: c => c.hosting === 'private', nist: "MEASURE-1", iso: "A.7.4" },
-    { id: "I6", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Endpoint Detection", description: "EDR with threat response.", trigger: c => true, nist: "MEASURE-2", iso: "A.7.2" },
-    { id: "I7", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Supply Chain Verification", description: "SBOM verification & vendor audits.", trigger: c => c.autonomy === 'agentic', nist: "MAP-1", iso: "A.7.1" },
-    { id: "I8", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Infrastructure Hardening", description: "OS patching & security baselines.", trigger: c => true, nist: "MANAGE-2", iso: "A.7.2" },
-    { id: "C1", layer: "5. COMPLIANCE", type: "Directive", title: "Audit Logs", description: "Immutable signed logs.", trigger: c => c.sensitivity === 'critical', nist: "GOVERN-1", iso: "A.8.2" },
-    { id: "C2", layer: "5. COMPLIANCE", type: "Directive", title: "DPIA", description: "Data Protection Impact Assessment.", trigger: c => c.sensitivity === 'critical', nist: "MAP-3", iso: "A.8.2" }
+    // Data Layer
+    { id: "D1", layer: "1. DATA", type: "Preventive", title: "Data Lineage & Provenance Tracking", description: "Immutable log of training/fine-tuning data origin.", trigger: c => c.sensitivity === 'critical', nist: "MAP-2", iso: "A.10.6", mitigates: ["Data poisoning"] },
+    { id: "D2", layer: "1. DATA", type: "Preventive", title: "Automated Data Masking & PII Anonymization", description: "Real-time PII stripping/hashing before data lake.", trigger: c => c.sensitivity === 'critical', nist: "MAP-2", iso: "A.10.6", mitigates: ["PII leakage", "Unauthorized access"] },
+    { id: "D3", layer: "1. DATA", type: "Preventive", title: "Access Control & Encryption", description: "RBAC enforcement, AES-256 at rest, TLS 1.3 in transit.", trigger: c => true, nist: "MANAGE-1", iso: "A.10.7", mitigates: ["Unauthorized access", "Exfiltration", "Membership inference"] },
+    // Model/LLM Layer
+    { id: "M1", layer: "2. MODEL / LLM", type: "Preventive", title: "Input Sanitization & Prompt Injection Filtering", description: "Defensive gateway to block adversarial prompts.", trigger: c => c.users === 'public', nist: "MANAGE-2", iso: "A.9.2", mitigates: ["Prompt injection", "Jailbreak attacks"] },
+    { id: "M2", layer: "2. MODEL / LLM", type: "Preventive", title: "Output Validation & Rate Limiting", description: "Scan outputs for hallucinations, rate-limit API calls.", trigger: c => c.users === 'public', nist: "MEASURE-2", iso: "A.9.4", mitigates: ["Hallucinations", "Output poisoning", "Model inversion attacks"] },
+    { id: "M3", layer: "2. MODEL / LLM", type: "Preventive", title: "Model Integrity & Version Control", description: "Cryptographic signing for model weights.", trigger: c => true, nist: "MANAGE-2", iso: "A.9.2", mitigates: ["Model weight theft", "Unauthorized modifications"] },
+    // Application Layer
+    { id: "A1", layer: "3. APPLICATION", type: "Preventive", title: "Secure API Authentication & Authorization", description: "OAuth 2.0/OIDC with continuous token validation.", trigger: c => true, nist: "MANAGE-3", iso: "A.8.3", mitigates: ["Authorization bypass", "Session hijacking", "BOLA attacks"] },
+    { id: "A2", layer: "3. APPLICATION", type: "Preventive", title: "Dynamic & Static Application Security Testing", description: "Automated DAST/SAST in CI/CD pipeline.", trigger: c => true, nist: "MEASURE-3", iso: "A.8.3", mitigates: ["XSS attacks", "Authorization bypass"] },
+    { id: "A3", layer: "3. APPLICATION", type: "Preventive", title: "Comprehensive Audit Logging", description: "Detailed logs of runtime behavior and decisions.", trigger: c => c.autonomy === 'agentic', nist: "GOVERN-1", iso: "A.8.2", mitigates: ["Overprivileged agents", "Session hijacking"] },
+    // Infrastructure Layer
+    { id: "I1", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Container & Orchestration Hardening", description: "Minimal base images, K8s policies, pod security.", trigger: c => c.hosting === 'private', nist: "MANAGE-1", iso: "A.7.3", mitigates: ["Credential leaks", "DDoS attacks"] },
+    { id: "I2", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Vulnerability & Patch Management", description: "Automated scanning and patching of OS/dependencies.", trigger: c => true, nist: "MANAGE-1", iso: "A.7.2", mitigates: ["Model exfil", "Credential leaks", "Takeover"] },
+    { id: "I3", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Identity & Access Management (IAM)", description: "Least privilege, short-lived credentials, MFA.", trigger: c => true, nist: "MANAGE-1", iso: "A.7.3", mitigates: ["Credential leaks", "Takeover"] },
+    { id: "I4", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Rate Limiting", description: "Throttle requests to prevent DDoS attacks.", trigger: c => c.hosting === 'vendor-api', nist: "MANAGE-1", iso: "A.7.1", mitigates: ["DDoS attacks"] },
+    { id: "I5", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Supply Chain Verification", description: "SBOM verification & vendor audits.", trigger: c => c.autonomy === 'agentic', nist: "MAP-1", iso: "A.7.1", mitigates: ["Supply chain", "Takeover"] },
+    // Network Layer
+    { id: "N1", layer: "5. NETWORK", type: "Preventive", title: "Micro-segmentation", description: "Dedicated VPCs/subnets for AI training/inference.", trigger: c => c.hosting === 'private', nist: "MANAGE-1", iso: "A.7.4", mitigates: ["DDoS attacks", "Model exfil", "Supply chain"] },
+    { id: "N2", layer: "5. NETWORK", type: "Preventive", title: "Egress Traffic Filtering", description: "Restrict unauthorized outbound connections.", trigger: c => true, nist: "MANAGE-1", iso: "A.7.4", mitigates: ["Model exfil", "Credential leaks"] },
+    { id: "N3", layer: "5. NETWORK", type: "Preventive", title: "DDoS & WAF Protection", description: "Cloud-based WAF for DDoS mitigation.", trigger: c => c.hosting === 'vendor-api', nist: "MANAGE-1", iso: "A.7.1", mitigates: ["DDoS attacks"] },
+    // Compliance Layer
+    { id: "C1", layer: "5. COMPLIANCE", type: "Directive", title: "Audit Logs", description: "Immutable signed logs for compliance.", trigger: c => c.sensitivity === 'critical', nist: "GOVERN-1", iso: "A.8.2", mitigates: ["Uncontrolled automation", "No audit trail"] },
+    { id: "C2", layer: "5. COMPLIANCE", type: "Directive", title: "DPIA", description: "Data Protection Impact Assessment.", trigger: c => c.sensitivity === 'critical', nist: "MAP-3", iso: "A.8.2", mitigates: ["Uncontrolled automation", "Discrimination"] }
 ];
 
 let currentFramework = '5layer';
@@ -441,6 +450,23 @@ function toggleControl(controlId) {
     } else {
         implementedControls.delete(controlId);
     }
+}
+
+function showThreatControls(threat, layerId) {
+    const filteredControls = masterControls.filter(c =>
+        c.layer === `${layerId}. ${['DATA','MODEL / LLM','APPLICATION','INFRASTRUCTURE','NETWORK'][layerId-1]}` &&
+        (c.mitigates||[]).includes(threat)
+    );
+
+    let html = '';
+    if (filteredControls.length === 0) {
+        html = `<div style="padding:12px;background:rgba(34,197,94,0.1);border-left:4px solid #22c55e;border-radius:6px;color:#cbd5e1;">No direct controls found for "${threat}". Review all recommended controls above.</div>`;
+    } else {
+        html = `<div style="padding:12px;background:rgba(34,197,94,0.1);border-left:4px solid #22c55e;border-radius:6px;margin-bottom:12px;color:#cbd5e1;"><strong>Controls for "${threat}":</strong></div>`;
+        html += filteredControls.map(ctrl => `<div class="layer-control-item" style="border-left-color:#22c55e;background:rgba(34,197,94,0.1);"><strong>${ctrl.title}</strong><br/><span style="font-size:0.85rem;color:#cbd5e1;">${ctrl.description}</span></div>`).join('');
+    }
+
+    document.getElementById(`controls-layer-${layerId}`).innerHTML = html;
 }
 
 function selectLayer(id) {
@@ -546,15 +572,18 @@ document.getElementById('riskForm').addEventListener('submit', function(e) {
         const controls = byLayer[layer.id];
         html += `<div class="card">
             <div class="layer-title" style="color:${layerColors[layer.id]};margin-bottom:20px;">${layerIcons[layer.id]} Layer ${layer.id}: ${layerNames[layer.id]} (Risk: ${layer.score}/100)</div>
+            <div style="margin-bottom:16px;padding:12px;background:rgba(71,85,105,0.2);border-radius:8px;font-size:0.9rem;color:#cbd5e1;">💡 Click on any threat to see which controls mitigate it</div>
             <div class="threats-controls-grid">
                 <div class="threats-column">
                     <div class="column-header threats-header">⚠️ Threats to Address</div>
-                    ${threats.map(t => `<div class="threat-item">${t}</div>`).join('')}
+                    ${threats.map((t, idx) => `<div class="threat-item" style="cursor:pointer;transition:all 0.2s ease;" onclick="showThreatControls('${t}',${layer.id})" onmouseover="this.style.background='rgba(239,68,68,0.2)'" onmouseout="this.style.background='rgba(239,68,68,0.1)'">${t}</div>`).join('')}
                 </div>
                 <div class="controls-column">
                     <div class="column-header controls-header">✓ Recommended Controls</div>
-                    ${controls.length === 0 ? '<p style="color:#94a3b8;">No specialized controls needed.</p>' :
-                    controls.map(ctrl => `<div class="layer-control-item"><strong>${ctrl.title}</strong><br/><span style="font-size:0.85rem;color:#cbd5e1;">${ctrl.description}</span></div>`).join('')}
+                    <div id="controls-layer-${layer.id}">
+                        ${controls.length === 0 ? '<p style="color:#94a3b8;">No specialized controls needed.</p>' :
+                        controls.map(ctrl => `<div class="layer-control-item"><strong>${ctrl.title}</strong><br/><span style="font-size:0.85rem;color:#cbd5e1;">${ctrl.description}</span><div style="margin-top:8px;font-size:0.8rem;color:#22c55e;">Mitigates: ${(ctrl.mitigates||[]).join(', ')}</div></div>`).join('')}
+                    </div>
                 </div>
             </div>
         </div>`;
