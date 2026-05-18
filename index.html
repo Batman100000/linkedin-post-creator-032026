@@ -453,16 +453,17 @@ function toggleControl(controlId) {
 }
 
 function showThreatControls(threat, layerId) {
-    const filteredControls = masterControls.filter(c =>
-        c.layer === `${layerId}. ${['DATA','MODEL / LLM','APPLICATION','INFRASTRUCTURE','NETWORK'][layerId-1]}` &&
-        (c.mitigates||[]).includes(threat)
-    );
+    const layerNames = {1:'DATA', 2:'MODEL / LLM', 3:'APPLICATION', 4:'INFRASTRUCTURE', 5:'COMPLIANCE'};
+    const filteredControls = masterControls.filter(c => {
+        const cLayerId = parseInt(c.layer.charAt(0));
+        return cLayerId === layerId && (c.mitigates||[]).includes(threat);
+    });
 
     let html = '';
     if (filteredControls.length === 0) {
-        html = `<div style="padding:12px;background:rgba(34,197,94,0.1);border-left:4px solid #22c55e;border-radius:6px;color:#cbd5e1;">No direct controls found for "${threat}". Review all recommended controls above.</div>`;
+        html = `<div style="padding:12px;background:rgba(34,197,94,0.1);border-left:4px solid #22c55e;border-radius:6px;color:#cbd5e1;"><strong>✓ "${threat}" mitigation:</strong><br/>Review all recommended controls above for comprehensive coverage.</div>`;
     } else {
-        html = `<div style="padding:12px;background:rgba(34,197,94,0.1);border-left:4px solid #22c55e;border-radius:6px;margin-bottom:12px;color:#cbd5e1;"><strong>Controls for "${threat}":</strong></div>`;
+        html = `<div style="padding:12px;background:rgba(34,197,94,0.15);border-left:4px solid #22c55e;border-radius:6px;margin-bottom:12px;color:#22c55e;"><strong>✓ Controls that mitigate "${threat}":</strong></div>`;
         html += filteredControls.map(ctrl => `<div class="layer-control-item" style="border-left-color:#22c55e;background:rgba(34,197,94,0.1);"><strong>${ctrl.title}</strong><br/><span style="font-size:0.85rem;color:#cbd5e1;">${ctrl.description}</span></div>`).join('');
     }
 
