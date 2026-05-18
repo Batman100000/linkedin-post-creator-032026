@@ -235,8 +235,27 @@
         .spider-legend { display: flex; gap: 20px; margin-top: 20px; justify-content: center; flex-wrap: wrap; }
         .legend-item { display: flex; align-items: center; gap: 8px; }
         .legend-color { width: 20px; height: 20px; border-radius: 3px; }
-        @media (max-width: 1200px) { .visualizer-layout { grid-template-columns: 1fr; } }
-        @media (max-width: 768px) { .fw-selector { grid-template-columns: 1fr; } .modal-content { padding: 24px; } }
+        .threats-controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 20px 0; }
+        .threats-column, .controls-column { background: rgba(30,41,59,0.6); border: 1px solid rgba(71,85,105,0.3); border-radius: 12px; padding: 20px; }
+        .column-header { font-size: 1.2rem; font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .threats-header { color: #ef4444; }
+        .controls-header { color: #22c55e; }
+        .threat-item { background: rgba(239,68,68,0.1); border-left: 4px solid #ef4444; padding: 12px; margin-bottom: 10px; border-radius: 6px; font-size: 0.95rem; color: #f1f5f9; }
+        .layer-control-item { background: rgba(34,197,94,0.1); border-left: 4px solid #22c55e; padding: 12px; margin-bottom: 10px; border-radius: 6px; font-size: 0.95rem; color: #f1f5f9; }
+        .framework-tabs { display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+        .fw-tab { padding: 10px 16px; background: rgba(71,85,105,0.2); border: 2px solid rgba(71,85,105,0.4); border-radius: 8px; cursor: pointer; font-weight: 600; color: #cbd5e1; transition: all 0.3s ease; }
+        .fw-tab.active { border-color: #3b82f6; background: rgba(59,130,246,0.2); color: #60a5fa; }
+        @media (max-width: 1200px) { .visualizer-layout { grid-template-columns: 1fr; } .threats-controls-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) {
+            .fw-selector { grid-template-columns: 1fr; }
+            .modal-content { padding: 24px; }
+            h1 { font-size: 1.6rem; }
+            .tab-btn { padding: 8px 12px; font-size: 0.85rem; }
+            .threats-controls-grid { gap: 16px; }
+            .threats-column, .controls-column { padding: 16px; }
+            .column-header { font-size: 1rem; }
+            .threat-item, .layer-control-item { padding: 10px; font-size: 0.9rem; }
+        }
     </style>
 </head>
 <body>
@@ -460,19 +479,65 @@ document.getElementById('riskForm').addEventListener('submit', function(e) {
     });
     html += `</div>`;
 
-    // Recommended Controls per Layer
-    html += `<div class="card"><h3 style="margin-bottom:20px;">🔧 Recommended Controls by Layer</h3>`;
+    // Framework selector tabs - 5-Layer, NIST, ISO
+    html += `<div class="card"><h3 style="margin-bottom:16px;">📋 View Controls By Framework</h3><div class="framework-tabs">
+        <button class="fw-tab active" onclick="switchResultsFramework(event, '5layer')">📊 5-Layer Model</button>
+        <button class="fw-tab" onclick="switchResultsFramework(event, 'nist')">🏛️ NIST AI RMF</button>
+        <button class="fw-tab" onclick="switchResultsFramework(event, 'iso')">📋 ISO 42001</button>
+    </div></div>`;
+
+    // 5-Layer view: Threats & Controls side by side
+    html += `<div id="framework-5layer">`;
     sorted.forEach(layer=>{
+        const threats = layersData[layer.id].threats;
         const controls = byLayer[layer.id];
-        html += `<div style="background:rgba(71,85,105,0.1);border-left:4px solid ${layerColors[layer.id]};padding:16px;margin-bottom:16px;border-radius:6px;">
-            <div class="layer-title" style="color:${layerColors[layer.id]};">${layerIcons[layer.id]} Layer ${layer.id}: ${layerNames[layer.id]} (Score: ${layer.score}/100)</div>`;
-        if(controls.length===0) {
-            html += '<p style="color:#94a3b8;">No specialized controls needed for this layer based on configuration.</p>';
-        } else {
-            controls.forEach(ctrl=>{
-                html += `<div class="control-item" style="border-left-color:${layerColors[layer.id]};margin-top:12px;"><div class="control-title">${ctrl.title}</div><span class="control-type">${ctrl.type}</span><div class="control-desc">${ctrl.description}</div><div class="control-tags"><span class="tag tag-nist">NIST: ${ctrl.nist}</span><span class="tag tag-iso">ISO: ${ctrl.iso}</span></div></div>`;
-            });
-        }
+        html += `<div class="card">
+            <div class="layer-title" style="color:${layerColors[layer.id]};margin-bottom:20px;">${layerIcons[layer.id]} Layer ${layer.id}: ${layerNames[layer.id]} (Risk: ${layer.score}/100)</div>
+            <div class="threats-controls-grid">
+                <div class="threats-column">
+                    <div class="column-header threats-header">⚠️ Threats to Address</div>
+                    ${threats.map(t => `<div class="threat-item">${t}</div>`).join('')}
+                </div>
+                <div class="controls-column">
+                    <div class="column-header controls-header">✓ Recommended Controls</div>
+                    ${controls.length === 0 ? '<p style="color:#94a3b8;">No specialized controls needed.</p>' :
+                    controls.map(ctrl => `<div class="layer-control-item"><strong>${ctrl.title}</strong><br/><span style="font-size:0.85rem;color:#cbd5e1;">${ctrl.description}</span></div>`).join('')}
+                </div>
+            </div>
+        </div>`;
+    });
+    html += `</div>`;
+
+    // NIST view
+    html += `<div id="framework-nist" style="display:none;">`;
+    const nistGroups = {};
+    m.forEach(ctrl => {
+        if(!nistGroups[ctrl.nist]) nistGroups[ctrl.nist] = [];
+        nistGroups[ctrl.nist].push(ctrl);
+    });
+    Object.keys(nistGroups).sort().forEach(nist => {
+        html += `<div class="card"><h3 style="color:#3b82f6;margin-bottom:16px;">🏛️ NIST: ${nist}</h3>`;
+        nistGroups[nist].forEach(ctrl => {
+            const layerColor = {1:'#f59e0b',2:'#10b981',3:'#3b82f6',4:'#a855f7',5:'#ec4899'}[parseInt(ctrl.layer[0])];
+            html += `<div class="control-item" style="border-left-color:${layerColor};margin-bottom:12px;"><div class="control-title">${ctrl.title}</div><span class="control-type">${ctrl.type}</span><div class="control-desc">${ctrl.description}</div><div class="control-tags"><span class="tag tag-iso">ISO: ${ctrl.iso}</span></div></div>`;
+        });
+        html += `</div>`;
+    });
+    html += `</div>`;
+
+    // ISO view
+    html += `<div id="framework-iso" style="display:none;">`;
+    const isoGroups = {};
+    m.forEach(ctrl => {
+        if(!isoGroups[ctrl.iso]) isoGroups[ctrl.iso] = [];
+        isoGroups[ctrl.iso].push(ctrl);
+    });
+    Object.keys(isoGroups).sort().forEach(iso => {
+        html += `<div class="card"><h3 style="color:#a855f7;margin-bottom:16px;">📋 ISO: ${iso}</h3>`;
+        isoGroups[iso].forEach(ctrl => {
+            const layerColor = {1:'#f59e0b',2:'#10b981',3:'#3b82f6',4:'#a855f7',5:'#ec4899'}[parseInt(ctrl.layer[0])];
+            html += `<div class="control-item" style="border-left-color:${layerColor};margin-bottom:12px;"><div class="control-title">${ctrl.title}</div><span class="control-type">${ctrl.type}</span><div class="control-desc">${ctrl.description}</div><div class="control-tags"><span class="tag tag-nist">NIST: ${ctrl.nist}</span></div></div>`;
+        });
         html += `</div>`;
     });
     html += `</div>`;
@@ -480,10 +545,8 @@ document.getElementById('riskForm').addEventListener('submit', function(e) {
     document.getElementById('riskResults').innerHTML = html;
     switchTab(null, 'results');
 
-    // Show framework selector modal
-    setTimeout(() => {
-        document.getElementById('frameworkModal').style.display = 'flex';
-    }, 500);
+    // Set default to 5-Layer and auto-show framework selector
+    currentFramework = '5layer';
 });
 
 function selectFrameworkAndRender(fw, element) {
@@ -496,6 +559,24 @@ function selectFrameworkAndRender(fw, element) {
         switchTab(null, 'guidelines');
         renderGuidelinesWithSpider();
     }, 300);
+}
+
+function switchResultsFramework(e, fw) {
+    e.preventDefault();
+    currentFramework = fw;
+
+    // Hide all frameworks
+    document.getElementById('framework-5layer').style.display = 'none';
+    document.getElementById('framework-nist').style.display = 'none';
+    document.getElementById('framework-iso').style.display = 'none';
+
+    // Show selected framework
+    const fwMap = {'5layer': 'framework-5layer', 'nist': 'framework-nist', 'iso': 'framework-iso'};
+    document.getElementById(fwMap[fw]).style.display = 'block';
+
+    // Update active tab styling
+    document.querySelectorAll('.fw-tab').forEach(btn => btn.classList.remove('active'));
+    e.target.classList.add('active');
 }
 
 function setFramework(f) {
