@@ -268,11 +268,20 @@
     <header>
         <h1>🛡️ Ultimate AI Security Framework v4</h1>
         <p class="subtitle">Interactive 5-Layer Model with NIST AI RMF & ISO/IEC 42001 Mapping</p>
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab(event, 'visualizer')">🎯 Interactive Visualizer</button>
-            <button class="tab-btn" onclick="switchTab(event, 'assessment')">📋 Risk Assessment</button>
-            <button class="tab-btn" onclick="switchTab(event, 'results')">📊 Results</button>
-            <button class="tab-btn" onclick="switchTab(event, 'guidelines')">🔐 Dynamic Guidelines</button>
+        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab(event, 'visualizer')">🎯 Interactive Visualizer</button>
+                <button class="tab-btn" onclick="switchTab(event, 'assessment')">📋 Risk Assessment</button>
+                <button class="tab-btn" onclick="switchTab(event, 'results')">📊 Results</button>
+                <button class="tab-btn" onclick="switchTab(event, 'guidelines')">🔐 Dynamic Guidelines</button>
+            </div>
+            <select id="layerSelector" onchange="selectLayer(parseInt(this.value))" style="padding: 10px 14px; background: rgba(71,85,105,0.3); border: 1px solid rgba(71,85,105,0.5); color: #cbd5e1; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
+                <option value="1" selected>📊 Layer 1: Data</option>
+                <option value="2">🧠 Layer 2: Model/LLM</option>
+                <option value="3">⚙️ Layer 3: Application</option>
+                <option value="4">🌐 Layer 4: Infrastructure</option>
+                <option value="5">📋 Layer 5: Compliance</option>
+            </select>
         </div>
     </header>
 
@@ -430,6 +439,12 @@ function selectLayer(id) {
             btn.classList.remove('layer-btn-active');
         }
     });
+
+    // Update dropdown selector
+    const selector = document.getElementById('layerSelector');
+    if(selector) {
+        selector.value = id;
+    }
 
     const d = layersData[id];
     document.getElementById('layerTag').textContent = d.tag;
@@ -694,12 +709,11 @@ function createSpiderChart() {
 
     // Risk reduction box on the right side
     const riskReductionBox = `
-        <rect x="${center + radius + 80}" y="${center - 80}" width="180" height="160" rx="16" fill="rgba(34,197,94,0.12)" stroke="#22c55e" stroke-width="3.5"/>
-        <text x="${center + radius + 170}" y="${center - 40}" text-anchor="middle" font-size="18" font-weight="900" fill="#22c55e" letter-spacing="1">RISK REDUCED</text>
-        <text x="${center + radius + 170}" y="${center + 35}" text-anchor="middle" font-size="64" font-weight="900" fill="#86efac">${riskReduction}%</text>
-        <text x="${center + radius + 170}" y="${center + 80}" text-anchor="middle" font-size="13" font-weight="700" fill="#cbd5e1">Through</text>
-        <text x="${center + radius + 170}" y="${center + 100}" text-anchor="middle" font-size="13" font-weight="700" fill="#cbd5e1">Recommended</text>
-        <text x="${center + radius + 170}" y="${center + 120}" text-anchor="middle" font-size="13" font-weight="700" fill="#cbd5e1">Controls</text>
+        <rect x="${center + radius + 60}" y="${center - 90}" width="220" height="180" rx="16" fill="rgba(34,197,94,0.12)" stroke="#22c55e" stroke-width="3.5"/>
+        <text x="${center + radius + 170}" y="${center - 50}" text-anchor="middle" font-size="14" font-weight="800" fill="#22c55e" letter-spacing="0.5">RISK REDUCED</text>
+        <text x="${center + radius + 170}" y="${center + 45}" text-anchor="middle" font-size="80" font-weight="900" fill="#86efac">${riskReduction}%</text>
+        <text x="${center + radius + 170}" y="${center + 95}" text-anchor="middle" font-size="11" font-weight="600" fill="#cbd5e1">With recommended</text>
+        <text x="${center + radius + 170}" y="${center + 110}" text-anchor="middle" font-size="11" font-weight="600" fill="#cbd5e1">controls implemented</text>
     `;
 
     const svg = `
@@ -747,13 +761,25 @@ function renderGuidelinesWithSpider() {
     if(currentFramework==='5layer') {
         const l = ['1. DATA','2. MODEL / LLM','3. APPLICATION','4. INFRASTRUCTURE','5. COMPLIANCE'];
         const col = {'1. DATA':'#f59e0b','2. MODEL / LLM':'#10b981','3. APPLICATION':'#3b82f6','4. INFRASTRUCTURE':'#a855f7','5. COMPLIANCE':'#ec4899'};
-        h += `<div style="margin-top: 20px;"><h3 style="margin-bottom: 16px;">🔧 Recommended Controls by Layer</h3>`;
-        l.forEach(l => {
-            const lc = m.filter(c=>c.layer===l);
-            h += `<div class="layer-section" style="border-left-color:${col[l]};"><div class="layer-title" style="color:${col[l]};">${l}</div>`;
-            if(lc.length===0) h+='<p style="color:#94a3b8;">No specialized controls needed.</p>';
-            else lc.forEach(c=>h+=renderControl(c));
-            h+='</div>';
+        h += `<div style="margin-top: 20px;"><h3 style="margin-bottom: 16px;">🔒 Threats & Controls by Layer</h3>`;
+        l.forEach(layerName => {
+            const lc = m.filter(c=>c.layer===layerName);
+            const layerThreats = layersData[Object.keys(layersData).find(k => layersData[k].title.includes(layerName.split('.')[1]))]?.threats || [];
+            h += `
+                <div style="margin-bottom: 28px;">
+                    <div style="color:${col[layerName]}; font-weight: 700; font-size: 1.1rem; margin-bottom: 12px;">${layerName}</div>
+                    <div class="threats-controls-grid">
+                        <div class="threats-column">
+                            <div class="column-header threats-header">🔴 Active Threats</div>
+                            ${layerThreats.map(t => `<div class="threat-item">${t}</div>`).join('')}
+                        </div>
+                        <div class="controls-column">
+                            <div class="column-header" style="color: #22c55e;">🟢 Recommended Controls</div>
+                            ${lc.length===0 ? '<p style="color:#94a3b8;">No specialized controls needed.</p>' : lc.map(c=>`<div class="control-item" style="border-left-color:#22c55e;background:rgba(34,197,94,0.08);"><div class="control-title">${c.title}</div></div>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
         });
         h += '</div>';
     } else {
