@@ -764,7 +764,8 @@ function renderGuidelinesWithSpider() {
         h += `<div style="margin-top: 20px;"><h3 style="margin-bottom: 16px;">🔒 Threats & Controls by Layer</h3>`;
         l.forEach(layerName => {
             const lc = m.filter(c=>c.layer===layerName);
-            const layerThreats = layersData[Object.keys(layersData).find(k => layersData[k].title.includes(layerName.split('.')[1]))]?.threats || [];
+            const layerId = parseInt(layerName.charAt(0));
+            const layerThreats = layersData[layerId]?.threats || [];
             h += `
                 <div style="margin-bottom: 28px;">
                     <div style="color:${col[layerName]}; font-weight: 700; font-size: 1.1rem; margin-bottom: 12px;">${layerName}</div>
