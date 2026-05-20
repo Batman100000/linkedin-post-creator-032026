@@ -315,6 +315,21 @@
 
     <!-- VISUALIZER TAB -->
     <div id="visualizer" class="tab-content active">
+        <!-- Spider Web Overview Section -->
+        <div class="card" style="margin-bottom: 40px;">
+            <h2 style="margin-bottom: 24px;">🛡️ AI Security Risk Landscape</h2>
+            <div id="frontPageSpiderContainer"></div>
+            <div id="frontPageRiskAlert" style="margin-top: 24px; padding: 20px; background: linear-gradient(135deg, rgba(239,68,68,0.15) 0%, rgba(245,158,11,0.1) 100%); border-left: 4px solid #ef4444; border-radius: 8px; display: none;">
+                <div style="display: flex; gap: 12px; align-items: flex-start;">
+                    <span style="font-size: 1.5rem;">⚠️</span>
+                    <div>
+                        <div style="font-weight: 700; color: #f1f5f9; margin-bottom: 8px;">Critical Layer Alert</div>
+                        <div id="frontPageRiskContent" style="color: #cbd5e1; font-size: 0.95rem;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="visualizer-layout">
             <div class="onion-container">
                 <svg class="onion-diagram" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
@@ -1268,6 +1283,103 @@ function getRequiredFieldsForStep(step) {
 
 selectLayer(1);
 renderDefaultSpiderWeb();
+
+function renderFrontPageSpider() {
+    // Default baseline risk scores
+    const defaultScores = { 1: 15, 2: 15, 3: 10, 4: 10, 5: 15 };
+
+    const size = 700;
+    const center = size / 2;
+    const radius = 180;
+    const layers = 5;
+    const maxScore = 100;
+
+    const points = [];
+    const riskPoints = [];
+    const layerNames = ['Data', 'Model/LLM', 'Application', 'Infrastructure', 'Compliance'];
+    const layerEmojis = ['📊', '🧠', '⚙️', '🌐', '📋'];
+    const layerColors = ['#f59e0b', '#10b981', '#3b82f6', '#a855f7', '#ec4899'];
+
+    for (let i = 0; i < layers; i++) {
+        const angle = (i * 2 * Math.PI / layers) - Math.PI / 2;
+        const x = center + radius * Math.cos(angle);
+        const y = center + radius * Math.sin(angle);
+        points.push({x, y, angle, name: layerNames[i], emoji: layerEmojis[i], color: layerColors[i]});
+    }
+
+    const riskVals = [defaultScores[1], defaultScores[2], defaultScores[3], defaultScores[4], defaultScores[5]];
+
+    points.forEach((p, i) => {
+        const r = (riskVals[i] / maxScore) * radius;
+        riskPoints.push(`${center + r * Math.cos(p.angle)},${center + r * Math.sin(p.angle)}`);
+    });
+
+    let svg = `<svg viewBox="0 0 ${size} ${size}" width="600" height="600" style="max-width:100%; margin: 0 auto; display:block;">
+        <defs>
+            <linearGradient id="riskGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3" />
+                <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:0.2" />
+            </linearGradient>
+        </defs>`;
+
+    // Grid circles
+    for (let i = 1; i <= 4; i++) {
+        const r = (i / 5) * radius;
+        svg += `<circle cx="${center}" cy="${center}" r="${r}" fill="none" stroke="rgba(207,188,255,0.15)" stroke-width="1" stroke-dasharray="5,5"/>`;
+        svg += `<text x="${center + r + 10}" y="${center - 10}" font-size="11" fill="#94a3b8">${i*20}%</text>`;
+    }
+
+    // Axis lines
+    points.forEach((p) => {
+        const lineR = radius * 1.15;
+        const lineX = center + lineR * Math.cos(p.angle);
+        const lineY = center + lineR * Math.sin(p.angle);
+        svg += `<line x1="${center}" y1="${center}" x2="${lineX}" y2="${lineY}" stroke="rgba(207,188,255,0.2)" stroke-width="1"/>`;
+
+        const labelR = radius * 1.3;
+        const labelX = center + labelR * Math.cos(p.angle);
+        const labelY = center + labelR * Math.sin(p.angle);
+        svg += `<text x="${labelX}" y="${labelY+6}" font-size="13" font-weight="700" fill="${p.color}" text-anchor="middle">${p.emoji}</text>`;
+        svg += `<text x="${labelX}" y="${labelY+22}" font-size="11" fill="#cbd5e1" text-anchor="middle">${p.name}</text>`;
+    });
+
+    // Risk polygon with gradient
+    svg += `<polygon points="${riskPoints.join(' ')}" fill="url(#riskGrad)" stroke="#ef4444" stroke-width="3"/>`;
+
+    // Data points
+    riskPoints.forEach((point, idx) => {
+        const coords = point.split(',');
+        svg += `<circle cx="${coords[0]}" cy="${coords[1]}" r="7" fill="${points[idx].color}" stroke="#fff" stroke-width="2"/>`;
+        svg += `<text x="${coords[0]}" y="${coords[1]-12}" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">${riskVals[idx]}%</text>`;
+    });
+
+    svg += `</svg>`;
+
+    // Find highest risk layer
+    const maxRisk = Math.max(...riskVals);
+    const highestRiskIdx = riskVals.indexOf(maxRisk);
+    const highestRiskLayer = layerNames[highestRiskIdx];
+
+    const riskTips = {
+        'Data': "🔐 Data security is foundational. Encrypt data at rest & transit, implement strict RBAC+MFA, and mask PII before processing.",
+        'Model/LLM': "🧠 Model security requires defensive gates. Block adversarial prompts, validate outputs, and implement continuous drift monitoring.",
+        'Application': "⚙️ Application layer needs strict controls. Validate all LLM outputs, sanitize for XSS, and enforce least-privilege access.",
+        'Infrastructure': "🌐 Secure your infrastructure. Segment networks, rotate secrets, implement DDoS protection, and scan dependencies.",
+        'Compliance': "📋 Governance enables accountability. Maintain immutable audit logs, implement ethics reviews, and establish clear policies."
+    };
+
+    const riskAlert = document.getElementById('frontPageRiskAlert');
+    const riskContent = document.getElementById('frontPageRiskContent');
+
+    if (riskAlert && riskContent) {
+        riskContent.innerHTML = `<strong>${layerEmojis[highestRiskIdx]} ${highestRiskLayer}: ${maxRisk}% Risk</strong><br/>${riskTips[highestRiskLayer] || 'Implement comprehensive security controls.'}`;
+        riskAlert.style.display = 'block';
+    }
+
+    document.getElementById('frontPageSpiderContainer').innerHTML = svg;
+}
+
+renderFrontPageSpider();
 </script>
 </body>
 </html>
