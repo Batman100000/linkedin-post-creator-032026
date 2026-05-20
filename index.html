@@ -1,12 +1,8 @@
 <!DOCTYPE html>
-<!-- Updated: 2026-05-20 | Cache Buster: v20250520-latest -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <title>Ultimate AI Security Framework v4</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -267,13 +263,10 @@
         .btn-next { padding: 12px 24px; }
         .btn-submit { padding: 12px 24px; background: linear-gradient(135deg, #cfbcff 0%, #b8a5e0 100%); color: #0f141b; font-weight: 600; }
         .btn-next:disabled, .btn-prev:disabled { opacity: 0.5; cursor: not-allowed; }
-        .form-group-wizard { margin-bottom: 24px; padding: 16px; background: rgba(207,188,255,0.05); border: 1px solid rgba(207,188,255,0.1); border-radius: 8px; }
-        .form-group-wizard label { display: block; margin-bottom: 12px; font-weight: 600; color: #f1f5f9; font-size: 1.05rem; }
-        .linear-layout { display: flex; flex-direction: column; gap: 20px; }
-        .radio-group { display: flex; flex-direction: column; gap: 10px; }
-        .radio-group label { display: flex; align-items: center; gap: 8px; margin: 0; font-weight: 400; font-size: 0.95rem; cursor: pointer; }
-        .radio-group input[type="radio"] { cursor: pointer; }
-        input[type="text"] { width: 100% !important; padding: 12px !important; }
+        .form-group-wizard { margin-bottom: 24px; }
+        .three-column-layout { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+        @media (max-width: 1024px) { .three-column-layout { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 768px) { .three-column-layout { grid-template-columns: 1fr; } }
         .layer-btn { padding: 12px 18px; border-radius: 8px; cursor: pointer; font-weight: 700; color: #f1f5f9; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
         .layer-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
         .layer-btn-active { box-shadow: 0 0 20px rgba(255,255,255,0.4) !important; transform: scale(1.05); }
@@ -315,21 +308,6 @@
 
     <!-- VISUALIZER TAB -->
     <div id="visualizer" class="tab-content active">
-        <!-- Spider Web Overview Section -->
-        <div class="card" style="margin-bottom: 40px;">
-            <h2 style="margin-bottom: 24px;">🛡️ AI Security Risk Landscape</h2>
-            <div id="frontPageSpiderContainer"></div>
-            <div id="frontPageRiskAlert" style="margin-top: 24px; padding: 20px; background: linear-gradient(135deg, rgba(239,68,68,0.15) 0%, rgba(245,158,11,0.1) 100%); border-left: 4px solid #ef4444; border-radius: 8px; display: none;">
-                <div style="display: flex; gap: 12px; align-items: flex-start;">
-                    <span style="font-size: 1.5rem;">⚠️</span>
-                    <div>
-                        <div style="font-weight: 700; color: #f1f5f9; margin-bottom: 8px;">Critical Layer Alert</div>
-                        <div id="frontPageRiskContent" style="color: #cbd5e1; font-size: 0.95rem;"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="visualizer-layout">
             <div class="onion-container">
                 <svg class="onion-diagram" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
@@ -391,24 +369,28 @@
             </div>
 
             <form id="riskForm">
-                <!-- Step 1: Primary Users & Data Sensitivity -->
+                <!-- Step 1: System Name, Primary Users & Data Sensitivity -->
                 <div class="wizard-step active" id="step1">
-                    <div class="step-title">📋 User Type & Data Classification</div>
-                    <div class="linear-layout">
+                    <div class="step-title">📋 System Overview & Data</div>
+                    <div class="three-column-layout">
                         <div class="form-group-wizard">
-                            <label>Who uses your system? <span class="required">*</span></label>
+                            <label>System Name <span style="color: #94a3b8;">(optional)</span></label>
+                            <input type="text" id="systemName" placeholder="e.g., Customer Support Chatbot" style="width: 100%; padding: 12px;">
+                        </div>
+                        <div class="form-group-wizard">
+                            <label>Primary Users <span class="required">*</span></label>
                             <div class="radio-group">
-                                <label><input type="radio" name="users" value="public"> Public Users</label>
-                                <label><input type="radio" name="users" value="authenticated"> Authenticated Users</label>
-                                <label><input type="radio" name="users" value="internal"> Internal Only</label>
+                                <label><input type="radio" name="users" value="public"> Public</label>
+                                <label><input type="radio" name="users" value="authenticated"> Authenticated</label>
+                                <label><input type="radio" name="users" value="internal"> Internal</label>
                             </div>
                         </div>
                         <div class="form-group-wizard">
-                            <label>What type of data does it process? <span class="required">*</span></label>
+                            <label>Data Sensitivity <span class="required">*</span></label>
                             <div class="radio-group">
-                                <label><input type="radio" name="sensitivity" value="public"> Public Data</label>
+                                <label><input type="radio" name="sensitivity" value="public"> Public</label>
                                 <label><input type="radio" name="sensitivity" value="confidential"> Confidential</label>
-                                <label><input type="radio" name="sensitivity" value="critical"> Critical (PII/Sensitive)</label>
+                                <label><input type="radio" name="sensitivity" value="critical"> Critical (PII)</label>
                             </div>
                         </div>
                     </div>
@@ -420,29 +402,29 @@
 
                 <!-- Step 2: Model Hosting, Agent Autonomy & Fine-tuning -->
                 <div class="wizard-step" id="step2">
-                    <div class="step-title">🤖 Model & Agent Configuration</div>
-                    <div class="linear-layout">
+                    <div class="step-title">🤖 Model & Autonomy Configuration</div>
+                    <div class="three-column-layout">
                         <div class="form-group-wizard">
-                            <label>Where is the model hosted? <span class="required">*</span></label>
+                            <label>Model Hosting <span class="required">*</span></label>
                             <div class="radio-group">
-                                <label><input type="radio" name="hosting" value="vendor-api"> Vendor API (OpenAI, Claude, etc.)</label>
-                                <label><input type="radio" name="hosting" value="managed"> Managed Cloud (AWS, GCP, Azure)</label>
-                                <label><input type="radio" name="hosting" value="private"> Private VPC (On-premises)</label>
+                                <label><input type="radio" name="hosting" value="vendor-api"> Vendor API</label>
+                                <label><input type="radio" name="hosting" value="managed"> Managed Cloud</label>
+                                <label><input type="radio" name="hosting" value="private"> Private VPC</label>
                             </div>
                         </div>
                         <div class="form-group-wizard">
-                            <label>What level of autonomy does the agent have? <span class="required">*</span></label>
+                            <label>Agent Autonomy <span class="required">*</span></label>
                             <div class="radio-group">
-                                <label><input type="radio" name="autonomy" value="readonly"> Read-Only (No actions)</label>
-                                <label><input type="radio" name="autonomy" value="supervised"> Supervised (Human approval)</label>
-                                <label><input type="radio" name="autonomy" value="agentic"> Agentic (Full autonomy)</label>
+                                <label><input type="radio" name="autonomy" value="readonly"> Read-Only</label>
+                                <label><input type="radio" name="autonomy" value="supervised"> Supervised</label>
+                                <label><input type="radio" name="autonomy" value="agentic"> Agentic</label>
                             </div>
                         </div>
                         <div class="form-group-wizard">
-                            <label>Is the model custom fine-tuned? <span class="required">*</span></label>
+                            <label>Custom Fine-tuning <span class="required">*</span></label>
                             <div class="radio-group">
-                                <label><input type="radio" name="training" value="no"> No (Base model)</label>
-                                <label><input type="radio" name="training" value="yes"> Yes (Custom trained)</label>
+                                <label><input type="radio" name="training" value="no"> No</label>
+                                <label><input type="radio" name="training" value="yes"> Yes</label>
                             </div>
                         </div>
                     </div>
@@ -452,19 +434,13 @@
                     </div>
                 </div>
 
-                <!-- Step 3: Integrations, Use Case & System Name -->
+                <!-- Step 3: Integrations, Use Case & Deployment -->
                 <div class="wizard-step" id="step3">
-                    <div class="step-title">🔌 Integrations & System Details</div>
-                    <div class="linear-layout">
+                    <div class="step-title">🔌 Integration & Deployment</div>
+                    <div class="three-column-layout">
                         <div class="form-group-wizard">
-                            <label>How many third-party integrations? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label><input type="radio" name="integrations-radio" value="0" onclick="document.getElementById('integrations').value='0'"> None</label>
-                                <label><input type="radio" name="integrations-radio" value="1-3" onclick="document.getElementById('integrations').value='1-3'"> 1-3</label>
-                                <label><input type="radio" name="integrations-radio" value="4-7" onclick="document.getElementById('integrations').value='4-7'"> 4-7</label>
-                                <label><input type="radio" name="integrations-radio" value="8+" onclick="document.getElementById('integrations').value='8+'"> 8+</label>
-                            </div>
-                            <select id="integrations" required style="display:none;">
+                            <label>Third-Party Integrations <span class="required">*</span></label>
+                            <select id="integrations" required style="width: 100%; padding: 10px;">
                                 <option value="0" selected>None</option>
                                 <option value="1-3">1-3</option>
                                 <option value="4-7">4-7</option>
@@ -472,18 +448,8 @@
                             </select>
                         </div>
                         <div class="form-group-wizard">
-                            <label>What is the primary use case? <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label><input type="radio" name="useCase-radio" value="support" onclick="document.getElementById('useCase').value='support'"> Customer Support</label>
-                                <label><input type="radio" name="useCase-radio" value="analysis" onclick="document.getElementById('useCase').value='analysis'"> Data Analysis</label>
-                                <label><input type="radio" name="useCase-radio" value="content" onclick="document.getElementById('useCase').value='content'"> Content Generation</label>
-                                <label><input type="radio" name="useCase-radio" value="coding" onclick="document.getElementById('useCase').value='coding'"> Code Assistant</label>
-                                <label><input type="radio" name="useCase-radio" value="search" onclick="document.getElementById('useCase').value='search'"> Search/RAG</label>
-                                <label><input type="radio" name="useCase-radio" value="automation" onclick="document.getElementById('useCase').value='automation'"> Automation</label>
-                                <label><input type="radio" name="useCase-radio" value="medical" onclick="document.getElementById('useCase').value='medical'"> Medical/Healthcare</label>
-                                <label><input type="radio" name="useCase-radio" value="other" onclick="document.getElementById('useCase').value='other'"> Other</label>
-                            </div>
-                            <select id="useCase" required style="display:none;">
+                            <label>Primary Use Case <span class="required">*</span></label>
+                            <select id="useCase" required style="width: 100%; padding: 10px;">
                                 <option value="support" selected>Support</option>
                                 <option value="analysis">Analysis</option>
                                 <option value="content">Content</option>
@@ -495,8 +461,8 @@
                             </select>
                         </div>
                         <div class="form-group-wizard">
-                            <label>System Name <span style="color: #94a3b8;">(optional - for your reference)</span></label>
-                            <input type="text" id="systemName" placeholder="e.g., Customer Support Chatbot, Data Analysis Tool, etc.">
+                            <label style="color: #94a3b8; font-size: 0.9rem;">Ready to analyze</label>
+                            <div style="padding: 12px; background: rgba(207,188,255,0.08); border-radius: 6px; color: #cbd5e1; font-size: 0.9rem;">✓ All questions answered</div>
                         </div>
                     </div>
                     <div class="wizard-buttons">
@@ -516,30 +482,12 @@
     <!-- GUIDELINES TAB -->
     <div id="guidelines" class="tab-content">
         <div class="card">
-            <h2>🛡️ AI Security Risk Overview</h2>
-            <p style="color: #94a3b8; margin-bottom: 20px;">Default risk assessment across all 5 layers - Complete your Risk Assessment above for customized analysis.</p>
-
-            <!-- Default Spider Web -->
-            <div id="defaultSpiderContainer"></div>
-
-            <!-- Risk Tip Alert -->
-            <div id="riskTipAlert" style="margin-top: 24px; padding: 20px; background: linear-gradient(135deg, rgba(239,68,68,0.15) 0%, rgba(245,158,11,0.1) 100%); border-left: 4px solid #ef4444; border-radius: 8px; display: none;">
-                <div style="display: flex; gap: 12px; align-items: flex-start;">
-                    <span style="font-size: 1.5rem;">⚠️</span>
-                    <div>
-                        <div style="font-weight: 700; color: #f1f5f9; margin-bottom: 8px;">Critical Layer Alert</div>
-                        <div id="riskTipContent" style="color: #cbd5e1; font-size: 0.95rem;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(207,188,255,0.15);">
-                <h3 style="margin-bottom: 16px; color: #f1f5f9;">📋 Security Controls by Framework</h3>
-                <div class="framework-selector">
-                    <button class="fw-btn active" onclick="setFramework('5layer')">📊 5-Layer</button>
-                    <button class="fw-btn" onclick="setFramework('nist')">🏛️ NIST</button>
-                    <button class="fw-btn" onclick="setFramework('iso')">📋 ISO</button>
-                </div>
+            <h2>Dynamic Security Guidelines</h2>
+            <p style="color: #94a3b8; margin-bottom: 16px;">Complete Risk Assessment for customized controls.</p>
+            <div class="framework-selector">
+                <button class="fw-btn active" onclick="setFramework('5layer')">📊 5-Layer</button>
+                <button class="fw-btn" onclick="setFramework('nist')">🏛️ NIST</button>
+                <button class="fw-btn" onclick="setFramework('iso')">📋 ISO</button>
             </div>
         </div>
         <div id="guidelinesContent"></div>
@@ -568,124 +516,9 @@
     </div>
 </div>
 
-<footer style="padding: 30px 20px; background: rgba(15, 20, 27, 0.95); border-top: 1px solid rgba(207, 188, 255, 0.15); margin-top: 60px;">
-    <div style="max-width: 1600px; margin: 0 auto;">
-        <p style="text-align: center; margin-bottom: 16px; color: #94a3b8;">🔒 Ultimate AI Security Framework v4 | Build 2026 | For Security & DevSecOps Teams</p>
-        <div style="display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; font-size: 0.9rem;">
-            <a href="javascript:showPrivacyPolicy()" style="color: #cfbcff; text-decoration: none; cursor: pointer; transition: color 0.3s;">📋 Privacy Policy</a>
-            <span style="color: #475569;">|</span>
-            <a href="javascript:showAccessibility()" style="color: #cfbcff; text-decoration: none; cursor: pointer; transition: color 0.3s;">♿ Accessibility</a>
-            <span style="color: #475569;">|</span>
-            <a href="javascript:showTerms()" style="color: #cfbcff; text-decoration: none; cursor: pointer; transition: color 0.3s;">⚖️ Terms of Use</a>
-        </div>
-    </div>
+<footer>
+    <p>🔒 Ultimate AI Security Framework v4 | Build 2026 | For Security & DevSecOps Teams</p>
 </footer>
-
-<!-- PRIVACY POLICY MODAL -->
-<div id="privacyModal" class="modal-overlay" style="display: none;" onclick="if(event.target === this) document.getElementById('privacyModal').style.display='none';">
-    <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
-        <button onclick="document.getElementById('privacyModal').style.display='none'" style="position: absolute; top: 20px; right: 20px; background: rgba(207,188,255,0.2); border: none; color: #cfbcff; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">✕ Close</button>
-        <div class="modal-title">📋 Privacy Policy</div>
-        <div style="color: #cbd5e1; line-height: 1.8; font-size: 0.95rem;">
-            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Data We Collect</h3>
-            <p>This tool collects form inputs you provide for risk assessment analysis. No personal data is stored on our servers.</p>
-
-            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">How We Use Your Data</h3>
-            <ul style="margin-left: 20px;">
-                <li>✓ To generate customized security recommendations</li>
-                <li>✓ To improve the assessment framework</li>
-                <li>✓ To comply with security standards (NIST, ISO 42001)</li>
-            </ul>
-
-            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Data Storage & Security</h3>
-            <p>All assessments are processed client-side in your browser. No data is transmitted to external servers unless explicitly shared by you.</p>
-
-            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Your Rights</h3>
-            <ul style="margin-left: 20px;">
-                <li>✓ Access: View any assessment data you've entered</li>
-                <li>✓ Deletion: Clear your data by closing the browser tab</li>
-                <li>✓ Portability: Export your risk assessment results</li>
-            </ul>
-
-            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Third-Party Services</h3>
-            <p>This framework does not use cookies or third-party tracking. GitHub Pages hosting complies with privacy standards.</p>
-
-            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Contact</h3>
-            <p>For privacy questions, contact: asafapelbaum@gmail.com</p>
-
-            <p style="margin-top: 20px; color: #94a3b8; font-size: 0.85rem;">Last updated: May 20, 2026</p>
-        </div>
-    </div>
-</div>
-
-<!-- ACCESSIBILITY STATEMENT MODAL -->
-<div id="accessibilityModal" class="modal-overlay" style="display: none;" onclick="if(event.target === this) document.getElementById('accessibilityModal').style.display='none';">
-    <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
-        <button onclick="document.getElementById('accessibilityModal').style.display='none'" style="position: absolute; top: 20px; right: 20px; background: rgba(207,188,255,0.2); border: none; color: #cfbcff; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">✕ Close</button>
-        <div class="modal-title">♿ Accessibility Statement</div>
-        <div style="color: #cbd5e1; line-height: 1.8; font-size: 0.95rem;">
-            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Commitment to Accessibility</h3>
-            <p>The Ultimate AI Security Framework is committed to ensuring digital accessibility for people with disabilities. We strive to meet WCAG 2.1 Level AA accessibility standards.</p>
-
-            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Features</h3>
-            <ul style="margin-left: 20px;">
-                <li>✓ Keyboard Navigation: Full navigation using Tab, Enter, and Arrow keys</li>
-                <li>✓ Screen Reader Support: Proper ARIA labels and semantic HTML</li>
-                <li>✓ Color Contrast: WCAG AA compliant (4.5:1 minimum)</li>
-                <li>✓ Font Size: Scalable text that responds to browser zoom</li>
-                <li>✓ Form Labels: All inputs properly labeled for assistive devices</li>
-                <li>✓ Focus Indicators: Clear visual focus management</li>
-            </ul>
-
-            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Keyboard Shortcuts</h3>
-            <ul style="margin-left: 20px;">
-                <li>📋 Tab - Navigate between interactive elements</li>
-                <li>🔤 Enter/Space - Activate buttons and radio inputs</li>
-                <li>↑↓ Arrow Keys - Select radio options, navigate dropdowns</li>
-                <li>Shift+Tab - Navigate backwards</li>
-            </ul>
-
-            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Browser Compatibility</h3>
-            <p>Tested with: Chrome, Firefox, Safari, Edge. Screen readers: NVDA, JAWS, VoiceOver.</p>
-
-            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Report Accessibility Issues</h3>
-            <p>If you encounter accessibility barriers, please report them to: asafapelbaum@gmail.com with details about:</p>
-            <ul style="margin-left: 20px;">
-                <li>The barrier you encountered</li>
-                <li>Your browser and assistive technology</li>
-                <li>Steps to reproduce the issue</li>
-            </ul>
-
-            <p style="margin-top: 20px; color: #94a3b8; font-size: 0.85rem;">Last updated: May 20, 2026 | WCAG 2.1 Level AA Target</p>
-        </div>
-    </div>
-</div>
-
-<!-- TERMS OF USE MODAL -->
-<div id="termsModal" class="modal-overlay" style="display: none;" onclick="if(event.target === this) document.getElementById('termsModal').style.display='none';">
-    <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
-        <button onclick="document.getElementById('termsModal').style.display='none'" style="position: absolute; top: 20px; right: 20px; background: rgba(207,188,255,0.2); border: none; color: #cfbcff; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">✕ Close</button>
-        <div class="modal-title">⚖️ Terms of Use</div>
-        <div style="color: #cbd5e1; line-height: 1.8; font-size: 0.95rem;">
-            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">License & Usage</h3>
-            <p>The Ultimate AI Security Framework is provided as-is for educational and assessment purposes. Users may use this tool to evaluate their AI systems' security posture.</p>
-
-            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Disclaimer</h3>
-            <p>This framework provides general security guidance and should not be considered a substitute for professional security audits or legal advice. The recommendations are based on NIST AI RMF and ISO 42001 standards but may need customization for your specific environment.</p>
-
-            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Limitations of Liability</h3>
-            <p>We are not liable for any damages or losses resulting from the use of this framework or its recommendations. Users are responsible for implementing appropriate security measures based on their organization's risk tolerance and compliance requirements.</p>
-
-            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Modifications</h3>
-            <p>We reserve the right to modify this framework and these terms at any time. Continued use constitutes acceptance of changes.</p>
-
-            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Attribution</h3>
-            <p>Built with NIST AI RMF & ISO/IEC 42001 standards. For security professionals and DevSecOps teams.</p>
-
-            <p style="margin-top: 20px; color: #94a3b8; font-size: 0.85rem;">Last updated: May 20, 2026</p>
-        </div>
-    </div>
-</div>
 
 <script>
 const layersData = {
@@ -859,43 +692,6 @@ document.getElementById('riskForm').addEventListener('submit', function(e) {
     const recommendation = p <= 5 ? 'Implement optional hardening — low-priority roadmap' : p <= 10 ? 'Implement over next quarter — standard hardening roadmap' : 'Immediate action required — critical security roadmap';
 
     let html = `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:40px;"><div style="flex:1;min-width:300px;"><h2 style="margin-bottom:8px;">📊 Risk Assessment Results</h2><p style="color:#94a3b8;margin-bottom:12px;">System: <strong>${c.name}</strong> | ${new Date().toLocaleDateString()}</p><div style="margin-top:16px;padding:20px;background:rgba(71,85,105,0.1);border-radius:8px;"><div style="display:flex;gap:30px;align-items:center;"><div><div style="font-size:3.5rem;font-weight:900;color:${riskColor};">${p*100/15}%</div><div style="color:${riskColor};font-weight:700;font-size:1.1rem;margin-top:4px;">${riskLevel}</div></div><div style="flex:1;"><div style="color:#cbd5e1;margin-bottom:8px;"><strong>${recommendation}</strong></div><span style="font-size:0.85rem;color:#94a3b8;">Risk Score: ${p}/15</span></div></div></div></div><div style="flex:1;min-width:300px;"><h3 style="margin-bottom:16px;color:#f1f5f9;">⚙️ System Configuration</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.9rem;"><div><span style="color:#94a3b8;">👥 User Type</span><br/><strong>${c.users === 'public' ? 'Public' : 'Authenticated'}</strong></div><div><span style="color:#94a3b8;">🗄️ Data Sensitivity</span><br/><strong>${c.sensitivity === 'critical' ? 'Critical' : 'Confidential'}</strong></div><div><span style="color:#94a3b8;">☁️ Model Hosting</span><br/><strong>${c.hosting === 'vendor-api' ? 'Vendor API' : c.hosting === 'private' ? 'Private Cloud' : 'Managed Cloud'}</strong></div><div><span style="color:#94a3b8;">🤖 Autonomy Level</span><br/><strong>${c.autonomy === 'agentic' ? 'Agentic' : 'Read-Only'}</strong></div><div><span style="color:#94a3b8;">🔧 Fine-tuned Model</span><br/><strong>${c.training === 'yes' ? 'Yes' : 'No'}</strong></div><div><span style="color:#94a3b8;">🔌 Integrations</span><br/><strong>${c.integrations}</strong></div></div></div></div></div>`;
-
-    // KPI Dashboard Section
-    html += `<div class="card"><h3 style="margin-bottom:20px;">📊 Key Performance Indicators</h3>`;
-    const avgLayerRisk = Math.round(Object.values(scores).reduce((a, b) => a + b) / 5);
-    const highestRiskLayer = sorted[0];
-    const controlCount = m.length;
-    const implementationWeeks = p > 10 ? 2 : p > 5 ? 4 : 6;
-    const compliancePercentage = Math.round((5 - sorted.slice(0, 3).length) * 20 + 40);
-
-    html += `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:20px;">
-        <div style="padding:20px;background:rgba(59,130,246,0.1);border-left:4px solid #3b82f6;border-radius:8px;">
-            <div style="font-size:0.85rem;color:#94a3b8;margin-bottom:8px;font-weight:600;">🎯 OVERALL RISK</div>
-            <div style="font-size:2.2rem;font-weight:900;color:#3b82f6;">${avgLayerRisk}/100</div>
-            <div style="font-size:0.8rem;color:#cbd5e1;margin-top:4px;">${riskLevel}</div>
-        </div>
-        <div style="padding:20px;background:rgba(239,68,68,0.1);border-left:4px solid #ef4444;border-radius:8px;">
-            <div style="font-size:0.85rem;color:#94a3b8;margin-bottom:8px;font-weight:600;">⚠️ HIGHEST RISK</div>
-            <div style="font-size:1.5rem;font-weight:900;color:#ef4444;">${layerIcons[highestRiskLayer.id]} Layer ${highestRiskLayer.id}</div>
-            <div style="font-size:0.8rem;color:#cbd5e1;margin-top:4px;">${layerNames[highestRiskLayer.id]} (${highestRiskLayer.score}/100)</div>
-        </div>
-        <div style="padding:20px;background:rgba(34,197,94,0.1);border-left:4px solid #22c55e;border-radius:8px;">
-            <div style="font-size:0.85rem;color:#94a3b8;margin-bottom:8px;font-weight:600;">✓ CONTROLS</div>
-            <div style="font-size:2.2rem;font-weight:900;color:#22c55e;">${controlCount}</div>
-            <div style="font-size:0.8rem;color:#cbd5e1;margin-top:4px;">Recommended actions</div>
-        </div>
-        <div style="padding:20px;background:rgba(168,85,247,0.1);border-left:4px solid #a855f7;border-radius:8px;">
-            <div style="font-size:0.85rem;color:#94a3b8;margin-bottom:8px;font-weight:600;">📅 TIMELINE</div>
-            <div style="font-size:2.2rem;font-weight:900;color:#a855f7;">${implementationWeeks}</div>
-            <div style="font-size:0.8rem;color:#cbd5e1;margin-top:4px;">weeks to implement</div>
-        </div>
-        <div style="padding:20px;background:rgba(245,158,11,0.1);border-left:4px solid #f59e0b;border-radius:8px;">
-            <div style="font-size:0.85rem;color:#94a3b8;margin-bottom:8px;font-weight:600;">📋 COMPLIANCE</div>
-            <div style="font-size:2.2rem;font-weight:900;color:#f59e0b;">${compliancePercentage}%</div>
-            <div style="font-size:0.8rem;color:#cbd5e1;margin-top:4px;">Framework coverage</div>
-        </div>
-    </div>`;
-    html += `</div>`;
 
     // Framework Rings - Layer Risk Visualization
     html += `<div class="card"><h3 style="margin-bottom:20px;">🎯 Per-Layer Risk Breakdown</h3>`;
@@ -1263,105 +1059,7 @@ function renderGuidelinesWithSpider() {
 }
 
 function renderGuidelines() {
-    renderDefaultSpiderWeb();
     renderGuidelinesWithSpider();
-}
-
-function renderDefaultSpiderWeb() {
-    // Default baseline risk scores (before assessment)
-    const defaultScores = { before: {1: 15, 2: 15, 3: 10, 4: 10, 5: 15}, after: {1: 15, 2: 15, 3: 10, 4: 10, 5: 15} };
-
-    const size = 700;
-    const center = size / 2;
-    const radius = 180;
-    const layers = 5;
-    const maxScore = 100;
-
-    const points = [];
-    const beforePoints = [];
-    const layerNames = ['Data', 'Model/LLM', 'Application', 'Infrastructure', 'Compliance'];
-    const layerEmojis = ['📊', '🧠', '⚙️', '🌐', '📋'];
-
-    for (let i = 0; i < layers; i++) {
-        const angle = (i * 2 * Math.PI / layers) - Math.PI / 2;
-        const x = center + radius * Math.cos(angle);
-        const y = center + radius * Math.sin(angle);
-        points.push({x, y, angle, name: layerNames[i], emoji: layerEmojis[i]});
-    }
-
-    const beforeVals = [defaultScores.before[1], defaultScores.before[2], defaultScores.before[3], defaultScores.before[4], defaultScores.before[5]];
-
-    points.forEach((p, i) => {
-        const beforeR = (beforeVals[i] / maxScore) * radius;
-        beforePoints.push(`${center + beforeR * Math.cos(p.angle)},${center + beforeR * Math.sin(p.angle)}`);
-    });
-
-    let svg = `<svg viewBox="0 0 ${size} ${size}" width="600" height="600" style="max-width:100%; margin: 0 auto; display:block;">
-        <defs>
-            <linearGradient id="gridGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#cfbcff;stop-opacity:0.1" />
-                <stop offset="100%" style="stop-color:#cfbcff;stop-opacity:0.05" />
-            </linearGradient>
-        </defs>`;
-
-    // Grid circles
-    for (let i = 1; i <= 4; i++) {
-        const r = (i / 5) * radius;
-        svg += `<circle cx="${center}" cy="${center}" r="${r}" fill="none" stroke="rgba(207,188,255,0.1)" stroke-width="1"/>`;
-        svg += `<text x="${center + r - 20}" y="${center - 10}" font-size="12" fill="#94a3b8">${Math.round((i/5)*100)}%</text>`;
-    }
-
-    // Axis lines and labels
-    points.forEach((p) => {
-        const lineR = radius * 1.2;
-        const lineX = center + lineR * Math.cos(p.angle);
-        const lineY = center + lineR * Math.sin(p.angle);
-        svg += `<line x1="${center}" y1="${center}" x2="${lineX}" y2="${lineY}" stroke="rgba(207,188,255,0.15)" stroke-width="1"/>`;
-
-        const labelR = radius * 1.35;
-        const labelX = center + labelR * Math.cos(p.angle);
-        const labelY = center + labelR * Math.sin(p.angle);
-        svg += `<text x="${labelX-20}" y="${labelY+5}" font-size="14" font-weight="700" fill="#cfbcff" text-anchor="middle">${p.emoji} ${p.name}</text>`;
-    });
-
-    // Risk polygon
-    svg += `<polygon points="${beforePoints.join(' ')}" fill="rgba(239,68,68,0.2)" stroke="#ef4444" stroke-width="2"/>`;
-
-    // Data points
-    beforePoints.forEach((point, idx) => {
-        svg += `<circle cx="${point.split(',')[0]}" cy="${point.split(',')[1]}" r="6" fill="#ef4444" stroke="#fff" stroke-width="2"/>`;
-    });
-
-    svg += `</svg>`;
-
-    // Find highest risk layer
-    const maxRisk = Math.max(...beforeVals);
-    const highestRiskIdx = beforeVals.indexOf(maxRisk);
-    const highestRiskLayer = layerNames[highestRiskIdx];
-
-    const riskTips = {
-        'Data': "Data Layer risks include unauthorized access, PII leakage, and data poisoning. Implement AES-256 encryption, RBAC with MFA, and PII scrubbing.",
-        'Model/LLM': "Model/LLM risks include jailbreak attacks, prompt injection, and hallucinations. Deploy input filtering, prompt hardening, and output monitoring.",
-        'Application': "Application risks include BOLA vulnerabilities, overprivileged agents, and XSS attacks. Use least privilege principles and JSON validation.",
-        'Infrastructure': "Infrastructure risks include DDoS attacks, credential leaks, and supply chain compromises. Implement VPC segmentation and secrets vault.",
-        'Compliance': "Compliance risks include uncontrolled automation, discrimination, and audit trail gaps. Establish ethics boards and immutable logging."
-    };
-
-    const riskAlert = document.getElementById('riskTipAlert');
-    const riskContent = document.getElementById('riskTipContent');
-
-    riskContent.innerHTML = `<strong>${layerEmojis[highestRiskIdx]} ${highestRiskLayer} Layer (${maxRisk}%)</strong><br/>${riskTips[highestRiskLayer] || 'Implement comprehensive security controls.'}`;
-    riskAlert.style.display = 'block';
-
-    document.getElementById('defaultSpiderContainer').innerHTML = `
-        <div style="padding: 24px; background: rgba(207,188,255,0.05); border: 1px solid rgba(207,188,255,0.1); border-radius: 12px; margin-bottom: 24px;">
-            <div style="text-align: center; color: #cbd5e1; margin-bottom: 16px; font-size: 0.9rem;">Default Risk Profile (Baseline)</div>
-            ${svg}
-            <div style="margin-top: 16px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-                <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; background: #ef4444; border-radius: 2px;"></span><span style="color: #cbd5e1; font-size: 0.9rem;">Current Risk Level</span></div>
-            </div>
-        </div>
-    `;
 }
 
 function renderControl(c) {
@@ -1426,144 +1124,14 @@ function prevStep() {
 
 function getRequiredFieldsForStep(step) {
     const requirements = {
-        1: ['users', 'sensitivity'],
-        2: ['hosting', 'autonomy', 'training'],
-        3: ['integrations-radio', 'useCase-radio']
+        1: ['users', 'sensitivity'],  // Primary Users & Data Sensitivity required, System Name optional
+        2: ['hosting', 'autonomy', 'training'],  // Model Hosting, Autonomy, Fine-tuning required
+        3: ['integrations', 'useCase']  // Integrations & Use Case required
     };
     return requirements[step] || [];
 }
 
 selectLayer(1);
-renderDefaultSpiderWeb();
-
-function showPrivacyPolicy() {
-    document.getElementById('privacyModal').style.display = 'flex';
-}
-
-function showAccessibility() {
-    document.getElementById('accessibilityModal').style.display = 'flex';
-}
-
-function showTerms() {
-    document.getElementById('termsModal').style.display = 'flex';
-}
-
-// Close modals when clicking outside
-window.onclick = function(event) {
-    const privacyModal = document.getElementById('privacyModal');
-    const accessibilityModal = document.getElementById('accessibilityModal');
-    const termsModal = document.getElementById('termsModal');
-
-    if (event.target === privacyModal) privacyModal.style.display = 'none';
-    if (event.target === accessibilityModal) accessibilityModal.style.display = 'none';
-    if (event.target === termsModal) termsModal.style.display = 'none';
-}
-
-// Keyboard accessibility: Close modals with Escape key
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-        document.getElementById('privacyModal').style.display = 'none';
-        document.getElementById('accessibilityModal').style.display = 'none';
-        document.getElementById('termsModal').style.display = 'none';
-    }
-});
-
-function renderFrontPageSpider() {
-    // Default baseline risk scores
-    const defaultScores = { 1: 15, 2: 15, 3: 10, 4: 10, 5: 15 };
-
-    const size = 700;
-    const center = size / 2;
-    const radius = 180;
-    const layers = 5;
-    const maxScore = 100;
-
-    const points = [];
-    const riskPoints = [];
-    const layerNames = ['Data', 'Model/LLM', 'Application', 'Infrastructure', 'Compliance'];
-    const layerEmojis = ['📊', '🧠', '⚙️', '🌐', '📋'];
-    const layerColors = ['#f59e0b', '#10b981', '#3b82f6', '#a855f7', '#ec4899'];
-
-    for (let i = 0; i < layers; i++) {
-        const angle = (i * 2 * Math.PI / layers) - Math.PI / 2;
-        const x = center + radius * Math.cos(angle);
-        const y = center + radius * Math.sin(angle);
-        points.push({x, y, angle, name: layerNames[i], emoji: layerEmojis[i], color: layerColors[i]});
-    }
-
-    const riskVals = [defaultScores[1], defaultScores[2], defaultScores[3], defaultScores[4], defaultScores[5]];
-
-    points.forEach((p, i) => {
-        const r = (riskVals[i] / maxScore) * radius;
-        riskPoints.push(`${center + r * Math.cos(p.angle)},${center + r * Math.sin(p.angle)}`);
-    });
-
-    let svg = `<svg viewBox="0 0 ${size} ${size}" width="600" height="600" style="max-width:100%; margin: 0 auto; display:block;">
-        <defs>
-            <linearGradient id="riskGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3" />
-                <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:0.2" />
-            </linearGradient>
-        </defs>`;
-
-    // Grid circles
-    for (let i = 1; i <= 4; i++) {
-        const r = (i / 5) * radius;
-        svg += `<circle cx="${center}" cy="${center}" r="${r}" fill="none" stroke="rgba(207,188,255,0.15)" stroke-width="1" stroke-dasharray="5,5"/>`;
-        svg += `<text x="${center + r + 10}" y="${center - 10}" font-size="11" fill="#94a3b8">${i*20}%</text>`;
-    }
-
-    // Axis lines
-    points.forEach((p) => {
-        const lineR = radius * 1.15;
-        const lineX = center + lineR * Math.cos(p.angle);
-        const lineY = center + lineR * Math.sin(p.angle);
-        svg += `<line x1="${center}" y1="${center}" x2="${lineX}" y2="${lineY}" stroke="rgba(207,188,255,0.2)" stroke-width="1"/>`;
-
-        const labelR = radius * 1.3;
-        const labelX = center + labelR * Math.cos(p.angle);
-        const labelY = center + labelR * Math.sin(p.angle);
-        svg += `<text x="${labelX}" y="${labelY+6}" font-size="13" font-weight="700" fill="${p.color}" text-anchor="middle">${p.emoji}</text>`;
-        svg += `<text x="${labelX}" y="${labelY+22}" font-size="11" fill="#cbd5e1" text-anchor="middle">${p.name}</text>`;
-    });
-
-    // Risk polygon with gradient
-    svg += `<polygon points="${riskPoints.join(' ')}" fill="url(#riskGrad)" stroke="#ef4444" stroke-width="3"/>`;
-
-    // Data points
-    riskPoints.forEach((point, idx) => {
-        const coords = point.split(',');
-        svg += `<circle cx="${coords[0]}" cy="${coords[1]}" r="7" fill="${points[idx].color}" stroke="#fff" stroke-width="2"/>`;
-        svg += `<text x="${coords[0]}" y="${coords[1]-12}" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">${riskVals[idx]}%</text>`;
-    });
-
-    svg += `</svg>`;
-
-    // Find highest risk layer
-    const maxRisk = Math.max(...riskVals);
-    const highestRiskIdx = riskVals.indexOf(maxRisk);
-    const highestRiskLayer = layerNames[highestRiskIdx];
-
-    const riskTips = {
-        'Data': "🔐 Data security is foundational. Encrypt data at rest & transit, implement strict RBAC+MFA, and mask PII before processing.",
-        'Model/LLM': "🧠 Model security requires defensive gates. Block adversarial prompts, validate outputs, and implement continuous drift monitoring.",
-        'Application': "⚙️ Application layer needs strict controls. Validate all LLM outputs, sanitize for XSS, and enforce least-privilege access.",
-        'Infrastructure': "🌐 Secure your infrastructure. Segment networks, rotate secrets, implement DDoS protection, and scan dependencies.",
-        'Compliance': "📋 Governance enables accountability. Maintain immutable audit logs, implement ethics reviews, and establish clear policies."
-    };
-
-    const riskAlert = document.getElementById('frontPageRiskAlert');
-    const riskContent = document.getElementById('frontPageRiskContent');
-
-    if (riskAlert && riskContent) {
-        riskContent.innerHTML = `<strong>${layerEmojis[highestRiskIdx]} ${highestRiskLayer}: ${maxRisk}% Risk</strong><br/>${riskTips[highestRiskLayer] || 'Implement comprehensive security controls.'}`;
-        riskAlert.style.display = 'block';
-    }
-
-    document.getElementById('frontPageSpiderContainer').innerHTML = svg;
-}
-
-renderFrontPageSpider();
 </script>
 </body>
 </html>
