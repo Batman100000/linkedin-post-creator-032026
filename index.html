@@ -339,19 +339,61 @@
     <!-- ASSESSMENT TAB -->
     <div id="assessment" class="tab-content">
         <div class="card">
-            <h2>System Risk Assessment Form</h2>
-            <p style="color: #94a3b8; margin-bottom: 20px;">Answer questions to receive customized security controls across all 5 layers.</p>
+            <h2>🔍 Assess Your AI System Security</h2>
+            <p style="color: #94a3b8; margin-bottom: 8px;">Complete a few questions about your system to receive customized security recommendations across all 5 layers.</p>
+
+            <!-- Progress Bar -->
+            <div style="margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-size: 0.9rem; color: #94a3b8;">Form Progress</span>
+                    <span style="font-size: 0.9rem; color: #60a5fa; font-weight: 600;" id="progressText">0%</span>
+                </div>
+                <div style="background: rgba(71,85,105,0.3); border-radius: 12px; height: 8px; overflow: hidden;">
+                    <div id="progressBar" style="background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%); height: 100%; width: 0%; transition: width 0.3s ease; border-radius: 12px;"></div>
+                </div>
+            </div>
 
             <form id="riskForm">
-                <div class="system-name-group"><label>System Name <span class="required">*</span></label><input type="text" id="systemName" required placeholder="e.g., Customer Support Chatbot"></div>
-                <div class="form-group"><label>Primary Users <span class="required">*</span></label><div class="radio-group"><label><input type="radio" name="users" value="public"> Public</label><label><input type="radio" name="users" value="authenticated"> Authenticated</label><label><input type="radio" name="users" value="internal"> Internal</label></div></div>
-                <div class="form-group"><label>Data Sensitivity <span class="required">*</span></label><div class="radio-group"><label><input type="radio" name="sensitivity" value="public"> Public</label><label><input type="radio" name="sensitivity" value="confidential"> Confidential</label><label><input type="radio" name="sensitivity" value="critical"> Critical (PII)</label></div></div>
-                <div class="form-group"><label>Model Hosting <span class="required">*</span></label><div class="radio-group"><label><input type="radio" name="hosting" value="vendor-api"> Vendor API</label><label><input type="radio" name="hosting" value="managed"> Managed Cloud</label><label><input type="radio" name="hosting" value="private"> Private VPC</label></div></div>
-                <div class="form-group"><label>Agent Autonomy <span class="required">*</span></label><div class="radio-group"><label><input type="radio" name="autonomy" value="readonly"> Read-Only</label><label><input type="radio" name="autonomy" value="supervised"> Supervised</label><label><input type="radio" name="autonomy" value="agentic"> Agentic</label></div></div>
-                <div class="form-group"><label>Custom Fine-tuning <span class="required">*</span></label><div class="radio-group"><label><input type="radio" name="training" value="no"> No</label><label><input type="radio" name="training" value="yes"> Yes</label></div></div>
-                <div class="form-group"><label>Third-Party Integrations <span class="required">*</span></label><select id="integrations" required><option value="0" selected>None</option><option value="1-3">1-3</option><option value="4-7">4-7</option><option value="8+">8+</option></select></div>
-                <div class="form-group"><label>Primary Use Case <span class="required">*</span></label><select id="useCase" required><option value="support" selected>Support</option><option value="analysis">Analysis</option><option value="content">Content</option><option value="coding">Coding</option><option value="search">Search/RAG</option><option value="automation">Automation</option><option value="medical">Medical</option><option value="other">Other</option></select></div>
-                <div class="button-group"><button type="submit">Analyze Risks</button><button type="reset" class="btn-secondary">Clear</button></div>
+                <!-- System Identification -->
+                <div class="system-name-group" style="margin-bottom: 40px;">
+                    <label style="color: #60a5fa; font-size: 1.2rem;">What's your system called?</label>
+                    <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 12px;">(Optional - helps with reporting)</p>
+                    <input type="text" id="systemName" placeholder="e.g., Customer Support Chatbot, Data Analysis Tool">
+                </div>
+
+                <!-- System Characteristics Section -->
+                <div style="background: rgba(71,85,105,0.15); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 24px; margin-bottom: 32px;">
+                    <h3 style="color: #f1f5f9; margin-bottom: 20px; font-size: 1.1rem;">📋 System Characteristics</h3>
+
+                    <div class="form-group"><label>Who uses your system? <span class="required">*</span></label><div class="radio-group"><label><input type="radio" name="users" value="public"> 🌐 Public Users</label><label><input type="radio" name="users" value="authenticated"> 🔐 Authenticated Users</label><label><input type="radio" name="users" value="internal"> 🏢 Internal Only</label></div></div>
+
+                    <div class="form-group"><label>What type of data does it process? <span class="required">*</span></label><div class="radio-group"><label><input type="radio" name="sensitivity" value="public"> 📄 Public Data</label><label><input type="radio" name="sensitivity" value="confidential"> 🔑 Confidential</label><label><input type="radio" name="sensitivity" value="critical"> 🚨 Critical (PII/Sensitive)</label></div></div>
+
+                    <div class="form-group"><label>What use case best describes your system? <span class="required">*</span></label><select id="useCase" required style="margin-top: 8px;"><option value="support">💬 Customer Support / Chatbot</option><option value="analysis">📊 Data Analysis & Insights</option><option value="content">✍️ Content Generation</option><option value="coding">💻 Code Generation & Dev Tools</option><option value="search">🔎 Search / RAG / Knowledge Retrieval</option><option value="automation">⚙️ Process Automation & Workflows</option><option value="medical">🏥 Medical / Healthcare Decision Support</option><option value="other">🔧 Other</option></select></div>
+                </div>
+
+                <!-- Model & Infrastructure Section -->
+                <div style="background: rgba(10,185,129,0.1); border-left: 4px solid #10b981; border-radius: 8px; padding: 24px; margin-bottom: 32px;">
+                    <h3 style="color: #f1f5f9; margin-bottom: 20px; font-size: 1.1rem;">🧠 Model & Infrastructure</h3>
+
+                    <div class="form-group"><label>Where is the model hosted? <span class="required">*</span></label><div class="radio-group"><label><input type="radio" name="hosting" value="vendor-api"> ☁️ Vendor API (OpenAI, Anthropic, etc.)</label><label><input type="radio" name="hosting" value="managed"> 📦 Managed Cloud (AWS, GCP, Azure)</label><label><input type="radio" name="hosting" value="private"> 🔒 Private VPC / On-Premise</label></div></div>
+
+                    <div class="form-group"><label>Is the model custom fine-tuned? <span class="required">*</span></label><div class="radio-group"><label><input type="radio" name="training" value="no"> ❌ No - Using base/pre-trained model</label><label><input type="radio" name="training" value="yes"> ✅ Yes - Custom trained or fine-tuned</label></div></div>
+
+                    <div class="form-group"><label>How autonomous is your system? <span class="required">*</span></label><div class="radio-group"><label><input type="radio" name="autonomy" value="readonly"> 👀 Read-Only (No Actions)</label><label><input type="radio" name="autonomy" value="supervised"> 🤝 Supervised (Human-in-Loop)</label><label><input type="radio" name="autonomy" value="agentic"> 🤖 Agentic (Auto-Execute)</label></div></div>
+                </div>
+
+                <!-- Integration Section -->
+                <div style="background: rgba(168,85,247,0.1); border-left: 4px solid #a855f7; border-radius: 8px; padding: 24px; margin-bottom: 32px;">
+                    <h3 style="color: #f1f5f9; margin-bottom: 20px; font-size: 1.1rem;">🔗 Integrations & Complexity</h3>
+
+                    <div class="form-group"><label>How many third-party integrations? <span class="required">*</span></label><select id="integrations" required style="margin-top: 8px;"><option value="0" selected>🟢 None - Standalone System</option><option value="1-3">🟡 1-3 Integrations</option><option value="4-7">🟠 4-7 Integrations</option><option value="8+">🔴 8+ Integrations</option></select></div>
+                </div>
+
+                <div class="button-group" style="padding: 20px 0; border-top: 1px solid rgba(71,85,105,0.3);">
+                    <button type="submit" style="padding: 14px 32px; font-size: 1rem;">🚀 Analyze Security Risks</button>
+                    <button type="reset" class="btn-secondary" style="padding: 14px 24px; font-size: 1rem;">Reset Form</button>
+                </div>
             </form>
         </div>
     </div>
@@ -522,6 +564,31 @@ function selectLayer(id) {
     document.getElementById('threatsList').innerHTML = d.threats.map(t => `<div class="item">⚠️ ${t}</div>`).join('');
     document.getElementById('controlsList').innerHTML = d.controls.map(c => `<div class="item">✓ ${c}</div>`).join('');
 }
+
+// Update form progress bar
+function updateFormProgress() {
+    const requiredFields = [
+        document.querySelector('input[name="users"]:checked'),
+        document.querySelector('input[name="sensitivity"]:checked'),
+        document.querySelector('input[name="hosting"]:checked'),
+        document.querySelector('input[name="autonomy"]:checked'),
+        document.querySelector('input[name="training"]:checked')
+    ];
+    const completed = requiredFields.filter(f => f !== null).length;
+    const total = requiredFields.length;
+    const percentage = Math.round((completed / total) * 100);
+
+    document.getElementById('progressBar').style.width = percentage + '%';
+    document.getElementById('progressText').textContent = percentage + '%';
+}
+
+// Attach progress tracking to all form inputs
+document.querySelectorAll('#riskForm input[type="radio"], #riskForm select').forEach(input => {
+    input.addEventListener('change', updateFormProgress);
+});
+
+// Initial progress update
+updateFormProgress();
 
 document.getElementById('riskForm').addEventListener('submit', function(e) {
     e.preventDefault();
