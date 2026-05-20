@@ -359,20 +359,20 @@
 
     <!-- ASSESSMENT TAB -->
     <div id="assessment" class="tab-content">
+        <!-- Always Visible Progress Bar -->
+        <div style="position: sticky; top: 20px; z-index: 50; margin-bottom: 24px; padding: 16px; background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 12px; box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-size: 1.1rem; color: #00D4FF; font-weight: 700;">Form Progress</span>
+                <span style="font-size: 1.3rem; color: #00D4FF; font-weight: 900;" id="progressText">0%</span>
+            </div>
+            <div style="background: rgba(71,85,105,0.2); border-radius: 8px; height: 14px; overflow: hidden; border: 1px solid rgba(0, 212, 255, 0.3);">
+                <div id="progressBar" style="background: linear-gradient(90deg, #00D4FF 0%, #B84FFF 100%); height: 100%; width: 0%; transition: width 0.3s ease; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);"></div>
+            </div>
+        </div>
+
         <div class="card">
             <h2>Assess Your AI System Security</h2>
             <p style="color: #94a3b8; margin-bottom: 8px;">Complete a few questions about your system to receive customized security recommendations across all 5 layers.</p>
-
-            <!-- Progress Bar -->
-            <div style="margin-bottom: 32px; padding: 16px; background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 12px; box-shadow: 0 0 15px rgba(0, 212, 255, 0.1);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <span style="font-size: 1rem; color: #00D4FF; font-weight: 700;">Form Progress</span>
-                    <span style="font-size: 1.2rem; color: #00D4FF; font-weight: 800;" id="progressText">0%</span>
-                </div>
-                <div style="background: rgba(71,85,105,0.2); border-radius: 8px; height: 12px; overflow: hidden; border: 1px solid rgba(0, 212, 255, 0.2);">
-                    <div id="progressBar" style="background: linear-gradient(90deg, #00D4FF 0%, #B84FFF 100%); height: 100%; width: 0%; transition: width 0.3s ease; border-radius: 8px;"></div>
-                </div>
-            </div>
 
             <form id="riskForm">
                 <!-- System Identification -->
@@ -626,6 +626,10 @@ setTimeout(() => {
     riskForm.addEventListener('submit', function(e) {
         e.preventDefault();
         try {
+            if (!masterControls || !layersData) {
+                alert('System loading. Please wait and try again.');
+                return;
+            }
             const c = {
                 name: document.getElementById('systemName').value || '(Unnamed System)',
                 users: document.querySelector('input[name="users"]:checked')?.value,
@@ -633,8 +637,8 @@ setTimeout(() => {
                 hosting: document.querySelector('input[name="hosting"]:checked')?.value,
                 autonomy: document.querySelector('input[name="autonomy"]:checked')?.value,
                 training: document.querySelector('input[name="training"]:checked')?.value,
-                integrations: document.getElementById('integrations').value,
-                useCase: document.getElementById('useCase').value
+                integrations: document.getElementById('integrations')?.value || '0',
+                useCase: document.getElementById('useCase')?.value || 'support'
             };
             if (!c.users || !c.sensitivity || !c.hosting || !c.autonomy || !c.training) {
                 alert('⚠️ Please answer all required questions before analyzing.');
