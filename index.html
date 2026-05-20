@@ -962,7 +962,14 @@ function renderGuidelinesWithSpider() {
     // Layer 1: Data
     h += `<div style="margin-bottom:24px;padding:20px;background:rgba(71,85,105,0.1);border-left:4px solid #f59e0b;border-radius:8px;">
         <div style="font-weight:700;font-size:1.1rem;color:#f1f5f9;margin-bottom:12px;">🔐 Layer 1: Data Security & Privacy</div>
-        <div style="color:#cbd5e1;margin-bottom:12px;">✓ Encryption at rest & transit (AES-256, TLS 1.3)<br/>✓ RBAC + MFA + least privilege access<br/>✓ Data retention policies & right-to-delete mechanisms<br/>✓ Data lineage & provenance tracking<br/>✓ DLP, PII masking, data classification<br/>✓ RAG access filtering & poisoning detection</div>
+        <div style="color:#cbd5e1;margin-bottom:12px;">
+            <div style="margin-bottom:12px;"><strong>✓ Data Lineage & Provenance Tracking:</strong> Maintain an immutable log of where training and fine-tuning data originates to prevent data poisoning.</div>
+            <div style="margin-bottom:12px;"><strong>✓ Automated Data Masking & PII Anonymization:</strong> Implement real-time stripping or hashing of Personally Identifiable Information (PII) before it reaches the data lake or model.</div>
+            <div style="margin-bottom:12px;"><strong>✓ Access Control & Encryption:</strong> Enforce role-based access control (RBAC) and AES-256 encryption for data at rest and TLS 1.3 for data in transit.</div>
+            <div style="margin-bottom:12px;"><strong>✓ Data Retention & Right-to-Delete:</strong> Implement automated data lifecycle policies and GDPR-compliant deletion mechanisms.</div>
+            <div style="margin-bottom:12px;"><strong>✓ DLP & Data Classification:</strong> Deploy Data Loss Prevention tools with automatic classification of public/internal/confidential data.</div>
+            <div><strong>✓ RAG Access Filtering:</strong> Validate retrieval-augmented generation source integrity and detect training data poisoning attempts.</div>
+        </div>
         ${c.sensitivity === 'critical' ? `<div style="margin-top:12px;padding:12px;background:rgba(249,115,22,0.1);border-left:3px solid #f97316;border-radius:6px;"><div style="color:#f97316;font-weight:700;margin-bottom:8px;">🟠 Critical Data - Enhanced Controls</div><div style="color:#cbd5e1;font-size:0.9rem;">▸ Data classification tags (Public/Internal/Confidential)<br/>▸ Access policies per classification level<br/>▸ Encryption key management (HSM or Key Vault)</div></div>` : ''}
         ${c.sensitivity === 'critical' && c.users === 'public' ? `<div style="margin-top:12px;padding:12px;background:rgba(239,68,68,0.1);border-left:3px solid #ef4444;border-radius:6px;"><div style="color:#ef4444;font-weight:700;margin-bottom:8px;">⚠️ Public + Critical Data - Maximum Protection</div><div style="color:#cbd5e1;font-size:0.9rem;">▸ Zero-knowledge architecture where possible<br/>▸ Data encryption before transmission<br/>▸ Anonymization for analytics</div></div>` : ''}
     </div>`;
@@ -970,7 +977,15 @@ function renderGuidelinesWithSpider() {
     // Layer 2: Model/LLM
     h += `<div style="margin-bottom:24px;padding:20px;background:rgba(71,85,105,0.1);border-left:4px solid #10b981;border-radius:8px;">
         <div style="font-weight:700;font-size:1.1rem;color:#f1f5f9;margin-bottom:12px;">🛡️ Layer 2: Model / LLM Security</div>
-        <div style="color:#cbd5e1;margin-bottom:12px;">✓ Prompt injection & jailbreak protection<br/>✓ Input/output validation & content safety<br/>✓ Model registry + AI/ML SBOM<br/>✓ Security evaluation before deployment<br/>✓ Drift & anomaly detection monitoring<br/>✓ Confidence thresholds + human escalation<br/>✓ Vendor governance & third-party assurance</div>
+        <div style="color:#cbd5e1;margin-bottom:12px;">
+            <div style="margin-bottom:12px;"><strong>✓ Input Sanitization & Prompt Injection Filtering:</strong> Deploy a defensive gateway/firewall to intercept, analyze, and block adversarial prompt injections or malicious system overrides.</div>
+            <div style="margin-bottom:12px;"><strong>✓ Output Validation & Rate Limiting:</strong> Implement guardrails to scan model outputs for hallucinations, insecure code generation, or data leakage, and rate-limit API calls to prevent model inversion attacks.</div>
+            <div style="margin-bottom:12px;"><strong>✓ Model Integrity & Version Control:</strong> Use cryptographic code signing for model weights to ensure the pipeline only loads authenticated, unmodified models.</div>
+            <div style="margin-bottom:12px;"><strong>✓ Security Evaluation:</strong> Conduct red-teaming and adversarial testing before deployment to identify vulnerabilities.</div>
+            <div style="margin-bottom:12px;"><strong>✓ Drift & Anomaly Detection:</strong> Monitor model outputs for behavioral drift and unexpected patterns that may indicate compromise.</div>
+            <div style="margin-bottom:12px;"><strong>✓ Confidence Thresholds:</strong> Route uncertain outputs to human review to prevent unreliable predictions reaching users.</div>
+            <div><strong>✓ Vendor Governance:</strong> Verify vendor Data Processing Agreements and enforce zero-training data clauses.</div>
+        </div>
         ${c.training === 'yes' ? `<div style="margin-top:12px;padding:12px;background:rgba(249,115,22,0.1);border-left:3px solid #f97316;border-radius:6px;"><div style="color:#f97316;font-weight:700;margin-bottom:8px;">🟠 Fine-Tuned Model - Weight Protection</div><div style="color:#cbd5e1;font-size:0.9rem;">▸ ⚠️ Custom model weight protection & integrity checksums<br/>▸ ⚠️ Gradient constraints to prevent training data leakage<br/>▸ Training data integrity validation for poisoning attacks</div></div>` : ''}
         ${c.users === 'public' ? `<div style="margin-top:12px;padding:12px;background:rgba(249,115,22,0.1);border-left:3px solid #f97316;border-radius:6px;"><div style="color:#f97316;font-weight:700;margin-bottom:8px;">🟠 Public-Facing Model - Attack Hardening</div><div style="color:#cbd5e1;font-size:0.9rem;">▸ Advanced prompt injection detection (regex + ML)<br/>▸ Rate limiting and abuse detection<br/>▸ Prompt logging for incident analysis</div></div>` : ''}
     </div>`;
@@ -978,7 +993,14 @@ function renderGuidelinesWithSpider() {
     // Layer 3: Application
     h += `<div style="margin-bottom:24px;padding:20px;background:rgba(71,85,105,0.1);border-left:4px solid #3b82f6;border-radius:8px;">
         <div style="font-weight:700;font-size:1.1rem;color:#f1f5f9;margin-bottom:12px;">🔗 Layer 3: Application & Agent Security</div>
-        <div style="color:#cbd5e1;margin-bottom:12px;">✓ Strict schema validation for LLM outputs (JSON/XML)<br/>✓ Output sanitization & Content Security Policy (CSP)<br/>✓ Session isolation & cross-user context prevention<br/>✓ Tool allowlists & permission boundaries<br/>✓ Agent observability (prompt → tool → output trace)<br/>✓ Authentication & SSO (SAML 2.0, OIDC)</div>
+        <div style="color:#cbd5e1;margin-bottom:12px;">
+            <div style="margin-bottom:12px;"><strong>✓ Secure API Authentication & Authorization:</strong> Implement robust OAuth 2.0 / OIDC protocols and continuous token validation for all internal and external API endpoints.</div>
+            <div style="margin-bottom:12px;"><strong>✓ Dynamic & Static Application Security Testing:</strong> Integrate automated vulnerability scanning (DAST/SAST) into the CI/CD pipeline to catch application flaws before deployment.</div>
+            <div style="margin-bottom:12px;"><strong>✓ Comprehensive Audit Logging:</strong> Capture detailed runtime logs of application behavior, user requests, and system decisions to support threat detection and compliance auditing.</div>
+            <div style="margin-bottom:12px;"><strong>✓ Strict Schema Validation:</strong> Enforce JSON/XML schema validation on all LLM outputs to prevent injection attacks.</div>
+            <div style="margin-bottom:12px;"><strong>✓ Output Sanitization & CSP:</strong> Apply HTML/CSS/JS sanitization and Content Security Policy headers to prevent XSS.</div>
+            <div><strong>✓ Session Isolation:</strong> Prevent cross-user prompt injection through strict session boundaries and context prevention.</div>
+        </div>
         ${c.autonomy === 'readonly' ? `<div style="margin-top:12px;padding:12px;background:rgba(249,115,22,0.1);border-left:3px solid #f97316;border-radius:6px;"><div style="color:#f97316;font-weight:700;margin-bottom:8px;">🔵 Read-Only Systems - DB Protection</div><div style="color:#cbd5e1;font-size:0.9rem;">▸ Read-only enforcement on all DB connections<br/>▸ RAG query validation for write-operation prevention<br/>▸ Query result filtering by user permissions</div></div>` : ''}
         ${c.autonomy === 'agentic' ? `<div style="margin-top:12px;padding:12px;background:rgba(249,115,22,0.1);border-left:3px solid #f97316;border-radius:6px;"><div style="color:#f97316;font-weight:700;margin-bottom:8px;">🟠 Agentic Systems - Action Control</div><div style="color:#cbd5e1;font-size:0.9rem;">▸ Human-in-the-loop approval for critical actions<br/>▸ Immutable action audit logs<br/>▸ Rollback capabilities for failed actions</div></div>` : ''}
     </div>`;
@@ -986,14 +1008,29 @@ function renderGuidelinesWithSpider() {
     // Layer 4: Infrastructure
     h += `<div style="margin-bottom:24px;padding:20px;background:rgba(71,85,105,0.1);border-left:4px solid #a855f7;border-radius:8px;">
         <div style="font-weight:700;font-size:1.1rem;color:#f1f5f9;margin-bottom:12px;">🏗️ Layer 4: Infrastructure Security</div>
-        <div style="color:#cbd5e1;margin-bottom:12px;">✓ Network segmentation (VPC/VPN isolation)<br/>✓ Secrets management + automated key rotation<br/>✓ Runtime monitoring & anomaly detection<br/>✓ Supply chain scanning (Snyk, Dependabot)<br/>✓ Logging → SIEM integration<br/>✓ DDoS protection + resilience + incident response</div>
+        <div style="margin-bottom:12px;">
+            <div style="margin-bottom:12px;"><strong>✓ Network Segmentation (VPC/VPN Isolation):</strong> Create dedicated Virtual Private Clouds (VPCs) to isolate AI training and inference workloads from general network traffic, preventing unauthorized lateral movement and credential exposure.</div>
+            <div style="margin-bottom:12px;"><strong>✓ Secrets Management + Automated Key Rotation:</strong> Implement a centralized secrets vault (HashiCorp Vault, AWS Secrets Manager) with automatic rotation policies to prevent credential leakage and reduce exposure window for compromised keys.</div>
+            <div style="margin-bottom:12px;"><strong>✓ Runtime Monitoring & Anomaly Detection:</strong> Deploy SIEM (Security Information & Event Management) integration with real-time alerting to detect unusual network traffic, resource consumption, or behavioral anomalies indicating compromise.</div>
+            <div style="margin-bottom:12px;"><strong>✓ Supply Chain Scanning (Snyk, Dependabot):</strong> Automate vulnerability scanning of all software dependencies and third-party libraries in the CI/CD pipeline to prevent vulnerable code from reaching production.</div>
+            <div style="margin-bottom:12px;"><strong>✓ Logging → SIEM Integration:</strong> Forward immutable audit logs from all infrastructure components (load balancers, databases, APIs) to centralized SIEM for threat detection and compliance evidence.</div>
+            <div><strong>✓ DDoS Protection + Resilience + Incident Response:</strong> Deploy cloud-based DDoS mitigation services with rate-limiting and circuit breakers to maintain availability, plus documented incident response playbooks for rapid recovery.</div>
+        </div>
         ${c.hosting === 'vendor-api' ? `<div style="margin-top:12px;padding:12px;background:rgba(249,115,22,0.1);border-left:3px solid #f97316;border-radius:6px;"><div style="color:#f97316;font-weight:700;margin-bottom:8px;">🟠 Vendor API - Third-Party Risk Management</div><div style="color:#cbd5e1;font-size:0.9rem;">▸ Vendor security assessment & DPA review<br/>▸ Zero-training data clauses enforcement<br/>▸ Rate limiting & quota management</div></div>` : ''}
     </div>`;
 
     // Layer 5: Compliance
     h += `<div style="margin-bottom:24px;padding:20px;background:rgba(71,85,105,0.1);border-left:4px solid #ec4899;border-radius:8px;">
         <div style="font-weight:700;font-size:1.1rem;color:#f1f5f9;margin-bottom:12px;">📊 Layer 5: Governance & Compliance</div>
-        <div style="color:#cbd5e1;margin-bottom:12px;">✓ Immutable audit logging (cryptographically signed)<br/>✓ AI inventory & risk classification<br/>✓ Bias & fairness monitoring<br/>✓ Change management for models/prompts<br/>✓ AI governance board review process<br/>✓ Continuous assurance (KPIs/KRIs)<br/>✓ Periodic red teaming & compliance reviews</div>
+        <div style="margin-bottom:12px;">
+            <div style="margin-bottom:12px;"><strong>✓ Immutable Audit Logging (Cryptographically Signed):</strong> Implement tamper-proof audit logs with digital signatures and blockchain-based timestamping to ensure log integrity for regulatory compliance and incident investigations.</div>
+            <div style="margin-bottom:12px;"><strong>✓ AI Inventory & Risk Classification:</strong> Document all AI systems, their purpose, data inputs, model origins, and assign risk levels (critical/high/medium/low) to enable targeted governance and oversight.</div>
+            <div style="margin-bottom:12px;"><strong>✓ Bias & Fairness Monitoring:</strong> Deploy continuous monitoring dashboards tracking demographic parity, equalized odds, and fairness metrics across protected attributes to detect and remediate algorithmic discrimination.</div>
+            <div style="margin-bottom:12px;"><strong>✓ Change Management for Models/Prompts:</strong> Implement formal approval workflows requiring sign-off from security and compliance teams before deploying new model versions, fine-tuning updates, or system prompt changes.</div>
+            <div style="margin-bottom:12px;"><strong>✓ AI Governance Board Review Process:</strong> Establish executive oversight committee with quarterly reviews of high-risk AI deployments, incident reviews, and strategic risk decisions.</div>
+            <div style="margin-bottom:12px;"><strong>✓ Continuous Assurance (KPIs/KRIs):</strong> Define and track Key Risk Indicators (model drift > 5%, accuracy decline > 10%, fairness metrics breached) with automated alerting for governance violations.</div>
+            <div><strong>✓ Periodic Red Teaming & Compliance Reviews:</strong> Conduct quarterly adversarial testing campaigns and annual third-party security audits to validate control effectiveness and regulatory compliance.</div>
+        </div>
         ${c.sensitivity === 'critical' ? `<div style="margin-top:12px;padding:12px;background:rgba(249,115,22,0.1);border-left:3px solid #f97316;border-radius:6px;"><div style="color:#f97316;font-weight:700;margin-bottom:8px;">🟠 Data Subject Rights</div><div style="color:#cbd5e1;font-size:0.9rem;">▸ Data Subject Access Request (DSAR) procedures<br/>▸ Data inventory mapping for personal information<br/>▸ Right-to-be-forgotten implementation</div></div>` : ''}
     </div>`;
 
