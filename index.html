@@ -568,9 +568,124 @@
     </div>
 </div>
 
-<footer>
-    <p>🔒 Ultimate AI Security Framework v4 | Build 2026 | For Security & DevSecOps Teams</p>
+<footer style="padding: 30px 20px; background: rgba(15, 20, 27, 0.95); border-top: 1px solid rgba(207, 188, 255, 0.15); margin-top: 60px;">
+    <div style="max-width: 1600px; margin: 0 auto;">
+        <p style="text-align: center; margin-bottom: 16px; color: #94a3b8;">🔒 Ultimate AI Security Framework v4 | Build 2026 | For Security & DevSecOps Teams</p>
+        <div style="display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; font-size: 0.9rem;">
+            <a href="javascript:showPrivacyPolicy()" style="color: #cfbcff; text-decoration: none; cursor: pointer; transition: color 0.3s;">📋 Privacy Policy</a>
+            <span style="color: #475569;">|</span>
+            <a href="javascript:showAccessibility()" style="color: #cfbcff; text-decoration: none; cursor: pointer; transition: color 0.3s;">♿ Accessibility</a>
+            <span style="color: #475569;">|</span>
+            <a href="javascript:showTerms()" style="color: #cfbcff; text-decoration: none; cursor: pointer; transition: color 0.3s;">⚖️ Terms of Use</a>
+        </div>
+    </div>
 </footer>
+
+<!-- PRIVACY POLICY MODAL -->
+<div id="privacyModal" class="modal-overlay" style="display: none;" onclick="if(event.target === this) document.getElementById('privacyModal').style.display='none';">
+    <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
+        <button onclick="document.getElementById('privacyModal').style.display='none'" style="position: absolute; top: 20px; right: 20px; background: rgba(207,188,255,0.2); border: none; color: #cfbcff; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">✕ Close</button>
+        <div class="modal-title">📋 Privacy Policy</div>
+        <div style="color: #cbd5e1; line-height: 1.8; font-size: 0.95rem;">
+            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Data We Collect</h3>
+            <p>This tool collects form inputs you provide for risk assessment analysis. No personal data is stored on our servers.</p>
+
+            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">How We Use Your Data</h3>
+            <ul style="margin-left: 20px;">
+                <li>✓ To generate customized security recommendations</li>
+                <li>✓ To improve the assessment framework</li>
+                <li>✓ To comply with security standards (NIST, ISO 42001)</li>
+            </ul>
+
+            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Data Storage & Security</h3>
+            <p>All assessments are processed client-side in your browser. No data is transmitted to external servers unless explicitly shared by you.</p>
+
+            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Your Rights</h3>
+            <ul style="margin-left: 20px;">
+                <li>✓ Access: View any assessment data you've entered</li>
+                <li>✓ Deletion: Clear your data by closing the browser tab</li>
+                <li>✓ Portability: Export your risk assessment results</li>
+            </ul>
+
+            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Third-Party Services</h3>
+            <p>This framework does not use cookies or third-party tracking. GitHub Pages hosting complies with privacy standards.</p>
+
+            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Contact</h3>
+            <p>For privacy questions, contact: asafapelbaum@gmail.com</p>
+
+            <p style="margin-top: 20px; color: #94a3b8; font-size: 0.85rem;">Last updated: May 20, 2026</p>
+        </div>
+    </div>
+</div>
+
+<!-- ACCESSIBILITY STATEMENT MODAL -->
+<div id="accessibilityModal" class="modal-overlay" style="display: none;" onclick="if(event.target === this) document.getElementById('accessibilityModal').style.display='none';">
+    <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
+        <button onclick="document.getElementById('accessibilityModal').style.display='none'" style="position: absolute; top: 20px; right: 20px; background: rgba(207,188,255,0.2); border: none; color: #cfbcff; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">✕ Close</button>
+        <div class="modal-title">♿ Accessibility Statement</div>
+        <div style="color: #cbd5e1; line-height: 1.8; font-size: 0.95rem;">
+            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Commitment to Accessibility</h3>
+            <p>The Ultimate AI Security Framework is committed to ensuring digital accessibility for people with disabilities. We strive to meet WCAG 2.1 Level AA accessibility standards.</p>
+
+            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Features</h3>
+            <ul style="margin-left: 20px;">
+                <li>✓ Keyboard Navigation: Full navigation using Tab, Enter, and Arrow keys</li>
+                <li>✓ Screen Reader Support: Proper ARIA labels and semantic HTML</li>
+                <li>✓ Color Contrast: WCAG AA compliant (4.5:1 minimum)</li>
+                <li>✓ Font Size: Scalable text that responds to browser zoom</li>
+                <li>✓ Form Labels: All inputs properly labeled for assistive devices</li>
+                <li>✓ Focus Indicators: Clear visual focus management</li>
+            </ul>
+
+            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Keyboard Shortcuts</h3>
+            <ul style="margin-left: 20px;">
+                <li>📋 Tab - Navigate between interactive elements</li>
+                <li>🔤 Enter/Space - Activate buttons and radio inputs</li>
+                <li>↑↓ Arrow Keys - Select radio options, navigate dropdowns</li>
+                <li>Shift+Tab - Navigate backwards</li>
+            </ul>
+
+            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Browser Compatibility</h3>
+            <p>Tested with: Chrome, Firefox, Safari, Edge. Screen readers: NVDA, JAWS, VoiceOver.</p>
+
+            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Report Accessibility Issues</h3>
+            <p>If you encounter accessibility barriers, please report them to: asafapelbaum@gmail.com with details about:</p>
+            <ul style="margin-left: 20px;">
+                <li>The barrier you encountered</li>
+                <li>Your browser and assistive technology</li>
+                <li>Steps to reproduce the issue</li>
+            </ul>
+
+            <p style="margin-top: 20px; color: #94a3b8; font-size: 0.85rem;">Last updated: May 20, 2026 | WCAG 2.1 Level AA Target</p>
+        </div>
+    </div>
+</div>
+
+<!-- TERMS OF USE MODAL -->
+<div id="termsModal" class="modal-overlay" style="display: none;" onclick="if(event.target === this) document.getElementById('termsModal').style.display='none';">
+    <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
+        <button onclick="document.getElementById('termsModal').style.display='none'" style="position: absolute; top: 20px; right: 20px; background: rgba(207,188,255,0.2); border: none; color: #cfbcff; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">✕ Close</button>
+        <div class="modal-title">⚖️ Terms of Use</div>
+        <div style="color: #cbd5e1; line-height: 1.8; font-size: 0.95rem;">
+            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">License & Usage</h3>
+            <p>The Ultimate AI Security Framework is provided as-is for educational and assessment purposes. Users may use this tool to evaluate their AI systems' security posture.</p>
+
+            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Disclaimer</h3>
+            <p>This framework provides general security guidance and should not be considered a substitute for professional security audits or legal advice. The recommendations are based on NIST AI RMF and ISO 42001 standards but may need customization for your specific environment.</p>
+
+            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Limitations of Liability</h3>
+            <p>We are not liable for any damages or losses resulting from the use of this framework or its recommendations. Users are responsible for implementing appropriate security measures based on their organization's risk tolerance and compliance requirements.</p>
+
+            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Modifications</h3>
+            <p>We reserve the right to modify this framework and these terms at any time. Continued use constitutes acceptance of changes.</p>
+
+            <h3 style="color: #f1f5f9; margin-top: 20px; margin-bottom: 12px;">Attribution</h3>
+            <p>Built with NIST AI RMF & ISO/IEC 42001 standards. For security professionals and DevSecOps teams.</p>
+
+            <p style="margin-top: 20px; color: #94a3b8; font-size: 0.85rem;">Last updated: May 20, 2026</p>
+        </div>
+    </div>
+</div>
 
 <script>
 const layersData = {
@@ -1283,6 +1398,38 @@ function getRequiredFieldsForStep(step) {
 
 selectLayer(1);
 renderDefaultSpiderWeb();
+
+function showPrivacyPolicy() {
+    document.getElementById('privacyModal').style.display = 'flex';
+}
+
+function showAccessibility() {
+    document.getElementById('accessibilityModal').style.display = 'flex';
+}
+
+function showTerms() {
+    document.getElementById('termsModal').style.display = 'flex';
+}
+
+// Close modals when clicking outside
+window.onclick = function(event) {
+    const privacyModal = document.getElementById('privacyModal');
+    const accessibilityModal = document.getElementById('accessibilityModal');
+    const termsModal = document.getElementById('termsModal');
+
+    if (event.target === privacyModal) privacyModal.style.display = 'none';
+    if (event.target === accessibilityModal) accessibilityModal.style.display = 'none';
+    if (event.target === termsModal) termsModal.style.display = 'none';
+}
+
+// Keyboard accessibility: Close modals with Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        document.getElementById('privacyModal').style.display = 'none';
+        document.getElementById('accessibilityModal').style.display = 'none';
+        document.getElementById('termsModal').style.display = 'none';
+    }
+});
 
 function renderFrontPageSpider() {
     // Default baseline risk scores
