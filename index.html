@@ -665,107 +665,107 @@ setTimeout(() => {
             const byLayer = {1:[],2:[],3:[],4:[],5:[]};
             m.forEach(ctrl=>{const layer=parseInt(ctrl.layer[0]); if(byLayer[layer]) byLayer[layer].push(ctrl);});
 
-    const layerNames = {1:'Data',2:'Model/LLM',3:'Application',4:'Infrastructure',5:'Compliance'};
-    const layerIcons = {1:'📊',2:'🧠',3:'⚙️',4:'🌐',5:'📋'};
-    const layerColors = {1:'#f59e0b',2:'#10b981',3:'#3b82f6',4:'#a855f7',5:'#ec4899'};
+            const layerNames = {1:'Data',2:'Model/LLM',3:'Application',4:'Infrastructure',5:'Compliance'};
+            const layerIcons = {1:'📊',2:'🧠',3:'⚙️',4:'🌐',5:'📋'};
+            const layerColors = {1:'#f59e0b',2:'#10b981',3:'#3b82f6',4:'#a855f7',5:'#ec4899'};
 
-    const riskLevel = p <= 5 ? 'LOW RISK' : p <= 10 ? 'MEDIUM RISK' : 'HIGH RISK';
-    const riskColor = p <= 5 ? '#10b981' : p <= 10 ? '#f59e0b' : '#ef4444';
-    const recommendation = p <= 5 ? 'Implement optional hardening — low-priority roadmap' : p <= 10 ? 'Implement over next quarter — standard hardening roadmap' : 'Immediate action required — critical security roadmap';
+            const riskLevel = p <= 5 ? 'LOW RISK' : p <= 10 ? 'MEDIUM RISK' : 'HIGH RISK';
+            const riskColor = p <= 5 ? '#10b981' : p <= 10 ? '#f59e0b' : '#ef4444';
+            const recommendation = p <= 5 ? 'Implement optional hardening — low-priority roadmap' : p <= 10 ? 'Implement over next quarter — standard hardening roadmap' : 'Immediate action required — critical security roadmap';
 
-    let html = `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:40px;"><div style="flex:1;min-width:300px;"><h2 style="margin-bottom:8px;">📊 Risk Assessment Results</h2><p style="color:#94a3b8;margin-bottom:12px;">System: <strong>${c.name}</strong> | ${new Date().toLocaleDateString()}</p><div style="margin-top:16px;padding:20px;background:rgba(71,85,105,0.1);border-radius:8px;"><div style="display:flex;gap:30px;align-items:center;"><div><div style="font-size:3.5rem;font-weight:900;color:${riskColor};">${p*100/15}%</div><div style="color:${riskColor};font-weight:700;font-size:1.1rem;margin-top:4px;">${riskLevel}</div></div><div style="flex:1;"><div style="color:#cbd5e1;margin-bottom:8px;"><strong>${recommendation}</strong></div><span style="font-size:0.85rem;color:#94a3b8;">Risk Score: ${p}/15</span></div></div></div></div><div style="flex:1;min-width:300px;"><h3 style="margin-bottom:16px;color:#f1f5f9;">⚙️ System Configuration</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.9rem;"><div><span style="color:#94a3b8;">👥 User Type</span><br/><strong>${c.users === 'public' ? 'Public' : 'Authenticated'}</strong></div><div><span style="color:#94a3b8;">🗄️ Data Sensitivity</span><br/><strong>${c.sensitivity === 'critical' ? 'Critical' : 'Confidential'}</strong></div><div><span style="color:#94a3b8;">☁️ Model Hosting</span><br/><strong>${c.hosting === 'vendor-api' ? 'Vendor API' : c.hosting === 'private' ? 'Private Cloud' : 'Managed Cloud'}</strong></div><div><span style="color:#94a3b8;">🤖 Autonomy Level</span><br/><strong>${c.autonomy === 'agentic' ? 'Agentic' : 'Read-Only'}</strong></div><div><span style="color:#94a3b8;">🔧 Fine-tuned Model</span><br/><strong>${c.training === 'yes' ? 'Yes' : 'No'}</strong></div><div><span style="color:#94a3b8;">🔌 Integrations</span><br/><strong>${c.integrations}</strong></div></div></div></div></div>`;
+            let html = `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:40px;"><div style="flex:1;min-width:300px;"><h2 style="margin-bottom:8px;">Risk Assessment Results</h2><p style="color:#94a3b8;margin-bottom:12px;">System: <strong>${c.name}</strong> | ${new Date().toLocaleDateString()}</p><div style="margin-top:16px;padding:20px;background:rgba(71,85,105,0.1);border-radius:8px;"><div style="display:flex;gap:30px;align-items:center;"><div><div style="font-size:3.5rem;font-weight:900;color:${riskColor};">${p*100/15}%</div><div style="color:${riskColor};font-weight:700;font-size:1.1rem;margin-top:4px;">${riskLevel}</div></div><div style="flex:1;"><div style="color:#cbd5e1;margin-bottom:8px;"><strong>${recommendation}</strong></div><span style="font-size:0.85rem;color:#94a3b8;">Risk Score: ${p}/15</span></div></div></div></div><div style="flex:1;min-width:300px;"><h3 style="margin-bottom:16px;color:#f1f5f9;">System Configuration</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.9rem;"><div><span style="color:#94a3b8;">User Type</span><br/><strong>${c.users === 'public' ? 'Public' : 'Authenticated'}</strong></div><div><span style="color:#94a3b8;">Data Sensitivity</span><br/><strong>${c.sensitivity === 'critical' ? 'Critical' : 'Confidential'}</strong></div><div><span style="color:#94a3b8;">Model Hosting</span><br/><strong>${c.hosting === 'vendor-api' ? 'Vendor API' : c.hosting === 'private' ? 'Private Cloud' : 'Managed Cloud'}</strong></div><div><span style="color:#94a3b8;">Autonomy Level</span><br/><strong>${c.autonomy === 'agentic' ? 'Agentic' : 'Read-Only'}</strong></div><div><span style="color:#94a3b8;">Fine-tuned Model</span><br/><strong>${c.training === 'yes' ? 'Yes' : 'No'}</strong></div><div><span style="color:#94a3b8;">Integrations</span><br/><strong>${c.integrations}</strong></div></div></div></div></div>`;
 
-    // Framework Rings - Layer Risk Visualization
-    html += `<div class="card"><h3 style="margin-bottom:20px;">🎯 Per-Layer Risk Breakdown</h3>`;
-    const sorted = Object.entries(scores).map(e=>{return{id:parseInt(e[0]),score:e[1]};}).sort((a,b)=>b.score-a.score);
-    sorted.forEach(layer=>{
-        const sevLabel = layer.score>=65 ? 'Critical' : layer.score>=40 ? 'High' : layer.score>=25 ? 'Medium' : 'Low';
-        const sevColor = layer.score>=65 ? '#ef4444' : layer.score>=40 ? '#f59e0b' : layer.score>=25 ? '#f59e0b' : '#10b981';
-        html += `<div style="margin-bottom:20px;padding:16px;background:rgba(71,85,105,0.15);border-radius:8px;border-left:4px solid ${layerColors[layer.id]};">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:1.3rem;">${layerIcons[layer.id]}</span><span style="font-weight:700;color:#f1f5f9;">Layer ${layer.id}: ${layerNames[layer.id]}</span></div>
-                <div style="display:flex;align-items:center;gap:12px;"><span style="font-size:0.75rem;padding:3px 10px;background:${sevColor}20;color:${sevColor};border:1px solid ${sevColor}40;border-radius:4px;font-weight:700;">${sevLabel}</span><span style="font-weight:800;font-size:1.1rem;color:${layerColors[layer.id]};">${layer.score}/100</span></div>
-            </div>
-            <div style="width:100%;height:8px;background:rgba(71,85,105,0.3);border-radius:4px;overflow:hidden;"><div style="width:${layer.score}%;height:100%;background:${layerColors[layer.id]};border-radius:4px;"></div></div>
-        </div>`;
-    });
-    html += `</div>`;
+            // Framework Rings - Layer Risk Visualization
+            html += `<div class="card"><h3 style="margin-bottom:20px;">Per-Layer Risk Breakdown</h3>`;
+            const sorted = Object.entries(scores).map(e=>{return{id:parseInt(e[0]),score:e[1]};}).sort((a,b)=>b.score-a.score);
+            sorted.forEach(layer=>{
+                const sevLabel = layer.score>=65 ? 'Critical' : layer.score>=40 ? 'High' : layer.score>=25 ? 'Medium' : 'Low';
+                const sevColor = layer.score>=65 ? '#ef4444' : layer.score>=40 ? '#f59e0b' : layer.score>=25 ? '#f59e0b' : '#10b981';
+                html += `<div style="margin-bottom:20px;padding:16px;background:rgba(71,85,105,0.15);border-radius:8px;border-left:4px solid ${layerColors[layer.id]};">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                        <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:1.3rem;">${layerIcons[layer.id]}</span><span style="font-weight:700;color:#f1f5f9;">Layer ${layer.id}: ${layerNames[layer.id]}</span></div>
+                        <div style="display:flex;align-items:center;gap:12px;"><span style="font-size:0.75rem;padding:3px 10px;background:${sevColor}20;color:${sevColor};border:1px solid ${sevColor}40;border-radius:4px;font-weight:700;">${sevLabel}</span><span style="font-weight:800;font-size:1.1rem;color:${layerColors[layer.id]};">${layer.score}/100</span></div>
+                    </div>
+                    <div style="width:100%;height:8px;background:rgba(71,85,105,0.3);border-radius:4px;overflow:hidden;"><div style="width:${layer.score}%;height:100%;background:${layerColors[layer.id]};border-radius:4px;"></div></div>
+                </div>`;
+            });
+            html += `</div>`;
 
-    // Risk Radar - Current vs Target
-    html += `<div class="card"><h3 style="margin-bottom:20px;">🕷️ Risk Radar: Current vs Target Posture</h3><div style="margin:20px 0;font-size:0.9rem;color:#cbd5e1;"><strong>Red = Current Risk | Green = Target State After Implementation</strong></div><svg viewBox="0 0 800 500" style="width:100%;max-width:800px;margin:20px auto;display:block;">
-        <defs>
-            <filter id="glow-red"><feGaussianBlur stdDeviation="2" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            <filter id="glow-green"><feGaussianBlur stdDeviation="2" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        </defs>
-        <circle cx="400" cy="250" r="200" fill="none" stroke="rgba(71,85,105,0.3)" stroke-width="1"/>
-        <circle cx="400" cy="250" r="150" fill="none" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>
-        <circle cx="400" cy="250" r="100" fill="none" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>
-        <circle cx="400" cy="250" r="50" fill="none" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>
-        <line x1="400" y1="50" x2="400" y2="450" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>
-        <line x1="200" y1="250" x2="600" y2="250" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>
-        <line x1="288" y1="93" x2="512" y2="407" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>
-        <line x1="512" y1="93" x2="288" y2="407" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>
-        <text x="400" y="30" text-anchor="middle" font-size="12" fill="#cbd5e1">Data Protection</text>
-        <text x="570" y="260" text-anchor="start" font-size="12" fill="#cbd5e1">Model/LLM Security</text>
-        <text x="470" y="430" text-anchor="middle" font-size="12" fill="#cbd5e1">Application Security</text>
-        <text x="130" y="430" text-anchor="middle" font-size="12" fill="#cbd5e1">Infrastructure</text>
-        <text x="30" y="260" text-anchor="end" font-size="12" fill="#cbd5e1">Compliance & Gov</text>`;
+            // Risk Radar - Current vs Target
+            html += `<div class="card"><h3 style="margin-bottom:20px;">Risk Radar: Current vs Target Posture</h3><div style="margin:20px 0;font-size:0.9rem;color:#cbd5e1;"><strong>Red = Current Risk | Green = Target State After Implementation</strong></div><svg viewBox="0 0 800 500" style="width:100%;max-width:800px;margin:20px auto;display:block;">
+                <defs>
+                    <filter id="glow-red"><feGaussianBlur stdDeviation="2" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                    <filter id="glow-green"><feGaussianBlur stdDeviation="2" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                </defs>
+                <circle cx="400" cy="250" r="200" fill="none" stroke="rgba(71,85,105,0.3)" stroke-width="1"/>
+                <circle cx="400" cy="250" r="150" fill="none" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>
+                <circle cx="400" cy="250" r="100" fill="none" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>
+                <circle cx="400" cy="250" r="50" fill="none" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>
+                <line x1="400" y1="50" x2="400" y2="450" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>
+                <line x1="200" y1="250" x2="600" y2="250" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>
+                <line x1="288" y1="93" x2="512" y2="407" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>
+                <line x1="512" y1="93" x2="288" y2="407" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>
+                <text x="400" y="30" text-anchor="middle" font-size="12" fill="#cbd5e1">Data Protection</text>
+                <text x="570" y="260" text-anchor="start" font-size="12" fill="#cbd5e1">Model/LLM Security</text>
+                <text x="470" y="430" text-anchor="middle" font-size="12" fill="#cbd5e1">Application Security</text>
+                <text x="130" y="430" text-anchor="middle" font-size="12" fill="#cbd5e1">Infrastructure</text>
+                <text x="30" y="260" text-anchor="end" font-size="12" fill="#cbd5e1">Compliance & Gov</text>`;
 
-    // Current risk polygon (red)
-    const angle = 2 * Math.PI / 5;
-    const cx = 400, cy = 250, maxR = 200;
-    const currentVals = [scores[1]/100, scores[2]/100, scores[3]/100, scores[4]/100, scores[5]/100];
-    let currentPoints = '';
-    for (let i = 0; i < 5; i++) {
-        const a = i * angle - Math.PI / 2;
-        const r = currentVals[i] * maxR;
-        const x = cx + r * Math.cos(a);
-        const y = cy + r * Math.sin(a);
-        currentPoints += `${x},${y} `;
-    }
-    html += `<polygon points="${currentPoints}" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="2.5" filter="url(#glow-red)"/>`;
+            // Current risk polygon (red)
+            const angle = 2 * Math.PI / 5;
+            const cx = 400, cy = 250, maxR = 200;
+            const currentVals = [scores[1]/100, scores[2]/100, scores[3]/100, scores[4]/100, scores[5]/100];
+            let currentPoints = '';
+            for (let i = 0; i < 5; i++) {
+                const a = i * angle - Math.PI / 2;
+                const r = currentVals[i] * maxR;
+                const x = cx + r * Math.cos(a);
+                const y = cy + r * Math.sin(a);
+                currentPoints += `${x},${y} `;
+            }
+            html += `<polygon points="${currentPoints}" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="2.5" filter="url(#glow-red)"/>`;
 
-    // Target risk polygon (green) - assume 50% reduction
-    const targetVals = currentVals.map(v => Math.max(v * 0.5, 0.05));
-    let targetPoints = '';
-    for (let i = 0; i < 5; i++) {
-        const a = i * angle - Math.PI / 2;
-        const r = targetVals[i] * maxR;
-        const x = cx + r * Math.cos(a);
-        const y = cy + r * Math.sin(a);
-        targetPoints += `${x},${y} `;
-    }
-    html += `<polygon points="${targetPoints}" fill="rgba(34,197,94,0.15)" stroke="#22c55e" stroke-width="2.5" filter="url(#glow-green)"/>`;
+            // Target risk polygon (green) - assume 50% reduction
+            const targetVals = currentVals.map(v => Math.max(v * 0.5, 0.05));
+            let targetPoints = '';
+            for (let i = 0; i < 5; i++) {
+                const a = i * angle - Math.PI / 2;
+                const r = targetVals[i] * maxR;
+                const x = cx + r * Math.cos(a);
+                const y = cy + r * Math.sin(a);
+                targetPoints += `${x},${y} `;
+            }
+            html += `<polygon points="${targetPoints}" fill="rgba(34,197,94,0.15)" stroke="#22c55e" stroke-width="2.5" filter="url(#glow-green)"/>`;
 
-    // Points
-    for (let i = 0; i < 5; i++) {
-        const a = i * angle - Math.PI / 2;
-        const r1 = currentVals[i] * maxR;
-        const r2 = targetVals[i] * maxR;
-        const x1 = cx + r1 * Math.cos(a);
-        const y1 = cy + r1 * Math.sin(a);
-        const x2 = cx + r2 * Math.cos(a);
-        const y2 = cy + r2 * Math.sin(a);
-        html += `<circle cx="${x1}" cy="${y1}" r="5" fill="#ef4444" stroke="#fca5a5" stroke-width="2"/>`;
-        html += `<circle cx="${x2}" cy="${y2}" r="5" fill="#22c55e" stroke="#86efac" stroke-width="2"/>`;
-    }
+            // Points
+            for (let i = 0; i < 5; i++) {
+                const a = i * angle - Math.PI / 2;
+                const r1 = currentVals[i] * maxR;
+                const r2 = targetVals[i] * maxR;
+                const x1 = cx + r1 * Math.cos(a);
+                const y1 = cy + r1 * Math.sin(a);
+                const x2 = cx + r2 * Math.cos(a);
+                const y2 = cy + r2 * Math.sin(a);
+                html += `<circle cx="${x1}" cy="${y1}" r="5" fill="#ef4444" stroke="#fca5a5" stroke-width="2"/>`;
+                html += `<circle cx="${x2}" cy="${y2}" r="5" fill="#22c55e" stroke="#86efac" stroke-width="2"/>`;
+            }
 
-    html += `</svg><div style="display:flex;justify-content:center;gap:30px;margin-top:20px;"><div style="display:flex;align-items:center;gap:8px;"><div style="width:16px;height:16px;background:#ef4444;border-radius:2px;"></div><span style="color:#cbd5e1;">Current Risk</span></div><div style="display:flex;align-items:center;gap:8px;"><div style="width:16px;height:16px;background:#22c55e;border-radius:2px;"></div><span style="color:#cbd5e1;">Target Posture</span></div></div></div>`;
+            html += `</svg><div style="display:flex;justify-content:center;gap:30px;margin-top:20px;"><div style="display:flex;align-items:center;gap:8px;"><div style="width:16px;height:16px;background:#ef4444;border-radius:2px;"></div><span style="color:#cbd5e1;">Current Risk</span></div><div style="display:flex;align-items:center;gap:8px;"><div style="width:16px;height:16px;background:#22c55e;border-radius:2px;"></div><span style="color:#cbd5e1;">Target Posture</span></div></div></div>`;
 
-    // Framework selector tabs - 5-Layer, NIST, ISO
-    html += `<div class="card"><h3 style="margin-bottom:16px;">📋 View Controls By Framework</h3><div class="framework-tabs">
-        <button class="fw-tab active" onclick="switchResultsFramework(event, '5layer')">📊 5-Layer Model</button>
-        <button class="fw-tab" onclick="switchResultsFramework(event, 'nist')">🏛️ NIST AI RMF</button>
-        <button class="fw-tab" onclick="switchResultsFramework(event, 'iso')">📋 ISO 42001</button>
-    </div></div>`;
+            // Framework selector tabs - 5-Layer, NIST, ISO
+            html += `<div class="card"><h3 style="margin-bottom:16px;">View Controls By Framework</h3><div class="framework-tabs">
+                <button class="fw-tab active" onclick="switchResultsFramework(event, '5layer')">5-Layer Model</button>
+                <button class="fw-tab" onclick="switchResultsFramework(event, 'nist')">NIST AI RMF</button>
+                <button class="fw-tab" onclick="switchResultsFramework(event, 'iso')">ISO 42001</button>
+            </div></div>`;
 
-    // 5-Layer view: Threats & Controls side by side
-    html += `<div id="framework-5layer">`;
-    sorted.forEach(layer=>{
-        const threats = layersData[layer.id].threats;
-        const controls = byLayer[layer.id];
-        html += `<div class="card">
-            <div class="layer-title" style="color:${layerColors[layer.id]};margin-bottom:20px;">${layerIcons[layer.id]} Layer ${layer.id}: ${layerNames[layer.id]} (Risk: ${layer.score}/100)</div>
+            // 5-Layer view: Threats & Controls side by side
+            html += `<div id="framework-5layer">`;
+            sorted.forEach(layer=>{
+                const threats = layersData[layer.id].threats;
+                const controls = byLayer[layer.id];
+                html += `<div class="card">
+                    <div class="layer-title" style="color:${layerColors[layer.id]};margin-bottom:20px;">Layer ${layer.id}: ${layerNames[layer.id]} (Risk: ${layer.score}/100)</div>
             <div style="margin-bottom:16px;padding:12px;background:rgba(71,85,105,0.2);border-radius:8px;font-size:0.9rem;color:#cbd5e1;">💡 Click on any threat to see which controls mitigate it</div>
             <div class="threats-controls-grid">
                 <div class="threats-column">
@@ -790,89 +790,89 @@ setTimeout(() => {
     });
     html += `</div>`;
 
-    // NIST view
-    html += `<div id="framework-nist" style="display:none;">`;
-    const nistGroups = {};
-    m.forEach(ctrl => {
-        if(!nistGroups[ctrl.nist]) nistGroups[ctrl.nist] = [];
-        nistGroups[ctrl.nist].push(ctrl);
-    });
-    Object.keys(nistGroups).sort().forEach(nist => {
-        html += `<div class="card"><h3 style="color:#3b82f6;margin-bottom:16px;">🏛️ NIST: ${nist}</h3>`;
-        nistGroups[nist].forEach(ctrl => {
-            const layerColor = {1:'#f59e0b',2:'#10b981',3:'#3b82f6',4:'#a855f7',5:'#ec4899'}[parseInt(ctrl.layer[0])];
-            html += `<div class="control-item" style="border-left-color:${layerColor};margin-bottom:12px;"><div class="control-title">${ctrl.title}</div><span class="control-type">${ctrl.type}</span><div class="control-desc">${ctrl.description}</div><div class="control-tags"><span class="tag tag-iso">ISO: ${ctrl.iso}</span></div></div>`;
-        });
-        html += `</div>`;
-    });
-    html += `</div>`;
+            // NIST view
+            html += `<div id="framework-nist" style="display:none;">`;
+            const nistGroups = {};
+            m.forEach(ctrl => {
+                if(!nistGroups[ctrl.nist]) nistGroups[ctrl.nist] = [];
+                nistGroups[ctrl.nist].push(ctrl);
+            });
+            Object.keys(nistGroups).sort().forEach(nist => {
+                html += `<div class="card"><h3 style="color:#3b82f6;margin-bottom:16px;">NIST: ${nist}</h3>`;
+                nistGroups[nist].forEach(ctrl => {
+                    const layerColor = {1:'#f59e0b',2:'#10b981',3:'#3b82f6',4:'#a855f7',5:'#ec4899'}[parseInt(ctrl.layer[0])];
+                    html += `<div class="control-item" style="border-left-color:${layerColor};margin-bottom:12px;"><div class="control-title">${ctrl.title}</div><span class="control-type">${ctrl.type}</span><div class="control-desc">${ctrl.description}</div><div class="control-tags"><span class="tag tag-iso">ISO: ${ctrl.iso}</span></div></div>`;
+                });
+                html += `</div>`;
+            });
+            html += `</div>`;
 
-    // ISO view
-    html += `<div id="framework-iso" style="display:none;">`;
-    const isoGroups = {};
-    m.forEach(ctrl => {
-        if(!isoGroups[ctrl.iso]) isoGroups[ctrl.iso] = [];
-        isoGroups[ctrl.iso].push(ctrl);
-    });
-    Object.keys(isoGroups).sort().forEach(iso => {
-        html += `<div class="card"><h3 style="color:#a855f7;margin-bottom:16px;">📋 ISO: ${iso}</h3>`;
-        isoGroups[iso].forEach(ctrl => {
-            const layerColor = {1:'#f59e0b',2:'#10b981',3:'#3b82f6',4:'#a855f7',5:'#ec4899'}[parseInt(ctrl.layer[0])];
-            html += `<div class="control-item" style="border-left-color:${layerColor};margin-bottom:12px;"><div class="control-title">${ctrl.title}</div><span class="control-type">${ctrl.type}</span><div class="control-desc">${ctrl.description}</div><div class="control-tags"><span class="tag tag-nist">NIST: ${ctrl.nist}</span></div></div>`;
-        });
-        html += `</div>`;
-    });
-    html += `</div>`;
+            // ISO view
+            html += `<div id="framework-iso" style="display:none;">`;
+            const isoGroups = {};
+            m.forEach(ctrl => {
+                if(!isoGroups[ctrl.iso]) isoGroups[ctrl.iso] = [];
+                isoGroups[ctrl.iso].push(ctrl);
+            });
+            Object.keys(isoGroups).sort().forEach(iso => {
+                html += `<div class="card"><h3 style="color:#a855f7;margin-bottom:16px;">ISO: ${iso}</h3>`;
+                isoGroups[iso].forEach(ctrl => {
+                    const layerColor = {1:'#f59e0b',2:'#10b981',3:'#3b82f6',4:'#a855f7',5:'#ec4899'}[parseInt(ctrl.layer[0])];
+                    html += `<div class="control-item" style="border-left-color:${layerColor};margin-bottom:12px;"><div class="control-title">${ctrl.title}</div><span class="control-type">${ctrl.type}</span><div class="control-desc">${ctrl.description}</div><div class="control-tags"><span class="tag tag-nist">NIST: ${ctrl.nist}</span></div></div>`;
+                });
+                html += `</div>`;
+            });
+            html += `</div>`;
 
-    // Priority Security Recommendations
-    html += `<div class="card"><h3 style="margin-bottom:20px;">🎯 Priority Security Recommendations</h3>`;
-    const topRisks = sorted.slice(0, 2);
-    topRisks.forEach(layer => {
-        const sevColor = layer.score >= 65 ? '#ef4444' : layer.score >= 40 ? '#f59e0b' : '#10b981';
-        const layerControls = byLayer[layer.id];
-        const recommendation = {
-            1: 'Implement comprehensive PII masking, data encryption (AES-256), and access controls. Enable data lineage tracking to detect poisoning attempts.',
-            2: 'Protect custom model weights with access controls and integrity checksums. Apply gradient constraints to prevent training data leakage.',
-            3: 'Enforce schema validation on all LLM outputs. Implement session isolation to prevent cross-user prompt injection.',
-            4: 'Deploy network segmentation (VPCs) and secrets management with automated key rotation.',
-            5: 'Implement DSAR automation for right-to-be-forgotten compliance. Maintain immutable cryptographic audit logs of all interactions.'
-        }[layer.id];
+            // Priority Security Recommendations
+            html += `<div class="card"><h3 style="margin-bottom:20px;">Priority Security Recommendations</h3>`;
+            const topRisks = sorted.slice(0, 2);
+            topRisks.forEach(layer => {
+                const sevColor = layer.score >= 65 ? '#ef4444' : layer.score >= 40 ? '#f59e0b' : '#10b981';
+                const layerControls = byLayer[layer.id];
+                const recommendation = {
+                    1: 'Implement comprehensive PII masking, data encryption (AES-256), and access controls. Enable data lineage tracking to detect poisoning attempts.',
+                    2: 'Protect custom model weights with access controls and integrity checksums. Apply gradient constraints to prevent training data leakage.',
+                    3: 'Enforce schema validation on all LLM outputs. Implement session isolation to prevent cross-user prompt injection.',
+                    4: 'Deploy network segmentation (VPCs) and secrets management with automated key rotation.',
+                    5: 'Implement DSAR automation for right-to-be-forgotten compliance. Maintain immutable cryptographic audit logs of all interactions.'
+                }[layer.id];
 
-        html += `<div style="margin-bottom:16px;padding:16px;background:rgba(${sevColor.match(/\\d+/g).join(',')},0.1);border-left:4px solid ${sevColor};border-radius:8px;"><div style="display:flex;gap:12px;align-items:flex-start;"><span style="font-size:1.2rem;font-weight:700;color:${sevColor};min-width:24px;">${layer.score >= 40 ? 'HIGH' : 'MEDIUM'}</span><div style="flex:1;"><div style="font-weight:700;color:${sevColor};margin-bottom:4px;">${layerIcons[layer.id]} Layer ${layer.id}: ${layerNames[layer.id]}</div><div style="color:#cbd5e1;font-size:0.9rem;">${recommendation}</div></div></div></div>`;
-    });
-    html += `</div>`;
+                html += `<div style="margin-bottom:16px;padding:16px;background:rgba(${sevColor.match(/\\d+/g).join(',')},0.1);border-left:4px solid ${sevColor};border-radius:8px;"><div style="display:flex;gap:12px;align-items:flex-start;"><span style="font-size:1.2rem;font-weight:700;color:${sevColor};min-width:24px;">${layer.score >= 40 ? 'HIGH' : 'MEDIUM'}</span><div style="flex:1;"><div style="font-weight:700;color:${sevColor};margin-bottom:4px;">Layer ${layer.id}: ${layerNames[layer.id]}</div><div style="color:#cbd5e1;font-size:0.9rem;">${recommendation}</div></div></div></div>`;
+            });
+            html += `</div>`;
 
-    // Recommended Next Steps
-    html += `<div class="card"><h3 style="margin-bottom:20px;">📋 Recommended Next Steps</h3>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-            <div style="padding:16px;background:rgba(59,130,246,0.1);border-left:4px solid #3b82f6;border-radius:8px;">
-                <div style="font-size:1.5rem;font-weight:900;color:#3b82f6;margin-bottom:8px;">1</div>
-                <div style="font-weight:700;color:#f1f5f9;margin-bottom:8px;">Review Layer Details</div>
-                <div style="color:#cbd5e1;font-size:0.9rem;">Use the Interactive Visualizer to explore threats and controls for your highest-risk layers.</div>
-            </div>
-            <div style="padding:16px;background:rgba(168,85,247,0.1);border-left:4px solid #a855f7;border-radius:8px;">
-                <div style="font-size:1.5rem;font-weight:900;color:#a855f7;margin-bottom:8px;">2</div>
-                <div style="font-weight:700;color:#f1f5f9;margin-bottom:8px;">Implement Controls</div>
-                <div style="color:#cbd5e1;font-size:0.9rem;">Follow the Security Guidelines tab for specific technical controls per layer.</div>
-            </div>
-            <div style="padding:16px;background:rgba(34,197,94,0.1);border-left:4px solid #22c55e;border-radius:8px;">
-                <div style="font-size:1.5rem;font-weight:900;color:#22c55e;margin-bottom:8px;">3</div>
-                <div style="font-weight:700;color:#f1f5f9;margin-bottom:8px;">Follow Roadmap</div>
-                <div style="color:#cbd5e1;font-size:0.9rem;">Use the Implementation Playbook for a structured 4-month deployment plan.</div>
-            </div>
-            <div style="padding:16px;background:rgba(245,158,11,0.1);border-left:4px solid #f59e0b;border-radius:8px;">
-                <div style="font-size:1.5rem;font-weight:900;color:#f59e0b;margin-bottom:8px;">4</div>
-                <div style="font-weight:700;color:#f1f5f9;margin-bottom:8px;">Schedule Review</div>
-                <div style="color:#cbd5e1;font-size:0.9rem;">Conduct a team security review meeting to assign owners and set deadlines.</div>
-            </div>
-        </div>
-    </div>`;
+            // Recommended Next Steps
+            html += `<div class="card"><h3 style="margin-bottom:20px;">Recommended Next Steps</h3>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                    <div style="padding:16px;background:rgba(0,212,255,0.1);border-left:4px solid #00D4FF;border-radius:8px;">
+                        <div style="font-size:1.5rem;font-weight:900;color:#00D4FF;margin-bottom:8px;">1</div>
+                        <div style="font-weight:700;color:#f1f5f9;margin-bottom:8px;">Review Layer Details</div>
+                        <div style="color:#cbd5e1;font-size:0.9rem;">Use the Interactive Visualizer to explore threats and controls for your highest-risk layers.</div>
+                    </div>
+                    <div style="padding:16px;background:rgba(184,79,255,0.1);border-left:4px solid #B84FFF;border-radius:8px;">
+                        <div style="font-size:1.5rem;font-weight:900;color:#B84FFF;margin-bottom:8px;">2</div>
+                        <div style="font-weight:700;color:#f1f5f9;margin-bottom:8px;">Implement Controls</div>
+                        <div style="color:#cbd5e1;font-size:0.9rem;">Follow the Security Guidelines tab for specific technical controls per layer.</div>
+                    </div>
+                    <div style="padding:16px;background:rgba(34,197,94,0.1);border-left:4px solid #22c55e;border-radius:8px;">
+                        <div style="font-size:1.5rem;font-weight:900;color:#22c55e;margin-bottom:8px;">3</div>
+                        <div style="font-weight:700;color:#f1f5f9;margin-bottom:8px;">Follow Roadmap</div>
+                        <div style="color:#cbd5e1;font-size:0.9rem;">Use the Implementation Playbook for a structured 4-month deployment plan.</div>
+                    </div>
+                    <div style="padding:16px;background:rgba(245,158,11,0.1);border-left:4px solid #f59e0b;border-radius:8px;">
+                        <div style="font-size:1.5rem;font-weight:900;color:#f59e0b;margin-bottom:8px;">4</div>
+                        <div style="font-weight:700;color:#f1f5f9;margin-bottom:8px;">Schedule Review</div>
+                        <div style="color:#cbd5e1;font-size:0.9rem;">Conduct a team security review meeting to assign owners and set deadlines.</div>
+                    </div>
+                </div>
+            </div>`;
 
-    // Footer
-    html += `<div style="text-align:center;padding:24px;border-top:1px solid rgba(71,85,105,0.3);margin-top:20px;color:#94a3b8;font-size:0.85rem;">🔒 Ultimate AI Security Framework | Build 2025 | For Security & DevSecOps Teams</div>`;
+            // Footer
+            html += `<div style="text-align:center;padding:24px;border-top:1px solid rgba(71,85,105,0.3);margin-top:20px;color:#94a3b8;font-size:0.85rem;">Ultimate AI Security Framework | Build 2025 | For Security & DevSecOps Teams</div>`;
 
-    document.getElementById('riskResults').innerHTML = html;
-    switchTab(null, 'results');
+            document.getElementById('riskResults').innerHTML = html;
+            switchTab(null, 'results');
 
             // Set default to 5-Layer and auto-show framework selector
             currentFramework = '5layer';
