@@ -18,7 +18,7 @@
         header {
             background: rgba(10, 22, 40, 0.95);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            border-bottom: 1px solid rgba(152, 203, 255, 0.2);
             padding: 30px 0;
             margin-bottom: 40px;
             border-radius: 12px;
@@ -30,7 +30,7 @@
             font-size: 2.2rem;
             margin-bottom: 8px;
             font-weight: 700;
-            background: linear-gradient(90deg, #00D4FF 0%, #B84FFF 50%, #FF00FF 100%);
+            background: linear-gradient(90deg, #98cbff 0%, #d672ff 50%, #ecb2ff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -55,11 +55,11 @@
         }
         .tab-btn:hover { background: rgba(71, 85, 105, 0.5); }
         .tab-btn.active {
-            background: linear-gradient(135deg, #00D4FF 0%, #00A8CC 100%);
-            border-color: #00D4FF;
-            color: #0a1628;
+            background: linear-gradient(135deg, #98cbff 0%, #00a3ff 100%);
+            border-color: #98cbff;
+            color: #003354;
             font-weight: 700;
-            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.4);
+            box-shadow: 0 4px 20px rgba(152, 203, 255, 0.4);
         }
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
@@ -173,17 +173,17 @@
 
         .form-group { margin-bottom: 32px; padding: 16px 0; border-bottom: 1px solid rgba(71,85,105,0.2); }
         .form-group:last-of-type { border-bottom: none; }
-        .system-name-group { margin-bottom: 32px; padding: 24px; background: rgba(0, 212, 255, 0.08); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 12px; }
-        .system-name-group label { font-size: 1.5rem; font-weight: 900; margin-bottom: 16px; color: #00D4FF; text-transform: uppercase; letter-spacing: 0.5px; }
-        .system-name-group input[type="text"] { font-size: 1.125rem; padding: 16px 20px; border: 2px solid rgba(0, 212, 255, 0.5) !important; background: rgba(30, 41, 59, 0.7) !important; transition: all 0.3s ease; }
-        .system-name-group input[type="text"]:focus { border-color: #00D4FF !important; background: rgba(30, 41, 59, 0.9) !important; box-shadow: 0 0 12px rgba(0, 212, 255, 0.4); }
+        .system-name-group { margin-bottom: 32px; padding: 24px; background: rgba(152, 203, 255, 0.08); border: 2px solid rgba(152, 203, 255, 0.3); border-radius: 12px; }
+        .system-name-group label { font-size: 1.5rem; font-weight: 900; margin-bottom: 16px; color: #98cbff; text-transform: uppercase; letter-spacing: 0.5px; }
+        .system-name-group input[type="text"] { font-size: 1.125rem; padding: 16px 20px; border: 2px solid rgba(152, 203, 255, 0.5) !important; background: rgba(30, 41, 59, 0.7) !important; transition: all 0.3s ease; }
+        .system-name-group input[type="text"]:focus { border-color: #98cbff !important; background: rgba(30, 41, 59, 0.9) !important; box-shadow: 0 0 12px rgba(152, 203, 255, 0.4); }
         label { display: block; margin-bottom: 12px; font-weight: 600; color: #f1f5f9; font-size: 1.05rem; }
         .radio-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
         input[type="radio"], input[type="text"], select {
-            accent-color: #00D4FF;
+            accent-color: #98cbff;
             padding: 8px 12px;
             border-radius: 6px;
-            border: 1px solid rgba(0, 212, 255, 0.3);
+            border: 1px solid rgba(152, 203, 255, 0.3);
             background: rgba(30, 41, 59, 0.4);
             color: #e2e8f0;
         }
@@ -192,15 +192,15 @@
         .button-group { display: flex; gap: 12px; margin-top: 20px; }
         button {
             padding: 12px 24px;
-            background: linear-gradient(135deg, #00D4FF 0%, #00A8CC 100%);
-            color: #0a1628;
+            background: linear-gradient(135deg, #98cbff 0%, #00a3ff 100%);
+            color: #003354;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 700;
             transition: all 0.3s ease;
         }
-        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5); }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(152, 203, 255, 0.5); }
         .btn-secondary { background: rgba(71, 85, 105, 0.3); color: #cbd5e1; }
 
         .framework-selector { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
@@ -360,13 +360,13 @@
     <!-- ASSESSMENT TAB -->
     <div id="assessment" class="tab-content">
         <!-- Always Visible Progress Bar -->
-        <div style="position: sticky; top: 20px; z-index: 50; margin-bottom: 24px; padding: 16px; background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 12px; box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);">
+        <div style="position: sticky; top: 20px; z-index: 50; margin-bottom: 24px; padding: 16px; background: rgba(152, 203, 255, 0.1); border: 2px solid rgba(152, 203, 255, 0.3); border-radius: 12px; box-shadow: 0 0 20px rgba(152, 203, 255, 0.2);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <span style="font-size: 1.1rem; color: #00D4FF; font-weight: 700;">Form Progress</span>
-                <span style="font-size: 1.3rem; color: #00D4FF; font-weight: 900;" id="progressText">0%</span>
+                <span style="font-size: 1.1rem; color: #98cbff; font-weight: 700;">Form Progress</span>
+                <span style="font-size: 1.3rem; color: #98cbff; font-weight: 900;" id="progressText">0%</span>
             </div>
-            <div style="background: rgba(71,85,105,0.2); border-radius: 8px; height: 14px; overflow: hidden; border: 1px solid rgba(0, 212, 255, 0.3);">
-                <div id="progressBar" style="background: linear-gradient(90deg, #00D4FF 0%, #B84FFF 100%); height: 100%; width: 0%; transition: width 0.3s ease; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);"></div>
+            <div style="background: rgba(71,85,105,0.2); border-radius: 8px; height: 14px; overflow: hidden; border: 1px solid rgba(152, 203, 255, 0.3);">
+                <div id="progressBar" style="background: linear-gradient(90deg, #98cbff 0%, #d672ff 100%); height: 100%; width: 0%; transition: width 0.3s ease; border-radius: 8px; box-shadow: 0 0 10px rgba(152, 203, 255, 0.5);"></div>
             </div>
         </div>
 
@@ -375,13 +375,6 @@
             <p style="color: #94a3b8; margin-bottom: 8px;">Complete a few questions about your system to receive customized security recommendations across all 5 layers.</p>
 
             <form id="riskForm">
-                <!-- System Identification -->
-                <div class="system-name-group" style="margin-bottom: 40px;">
-                    <label style="color: #60a5fa; font-size: 1.2rem;">What's your system called?</label>
-                    <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 12px;">(Optional - helps with reporting)</p>
-                    <input type="text" id="systemName" placeholder="e.g., Customer Support Chatbot, Data Analysis Tool">
-                </div>
-
                 <!-- System Characteristics Section -->
                 <div style="background: rgba(71,85,105,0.15); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 24px; margin-bottom: 32px;">
                     <h3 style="color: #f1f5f9; margin-bottom: 20px; font-size: 1.1rem;">System Characteristics</h3>
@@ -409,6 +402,13 @@
                     <h3 style="color: #f1f5f9; margin-bottom: 20px; font-size: 1.1rem;">Integrations & Complexity</h3>
 
                     <div class="form-group"><label>How many third-party integrations? <span class="required">*</span></label><select id="integrations" required style="margin-top: 8px;"><option value="0" selected>None - Standalone System</option><option value="1-3">1-3 Integrations</option><option value="4-7">4-7 Integrations</option><option value="8+">8+ Integrations</option></select></div>
+                </div>
+
+                <!-- System Identification (Optional) -->
+                <div class="system-name-group" style="margin-bottom: 32px;">
+                    <label style="color: #60a5fa; font-size: 1.2rem;">What's your system called?</label>
+                    <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 12px;">(Optional - helps with reporting)</p>
+                    <input type="text" id="systemName" placeholder="e.g., Customer Support Chatbot, Data Analysis Tool">
                 </div>
 
                 <div class="button-group" style="padding: 20px 0; border-top: 1px solid rgba(71,85,105,0.3);">
@@ -677,7 +677,7 @@ setTimeout(() => {
             const riskColor = p <= 5 ? '#10b981' : p <= 10 ? '#f59e0b' : '#ef4444';
             const recommendation = p <= 5 ? 'Implement optional hardening — low-priority roadmap' : p <= 10 ? 'Implement over next quarter — standard hardening roadmap' : 'Immediate action required — critical security roadmap';
 
-            let html = `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:40px;"><div style="flex:1;min-width:300px;"><h2 style="margin-bottom:8px;">Risk Assessment Results</h2><p style="color:#94a3b8;margin-bottom:12px;">System: <strong>${c.name}</strong> | ${new Date().toLocaleDateString()}</p><div style="margin-top:16px;padding:20px;background:rgba(71,85,105,0.1);border-radius:8px;"><div style="display:flex;gap:30px;align-items:center;"><div><div style="font-size:3.5rem;font-weight:900;color:${riskColor};">${p*100/15}%</div><div style="color:${riskColor};font-weight:700;font-size:1.1rem;margin-top:4px;">${riskLevel}</div></div><div style="flex:1;"><div style="color:#cbd5e1;margin-bottom:8px;"><strong>${recommendation}</strong></div><span style="font-size:0.85rem;color:#94a3b8;">Risk Score: ${p}/15</span></div></div></div></div><div style="flex:1;min-width:300px;"><h3 style="margin-bottom:16px;color:#f1f5f9;">System Configuration</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.9rem;"><div><span style="color:#94a3b8;">User Type</span><br/><strong>${c.users === 'public' ? 'Public' : 'Authenticated'}</strong></div><div><span style="color:#94a3b8;">Data Sensitivity</span><br/><strong>${c.sensitivity === 'critical' ? 'Critical' : 'Confidential'}</strong></div><div><span style="color:#94a3b8;">Model Hosting</span><br/><strong>${c.hosting === 'vendor-api' ? 'Vendor API' : c.hosting === 'private' ? 'Private Cloud' : 'Managed Cloud'}</strong></div><div><span style="color:#94a3b8;">Autonomy Level</span><br/><strong>${c.autonomy === 'agentic' ? 'Agentic' : 'Read-Only'}</strong></div><div><span style="color:#94a3b8;">Fine-tuned Model</span><br/><strong>${c.training === 'yes' ? 'Yes' : 'No'}</strong></div><div><span style="color:#94a3b8;">Integrations</span><br/><strong>${c.integrations}</strong></div></div></div></div></div>`;
+            let html = `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:40px;"><div style="flex:1;min-width:300px;"><h2 style="margin-bottom:8px;">Risk Assessment Results</h2><p style="color:#94a3b8;margin-bottom:12px;">System: <strong>${c.name}</strong> | ${new Date().toLocaleDateString()}</p><div style="margin-top:16px;padding:20px;background:rgba(71,85,105,0.1);border-radius:8px;"><div style="display:flex;gap:30px;align-items:center;"><div><div style="font-size:3.5rem;font-weight:900;color:${riskColor};">${p*100/15}%</div><div style="color:${riskColor};font-weight:700;font-size:1.1rem;margin-top:4px;">${riskLevel}</div></div><div style="flex:1;"><div style="color:#cbd5e1;margin-bottom:8px;"><strong>${recommendation}</strong></div><span style="font-size:0.85rem;color:#94a3b8;">Risk Score: ${p}/15</span></div></div></div></div><div style="flex:1;min-width:300px;"><h3 style="margin-bottom:16px;color:#f1f5f9;">System Configuration</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.9rem;"><div><span style="color:#94a3b8;">User Type</span><br/><strong>${c.users === 'public' ? 'Public' : c.users === 'authenticated' ? 'Authenticated' : 'Internal Only'}</strong></div><div><span style="color:#94a3b8;">Data Sensitivity</span><br/><strong>${c.sensitivity === 'critical' ? 'Critical (PII)' : c.sensitivity === 'confidential' ? 'Confidential' : 'Public'}</strong></div><div><span style="color:#94a3b8;">Model Hosting</span><br/><strong>${c.hosting === 'vendor-api' ? 'Vendor API' : c.hosting === 'private' ? 'Private Cloud' : 'Managed Cloud'}</strong></div><div><span style="color:#94a3b8;">Autonomy Level</span><br/><strong>${c.autonomy === 'agentic' ? 'Agentic' : c.autonomy === 'supervised' ? 'Supervised' : 'Read-Only'}</strong></div><div><span style="color:#94a3b8;">Fine-tuned Model</span><br/><strong>${c.training === 'yes' ? 'Yes' : 'No'}</strong></div><div><span style="color:#94a3b8;">Integrations</span><br/><strong>${c.integrations}</strong></div></div></div></div></div>`;
 
             // Framework Rings - Layer Risk Visualization
             html += `<div class="card"><h3 style="margin-bottom:20px;">Per-Layer Risk Breakdown</h3>`;
@@ -833,6 +833,7 @@ setTimeout(() => {
             const topRisks = sorted.slice(0, 2);
             topRisks.forEach(layer => {
                 const sevColor = layer.score >= 65 ? '#ef4444' : layer.score >= 40 ? '#f59e0b' : '#10b981';
+                const sevBgColor = layer.score >= 65 ? 'rgba(239,68,68,0.1)' : layer.score >= 40 ? 'rgba(245,158,11,0.1)' : 'rgba(16,185,129,0.1)';
                 const layerControls = byLayer[layer.id];
                 const recommendation = {
                     1: 'Implement comprehensive PII masking, data encryption (AES-256), and access controls. Enable data lineage tracking to detect poisoning attempts.',
@@ -842,20 +843,20 @@ setTimeout(() => {
                     5: 'Implement DSAR automation for right-to-be-forgotten compliance. Maintain immutable cryptographic audit logs of all interactions.'
                 }[layer.id];
 
-                html += `<div style="margin-bottom:16px;padding:16px;background:rgba(${sevColor.match(/\\d+/g).join(',')},0.1);border-left:4px solid ${sevColor};border-radius:8px;"><div style="display:flex;gap:12px;align-items:flex-start;"><span style="font-size:1.2rem;font-weight:700;color:${sevColor};min-width:24px;">${layer.score >= 40 ? 'HIGH' : 'MEDIUM'}</span><div style="flex:1;"><div style="font-weight:700;color:${sevColor};margin-bottom:4px;">Layer ${layer.id}: ${layerNames[layer.id]}</div><div style="color:#cbd5e1;font-size:0.9rem;">${recommendation}</div></div></div></div>`;
+                html += `<div style="margin-bottom:16px;padding:16px;background:${sevBgColor};border-left:4px solid ${sevColor};border-radius:8px;"><div style="display:flex;gap:12px;align-items:flex-start;"><span style="font-size:1.2rem;font-weight:700;color:${sevColor};min-width:24px;">${layer.score >= 40 ? 'HIGH' : 'MEDIUM'}</span><div style="flex:1;"><div style="font-weight:700;color:${sevColor};margin-bottom:4px;">Layer ${layer.id}: ${layerNames[layer.id]}</div><div style="color:#cbd5e1;font-size:0.9rem;">${recommendation}</div></div></div></div>`;
             });
             html += `</div>`;
 
             // Recommended Next Steps
             html += `<div class="card"><h3 style="margin-bottom:20px;">Recommended Next Steps</h3>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-                    <div style="padding:16px;background:rgba(0,212,255,0.1);border-left:4px solid #00D4FF;border-radius:8px;">
-                        <div style="font-size:1.5rem;font-weight:900;color:#00D4FF;margin-bottom:8px;">1</div>
+                    <div style="padding:16px;background:rgba(152,203,255,0.1);border-left:4px solid #98cbff;border-radius:8px;">
+                        <div style="font-size:1.5rem;font-weight:900;color:#98cbff;margin-bottom:8px;">1</div>
                         <div style="font-weight:700;color:#f1f5f9;margin-bottom:8px;">Review Layer Details</div>
                         <div style="color:#cbd5e1;font-size:0.9rem;">Use the Interactive Visualizer to explore threats and controls for your highest-risk layers.</div>
                     </div>
-                    <div style="padding:16px;background:rgba(184,79,255,0.1);border-left:4px solid #B84FFF;border-radius:8px;">
-                        <div style="font-size:1.5rem;font-weight:900;color:#B84FFF;margin-bottom:8px;">2</div>
+                    <div style="padding:16px;background:rgba(214,114,255,0.1);border-left:4px solid #d672ff;border-radius:8px;">
+                        <div style="font-size:1.5rem;font-weight:900;color:#d672ff;margin-bottom:8px;">2</div>
                         <div style="font-weight:700;color:#f1f5f9;margin-bottom:8px;">Implement Controls</div>
                         <div style="color:#cbd5e1;font-size:0.9rem;">Follow the Security Guidelines tab for specific technical controls per layer.</div>
                     </div>
@@ -864,8 +865,8 @@ setTimeout(() => {
                         <div style="font-weight:700;color:#f1f5f9;margin-bottom:8px;">Follow Roadmap</div>
                         <div style="color:#cbd5e1;font-size:0.9rem;">Use the Implementation Playbook for a structured 4-month deployment plan.</div>
                     </div>
-                    <div style="padding:16px;background:rgba(245,158,11,0.1);border-left:4px solid #f59e0b;border-radius:8px;">
-                        <div style="font-size:1.5rem;font-weight:900;color:#f59e0b;margin-bottom:8px;">4</div>
+                    <div style="padding:16px;background:rgba(255,219,60,0.1);border-left:4px solid #ffdb3c;border-radius:8px;">
+                        <div style="font-size:1.5rem;font-weight:900;color:#ffdb3c;margin-bottom:8px;">4</div>
                         <div style="font-weight:700;color:#f1f5f9;margin-bottom:8px;">Schedule Review</div>
                         <div style="color:#cbd5e1;font-size:0.9rem;">Conduct a team security review meeting to assign owners and set deadlines.</div>
                     </div>
@@ -1000,11 +1001,11 @@ function createSpiderChart() {
             const y = center + gridR * Math.sin(p.angle);
             gridPath += (i === 0 ? 'M' : 'L') + x + ',' + y;
         }
-        gridLines.push(`<path d="${gridPath}" stroke="rgba(71,85,105,0.4)" stroke-width="2" fill="none"/>`);
+        gridLines.push(`<path d="${gridPath}" stroke="rgba(0,212,255,0.25)" stroke-width="1.5" fill="none"/>`);
     }
 
     const axisLines = points.map((p, i) => {
-        return `<line x1="${center}" y1="${center}" x2="${p.x}" y2="${p.y}" stroke="rgba(71,85,105,0.3)" stroke-width="2"/>`;
+        return `<line x1="${center}" y1="${center}" x2="${p.x}" y2="${p.y}" stroke="rgba(0,212,255,0.2)" stroke-width="1.5"/>`;
     }).join('');
 
     const layerLabels = ['Data', 'Model/LLM', 'App', 'Infra', 'Compliance'];
@@ -1017,20 +1018,24 @@ function createSpiderChart() {
 
     // Risk reduction box on the right side
     const riskReductionBox = `
-        <text x="${center + radius + 170}" y="${center - 50}" text-anchor="middle" font-size="14" font-weight="800" fill="#22c55e" letter-spacing="0.5">RISK REDUCED</text>
-        <text x="${center + radius + 170}" y="${center + 45}" text-anchor="middle" font-size="80" font-weight="900" fill="#86efac">${riskReduction}%</text>
+        <text x="${center + radius + 170}" y="${center - 50}" text-anchor="middle" font-size="14" font-weight="800" fill="#00D4FF" letter-spacing="0.5">RISK REDUCED</text>
+        <text x="${center + radius + 170}" y="${center + 45}" text-anchor="middle" font-size="80" font-weight="900" fill="#00F0FF">${riskReduction}%</text>
         <text x="${center + radius + 170}" y="${center + 120}" text-anchor="middle" font-size="11" font-weight="600" fill="#cbd5e1">With recommended</text>
         <text x="${center + radius + 170}" y="${center + 135}" text-anchor="middle" font-size="11" font-weight="600" fill="#cbd5e1">controls implemented</text>
     `;
 
     const svg = `
     <svg viewBox="0 0 ${size + 280} ${size + 50}" class="spider-svg" style="margin: 30px auto; display: block; max-width: 100%; height: auto;">
+        <defs>
+            <filter id="glow-before"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="glow-after"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
         <g>${gridLines.join('')}</g>
         <g>${axisLines}</g>
-        <polygon points="${beforePoints.join(' ')}" fill="rgba(239,68,68,0.12)" stroke="#ef4444" stroke-width="5.5" opacity="0.95" stroke-linejoin="round"/>
-        <polygon points="${afterPoints.join(' ')}" fill="rgba(34,197,94,0.18)" stroke="#22c55e" stroke-width="5.5" opacity="1" stroke-linejoin="round"/>
-        ${points.map((p, i) => `<circle cx="${center + (beforeVals[i]/maxScore)*radius*Math.cos(p.angle)}" cy="${center + (beforeVals[i]/maxScore)*radius*Math.sin(p.angle)}" r="7" fill="#ef4444" stroke="#fca5a5" stroke-width="2.5"/>`).join('')}
-        ${points.map((p, i) => `<circle cx="${center + (afterVals[i]/maxScore)*radius*Math.cos(p.angle)}" cy="${center + (afterVals[i]/maxScore)*radius*Math.sin(p.angle)}" r="7" fill="#22c55e" stroke="#86efac" stroke-width="2.5"/>`).join('')}
+        <polygon points="${beforePoints.join(' ')}" fill="rgba(255,100,50,0.15)" stroke="#FF6432" stroke-width="5.5" opacity="0.95" stroke-linejoin="round" filter="url(#glow-before)"/>
+        <polygon points="${afterPoints.join(' ')}" fill="rgba(0,212,255,0.15)" stroke="#00D4FF" stroke-width="5.5" opacity="1" stroke-linejoin="round" filter="url(#glow-after)"/>
+        ${points.map((p, i) => `<circle cx="${center + (beforeVals[i]/maxScore)*radius*Math.cos(p.angle)}" cy="${center + (beforeVals[i]/maxScore)*radius*Math.sin(p.angle)}" r="7" fill="#FF6432" stroke="#FFAA88" stroke-width="2.5"/>`).join('')}
+        ${points.map((p, i) => `<circle cx="${center + (afterVals[i]/maxScore)*radius*Math.cos(p.angle)}" cy="${center + (afterVals[i]/maxScore)*radius*Math.sin(p.angle)}" r="7" fill="#00D4FF" stroke="#00F0FF" stroke-width="2.5"/>`).join('')}
         ${labels}
         ${riskReductionBox}
     </svg>`;
