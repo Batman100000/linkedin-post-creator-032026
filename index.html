@@ -999,6 +999,46 @@ function renderGuidelinesWithSpider() {
 
     h += `</div>`;
 
+    // Implementation Playbook
+    const risksByLayer = {1: scores.before[1], 2: scores.before[2], 3: scores.before[3], 4: scores.before[4], 5: scores.before[5]};
+    const topRiskLayers = Object.entries(risksByLayer).sort((a,b) => b[1] - a[1]).slice(0, 2).map(e => ({id: parseInt(e[0]), score: e[1]}));
+    const layerNamesFull = {1: 'Data Protection', 2: 'Model / LLM', 3: 'Application', 4: 'Infrastructure', 5: 'Compliance'};
+    const layerEmojisFull = {1: '🔐', 2: '🛡️', 3: '🔗', 4: '🏗️', 5: '📊'};
+
+    h += `<div style="margin-top: 40px;"><h2 style="margin-bottom: 12px;">📋 Implementation Playbook</h2><p style="color:#94a3b8;margin-bottom:20px;">Customized 4-month roadmap based on your assessment results</p>`;
+
+    // Phase 1
+    h += `<div style="margin-bottom:20px;padding:20px;background:rgba(59,130,246,0.1);border-left:4px solid #3b82f6;border-radius:8px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;"><span style="font-size:1.8rem;font-weight:900;color:#3b82f6;">1</span><div><div style="font-weight:700;font-size:1.1rem;color:#f1f5f9;">Assessment & Discovery</div><div style="color:#94a3b8;font-size:0.9rem;">Week 1-2</div></div></div>
+        <div style="color:#cbd5e1;margin-left:50px;">✓ Map all data flows from source to AI pipeline to output<br/>✓ Inventory all third-party integrations and API dependencies<br/>✓ Document current authentication and authorization mechanisms</div>
+    </div>`;
+
+    // Phase 2
+    h += `<div style="margin-bottom:20px;padding:20px;background:rgba(168,85,247,0.1);border-left:4px solid #a855f7;border-radius:8px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;"><span style="font-size:1.8rem;font-weight:900;color:#a855f7;">2</span><div><div style="font-weight:700;font-size:1.1rem;color:#f1f5f9;">Threat Modeling & Prioritization</div><div style="color:#94a3b8;font-size:0.9rem;">Week 3-4</div></div></div>
+        <div style="color:#cbd5e1;margin-left:50px;">✓ Conduct threat modeling across all 5 security layers<br/>✓ <strong style="color:#f1f5f9;">Priority focus: ${topRiskLayers.map(l => `${layerEmojisFull[l.id]} ${layerNamesFull[l.id]} (score: ${Math.round(l.score)}/100)`).join(' and ')}</strong><br/>✓ Prioritize controls using risk-impact matrix</div>
+    </div>`;
+
+    // Phase 3
+    h += `<div style="margin-bottom:20px;padding:20px;background:rgba(245,158,11,0.1);border-left:4px solid #f59e0b;border-radius:8px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;"><span style="font-size:1.8rem;font-weight:900;color:#f59e0b;">3</span><div><div style="font-weight:700;font-size:1.1rem;color:#f1f5f9;">Control Implementation</div><div style="color:#94a3b8;font-size:0.9rem;">Month 2-3</div></div></div>
+        <div style="color:#cbd5e1;margin-left:50px;">✓ Deploy input/output filtering and content safety pipelines<br/>✓ Implement SSO (SAML/OIDC) and MFA for all admin and user access<br/>✓ Configure secrets management vault and automated key rotation<br/>✓ Enable comprehensive audit logging with immutable storage<br/>✓ Set up rate limiting and token budget enforcement<br/>✓ Deploy encryption (AES-256 at rest, TLS 1.3 in transit)</div>
+    </div>`;
+
+    // Phase 4
+    h += `<div style="margin-bottom:20px;padding:20px;background:rgba(34,197,94,0.1);border-left:4px solid #22c55e;border-radius:8px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;"><span style="font-size:1.8rem;font-weight:900;color:#22c55e;">4</span><div><div style="font-weight:700;font-size:1.1rem;color:#f1f5f9;">Testing & Validation</div><div style="color:#94a3b8;font-size:0.9rem;">Month 3</div></div></div>
+        <div style="color:#cbd5e1;margin-left:50px;">✓ Execute red-teaming exercises: prompt injection, jailbreaks, data exfiltration attempts<br/>✓ Remediate all findings and retest failed controls<br/>✓ Generate security assessment report for stakeholders<br/>✓ Validate ${topRiskLayers.map(l => layerNamesFull[l.id]).join(' and ')} controls with penetration testing</div>
+    </div>`;
+
+    // Phase 5
+    h += `<div style="margin-bottom:20px;padding:20px;background:rgba(239,68,68,0.1);border-left:4px solid #ef4444;border-radius:8px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;"><span style="font-size:1.8rem;font-weight:900;color:#ef4444;">5</span><div><div style="font-weight:700;font-size:1.1rem;color:#f1f5f9;">Deployment & Continuous Monitoring</div><div style="color:#94a3b8;font-size:0.9rem;">Month 4+</div></div></div>
+        <div style="color:#cbd5e1;margin-left:50px;">✓ Deploy all controls to production with canary/gradual rollout<br/>✓ Enable real-time monitoring and SIEM alerting for anomalous behavior<br/>✓ Establish incident response playbook specific to AI security events<br/>✓ Schedule quarterly security reviews and annual red-teaming exercises<br/>✓ Monitor model drift and retrain security controls after model updates<br/>✓ Maintain living documentation of all security controls and exceptions</div>
+    </div>`;
+
+    h += `<div style="text-align:center;padding:16px;color:#94a3b8;font-size:0.9rem;margin-top:20px;">🔒 Implementation Timeline: 4 months | Next Review: Quarterly</div></div>`;
+
     if(currentFramework==='5layer') {
         const l = ['1. DATA','2. MODEL / LLM','3. APPLICATION','4. INFRASTRUCTURE','5. COMPLIANCE'];
         const col = {'1. DATA':'#f59e0b','2. MODEL / LLM':'#10b981','3. APPLICATION':'#3b82f6','4. INFRASTRUCTURE':'#a855f7','5. COMPLIANCE':'#ec4899'};
