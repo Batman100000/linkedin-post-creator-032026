@@ -501,12 +501,30 @@
     <!-- GUIDELINES TAB -->
     <div id="guidelines" class="tab-content">
         <div class="card">
-            <h2>Dynamic Security Guidelines</h2>
-            <p style="color: #94a3b8; margin-bottom: 16px;">Complete Risk Assessment for customized controls.</p>
-            <div class="framework-selector">
-                <button class="fw-btn active" onclick="setFramework('5layer')">📊 5-Layer</button>
-                <button class="fw-btn" onclick="setFramework('nist')">🏛️ NIST</button>
-                <button class="fw-btn" onclick="setFramework('iso')">📋 ISO</button>
+            <h2>🛡️ AI Security Risk Overview</h2>
+            <p style="color: #94a3b8; margin-bottom: 20px;">Default risk assessment across all 5 layers - Complete your Risk Assessment above for customized analysis.</p>
+
+            <!-- Default Spider Web -->
+            <div id="defaultSpiderContainer"></div>
+
+            <!-- Risk Tip Alert -->
+            <div id="riskTipAlert" style="margin-top: 24px; padding: 20px; background: linear-gradient(135deg, rgba(239,68,68,0.15) 0%, rgba(245,158,11,0.1) 100%); border-left: 4px solid #ef4444; border-radius: 8px; display: none;">
+                <div style="display: flex; gap: 12px; align-items: flex-start;">
+                    <span style="font-size: 1.5rem;">⚠️</span>
+                    <div>
+                        <div style="font-weight: 700; color: #f1f5f9; margin-bottom: 8px;">Critical Layer Alert</div>
+                        <div id="riskTipContent" style="color: #cbd5e1; font-size: 0.95rem;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(207,188,255,0.15);">
+                <h3 style="margin-bottom: 16px; color: #f1f5f9;">📋 Security Controls by Framework</h3>
+                <div class="framework-selector">
+                    <button class="fw-btn active" onclick="setFramework('5layer')">📊 5-Layer</button>
+                    <button class="fw-btn" onclick="setFramework('nist')">🏛️ NIST</button>
+                    <button class="fw-btn" onclick="setFramework('iso')">📋 ISO</button>
+                </div>
             </div>
         </div>
         <div id="guidelinesContent"></div>
@@ -1078,7 +1096,105 @@ function renderGuidelinesWithSpider() {
 }
 
 function renderGuidelines() {
+    renderDefaultSpiderWeb();
     renderGuidelinesWithSpider();
+}
+
+function renderDefaultSpiderWeb() {
+    // Default baseline risk scores (before assessment)
+    const defaultScores = { before: {1: 15, 2: 15, 3: 10, 4: 10, 5: 15}, after: {1: 15, 2: 15, 3: 10, 4: 10, 5: 15} };
+
+    const size = 700;
+    const center = size / 2;
+    const radius = 180;
+    const layers = 5;
+    const maxScore = 100;
+
+    const points = [];
+    const beforePoints = [];
+    const layerNames = ['Data', 'Model/LLM', 'Application', 'Infrastructure', 'Compliance'];
+    const layerEmojis = ['📊', '🧠', '⚙️', '🌐', '📋'];
+
+    for (let i = 0; i < layers; i++) {
+        const angle = (i * 2 * Math.PI / layers) - Math.PI / 2;
+        const x = center + radius * Math.cos(angle);
+        const y = center + radius * Math.sin(angle);
+        points.push({x, y, angle, name: layerNames[i], emoji: layerEmojis[i]});
+    }
+
+    const beforeVals = [defaultScores.before[1], defaultScores.before[2], defaultScores.before[3], defaultScores.before[4], defaultScores.before[5]];
+
+    points.forEach((p, i) => {
+        const beforeR = (beforeVals[i] / maxScore) * radius;
+        beforePoints.push(`${center + beforeR * Math.cos(p.angle)},${center + beforeR * Math.sin(p.angle)}`);
+    });
+
+    let svg = `<svg viewBox="0 0 ${size} ${size}" width="600" height="600" style="max-width:100%; margin: 0 auto; display:block;">
+        <defs>
+            <linearGradient id="gridGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#cfbcff;stop-opacity:0.1" />
+                <stop offset="100%" style="stop-color:#cfbcff;stop-opacity:0.05" />
+            </linearGradient>
+        </defs>`;
+
+    // Grid circles
+    for (let i = 1; i <= 4; i++) {
+        const r = (i / 5) * radius;
+        svg += `<circle cx="${center}" cy="${center}" r="${r}" fill="none" stroke="rgba(207,188,255,0.1)" stroke-width="1"/>`;
+        svg += `<text x="${center + r - 20}" y="${center - 10}" font-size="12" fill="#94a3b8">${Math.round((i/5)*100)}%</text>`;
+    }
+
+    // Axis lines and labels
+    points.forEach((p) => {
+        const lineR = radius * 1.2;
+        const lineX = center + lineR * Math.cos(p.angle);
+        const lineY = center + lineR * Math.sin(p.angle);
+        svg += `<line x1="${center}" y1="${center}" x2="${lineX}" y2="${lineY}" stroke="rgba(207,188,255,0.15)" stroke-width="1"/>`;
+
+        const labelR = radius * 1.35;
+        const labelX = center + labelR * Math.cos(p.angle);
+        const labelY = center + labelR * Math.sin(p.angle);
+        svg += `<text x="${labelX-20}" y="${labelY+5}" font-size="14" font-weight="700" fill="#cfbcff" text-anchor="middle">${p.emoji} ${p.name}</text>`;
+    });
+
+    // Risk polygon
+    svg += `<polygon points="${beforePoints.join(' ')}" fill="rgba(239,68,68,0.2)" stroke="#ef4444" stroke-width="2"/>`;
+
+    // Data points
+    beforePoints.forEach((point, idx) => {
+        svg += `<circle cx="${point.split(',')[0]}" cy="${point.split(',')[1]}" r="6" fill="#ef4444" stroke="#fff" stroke-width="2"/>`;
+    });
+
+    svg += `</svg>`;
+
+    // Find highest risk layer
+    const maxRisk = Math.max(...beforeVals);
+    const highestRiskIdx = beforeVals.indexOf(maxRisk);
+    const highestRiskLayer = layerNames[highestRiskIdx];
+
+    const riskTips = {
+        'Data': "Data Layer risks include unauthorized access, PII leakage, and data poisoning. Implement AES-256 encryption, RBAC with MFA, and PII scrubbing.",
+        'Model/LLM': "Model/LLM risks include jailbreak attacks, prompt injection, and hallucinations. Deploy input filtering, prompt hardening, and output monitoring.",
+        'Application': "Application risks include BOLA vulnerabilities, overprivileged agents, and XSS attacks. Use least privilege principles and JSON validation.",
+        'Infrastructure': "Infrastructure risks include DDoS attacks, credential leaks, and supply chain compromises. Implement VPC segmentation and secrets vault.",
+        'Compliance': "Compliance risks include uncontrolled automation, discrimination, and audit trail gaps. Establish ethics boards and immutable logging."
+    };
+
+    const riskAlert = document.getElementById('riskTipAlert');
+    const riskContent = document.getElementById('riskTipContent');
+
+    riskContent.innerHTML = `<strong>${layerEmojis[highestRiskIdx]} ${highestRiskLayer} Layer (${maxRisk}%)</strong><br/>${riskTips[highestRiskLayer] || 'Implement comprehensive security controls.'}`;
+    riskAlert.style.display = 'block';
+
+    document.getElementById('defaultSpiderContainer').innerHTML = `
+        <div style="padding: 24px; background: rgba(207,188,255,0.05); border: 1px solid rgba(207,188,255,0.1); border-radius: 12px; margin-bottom: 24px;">
+            <div style="text-align: center; color: #cbd5e1; margin-bottom: 16px; font-size: 0.9rem;">Default Risk Profile (Baseline)</div>
+            ${svg}
+            <div style="margin-top: 16px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; background: #ef4444; border-radius: 2px;"></span><span style="color: #cbd5e1; font-size: 0.9rem;">Current Risk Level</span></div>
+            </div>
+        </div>
+    `;
 }
 
 function renderControl(c) {
@@ -1151,6 +1267,7 @@ function getRequiredFieldsForStep(step) {
 }
 
 selectLayer(1);
+renderDefaultSpiderWeb();
 </script>
 </body>
 </html>
