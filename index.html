@@ -590,6 +590,67 @@ document.getElementById('riskForm').addEventListener('submit', function(e) {
     });
     html += `</div>`;
 
+    // Risk Radar - Current vs Target
+    html += `<div class="card"><h3 style="margin-bottom:20px;">🕷️ Risk Radar: Current vs Target Posture</h3><div style="margin:20px 0;font-size:0.9rem;color:#cbd5e1;"><strong>Red = Current Risk | Green = Target State After Implementation</strong></div><svg viewBox="0 0 800 500" style="width:100%;max-width:800px;margin:20px auto;display:block;">
+        <defs>
+            <filter id="glow-red"><feGaussianBlur stdDeviation="2" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="glow-green"><feGaussianBlur stdDeviation="2" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <circle cx="400" cy="250" r="200" fill="none" stroke="rgba(71,85,105,0.3)" stroke-width="1"/>
+        <circle cx="400" cy="250" r="150" fill="none" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>
+        <circle cx="400" cy="250" r="100" fill="none" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>
+        <circle cx="400" cy="250" r="50" fill="none" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>
+        <line x1="400" y1="50" x2="400" y2="450" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>
+        <line x1="200" y1="250" x2="600" y2="250" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>
+        <line x1="288" y1="93" x2="512" y2="407" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>
+        <line x1="512" y1="93" x2="288" y2="407" stroke="rgba(71,85,105,0.2)" stroke-width="1"/>
+        <text x="400" y="30" text-anchor="middle" font-size="12" fill="#cbd5e1">Data Protection</text>
+        <text x="570" y="260" text-anchor="start" font-size="12" fill="#cbd5e1">Model/LLM Security</text>
+        <text x="470" y="430" text-anchor="middle" font-size="12" fill="#cbd5e1">Application Security</text>
+        <text x="130" y="430" text-anchor="middle" font-size="12" fill="#cbd5e1">Infrastructure</text>
+        <text x="30" y="260" text-anchor="end" font-size="12" fill="#cbd5e1">Compliance & Gov</text>`;
+
+    // Current risk polygon (red)
+    const angle = 2 * Math.PI / 5;
+    const cx = 400, cy = 250, maxR = 200;
+    const currentVals = [scores[1]/100, scores[2]/100, scores[3]/100, scores[4]/100, scores[5]/100];
+    let currentPoints = '';
+    for (let i = 0; i < 5; i++) {
+        const a = i * angle - Math.PI / 2;
+        const r = currentVals[i] * maxR;
+        const x = cx + r * Math.cos(a);
+        const y = cy + r * Math.sin(a);
+        currentPoints += `${x},${y} `;
+    }
+    html += `<polygon points="${currentPoints}" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="2.5" filter="url(#glow-red)"/>`;
+
+    // Target risk polygon (green) - assume 50% reduction
+    const targetVals = currentVals.map(v => Math.max(v * 0.5, 0.05));
+    let targetPoints = '';
+    for (let i = 0; i < 5; i++) {
+        const a = i * angle - Math.PI / 2;
+        const r = targetVals[i] * maxR;
+        const x = cx + r * Math.cos(a);
+        const y = cy + r * Math.sin(a);
+        targetPoints += `${x},${y} `;
+    }
+    html += `<polygon points="${targetPoints}" fill="rgba(34,197,94,0.15)" stroke="#22c55e" stroke-width="2.5" filter="url(#glow-green)"/>`;
+
+    // Points
+    for (let i = 0; i < 5; i++) {
+        const a = i * angle - Math.PI / 2;
+        const r1 = currentVals[i] * maxR;
+        const r2 = targetVals[i] * maxR;
+        const x1 = cx + r1 * Math.cos(a);
+        const y1 = cy + r1 * Math.sin(a);
+        const x2 = cx + r2 * Math.cos(a);
+        const y2 = cy + r2 * Math.sin(a);
+        html += `<circle cx="${x1}" cy="${y1}" r="5" fill="#ef4444" stroke="#fca5a5" stroke-width="2"/>`;
+        html += `<circle cx="${x2}" cy="${y2}" r="5" fill="#22c55e" stroke="#86efac" stroke-width="2"/>`;
+    }
+
+    html += `</svg><div style="display:flex;justify-content:center;gap:30px;margin-top:20px;"><div style="display:flex;align-items:center;gap:8px;"><div style="width:16px;height:16px;background:#ef4444;border-radius:2px;"></div><span style="color:#cbd5e1;">Current Risk</span></div><div style="display:flex;align-items:center;gap:8px;"><div style="width:16px;height:16px;background:#22c55e;border-radius:2px;"></div><span style="color:#cbd5e1;">Target Posture</span></div></div></div>`;
+
     // Framework selector tabs - 5-Layer, NIST, ISO
     html += `<div class="card"><h3 style="margin-bottom:16px;">📋 View Controls By Framework</h3><div class="framework-tabs">
         <button class="fw-tab active" onclick="switchResultsFramework(event, '5layer')">📊 5-Layer Model</button>
