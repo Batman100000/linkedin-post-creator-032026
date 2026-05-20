@@ -577,6 +577,10 @@ function selectLayer(id) {
 
 // Update form progress bar
 function updateFormProgress() {
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    if (!progressBar || !progressText) return;
+
     const requiredFields = [
         document.querySelector('input[name="users"]:checked'),
         document.querySelector('input[name="sensitivity"]:checked'),
@@ -588,34 +592,40 @@ function updateFormProgress() {
     const total = requiredFields.length;
     const percentage = Math.round((completed / total) * 100);
 
-    document.getElementById('progressBar').style.width = percentage + '%';
-    document.getElementById('progressText').textContent = percentage + '%';
+    progressBar.style.width = percentage + '%';
+    progressText.textContent = percentage + '%';
 }
 
 // Attach progress tracking to all form inputs
-document.querySelectorAll('#riskForm input[type="radio"], #riskForm select').forEach(input => {
-    input.addEventListener('change', updateFormProgress);
-});
-
-// Initial progress update
-updateFormProgress();
-
-document.getElementById('riskForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const c = {
-        name: document.getElementById('systemName').value,
-        users: document.querySelector('input[name="users"]:checked')?.value,
-        sensitivity: document.querySelector('input[name="sensitivity"]:checked')?.value,
-        hosting: document.querySelector('input[name="hosting"]:checked')?.value,
-        autonomy: document.querySelector('input[name="autonomy"]:checked')?.value,
-        training: document.querySelector('input[name="training"]:checked')?.value,
-        integrations: document.getElementById('integrations').value,
-        useCase: document.getElementById('useCase').value
-    };
-    if (!c.users || !c.sensitivity || !c.hosting || !c.autonomy || !c.training) {
-        alert('Answer all required questions.');
-        return;
+setTimeout(() => {
+    const riskForm = document.getElementById('riskForm');
+    if (riskForm) {
+        riskForm.querySelectorAll('input[type="radio"], select').forEach(input => {
+            input.addEventListener('change', updateFormProgress);
+        });
+        updateFormProgress();
     }
+}, 100);
+
+// Ensure form exists before attaching listener
+if (document.getElementById('riskForm')) {
+    document.getElementById('riskForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        try {
+            const c = {
+                name: document.getElementById('systemName').value || '(Unnamed System)',
+                users: document.querySelector('input[name="users"]:checked')?.value,
+                sensitivity: document.querySelector('input[name="sensitivity"]:checked')?.value,
+                hosting: document.querySelector('input[name="hosting"]:checked')?.value,
+                autonomy: document.querySelector('input[name="autonomy"]:checked')?.value,
+                training: document.querySelector('input[name="training"]:checked')?.value,
+                integrations: document.getElementById('integrations').value,
+                useCase: document.getElementById('useCase').value
+            };
+            if (!c.users || !c.sensitivity || !c.hosting || !c.autonomy || !c.training) {
+                alert('⚠️ Please answer all required questions before analyzing.');
+                return;
+            }
     assessmentData = c;
     let p = 0;
     if(c.users==='public') p+=3;
@@ -850,9 +860,14 @@ document.getElementById('riskForm').addEventListener('submit', function(e) {
     document.getElementById('riskResults').innerHTML = html;
     switchTab(null, 'results');
 
-    // Set default to 5-Layer and auto-show framework selector
-    currentFramework = '5layer';
-});
+            // Set default to 5-Layer and auto-show framework selector
+            currentFramework = '5layer';
+        } catch(error) {
+            console.error('Form submission error:', error);
+            alert('❌ Error processing form. Please check the browser console for details.');
+        }
+    });
+}
 
 function selectFrameworkAndRender(fw, element) {
     currentFramework = fw;
