@@ -247,6 +247,25 @@
         .framework-tabs { display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
         .fw-tab { padding: 10px 16px; background: rgba(207,188,255,0.08); border: 2px solid rgba(207,188,255,0.2); border-radius: 8px; cursor: pointer; font-weight: 600; color: #cbd5e1; transition: all 0.3s ease; }
         .fw-tab.active { border-color: #cfbcff; background: rgba(207,188,255,0.15); color: #cfbcff; }
+
+        .wizard-container { position: relative; }
+        .wizard-progress { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding: 16px; background: rgba(207,188,255,0.08); border: 1px solid rgba(207,188,255,0.15); border-radius: 8px; }
+        .progress-bar { flex: 1; height: 8px; background: rgba(71,85,105,0.3); border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #cfbcff, #b8a5e0); border-radius: 4px; transition: width 0.4s ease; }
+        .progress-text { font-weight: 700; color: #cfbcff; font-size: 0.9rem; white-space: nowrap; }
+        .wizard-step { display: none; animation: fadeIn 0.3s ease; }
+        .wizard-step.active { display: block; }
+        .step-title { font-size: 1.3rem; font-weight: 700; color: #f1f5f9; margin-bottom: 24px; }
+        .step-subtitle { color: #94a3b8; margin-bottom: 12px; font-size: 0.95rem; }
+        .wizard-buttons { display: flex; gap: 12px; margin-top: 28px; justify-content: space-between; }
+        .btn-prev { background: rgba(207,188,255,0.12); color: #cbd5e1; border: 1px solid rgba(207,188,255,0.2); }
+        .btn-prev:hover { background: rgba(207,188,255,0.18); border-color: rgba(207,188,255,0.3); }
+        .btn-next { padding: 12px 24px; }
+        .btn-submit { padding: 12px 24px; background: linear-gradient(135deg, #cfbcff 0%, #b8a5e0 100%); color: #0f141b; font-weight: 600; }
+        .btn-next:disabled, .btn-prev:disabled { opacity: 0.5; cursor: not-allowed; }
+        .form-group-wizard { margin-bottom: 24px; }
+        .two-column-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        @media (max-width: 768px) { .two-column-layout { grid-template-columns: 1fr; } }
         .layer-btn { padding: 12px 18px; border-radius: 8px; cursor: pointer; font-weight: 700; color: #f1f5f9; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
         .layer-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
         .layer-btn-active { box-shadow: 0 0 20px rgba(255,255,255,0.4) !important; transform: scale(1.05); }
@@ -339,20 +358,124 @@
 
     <!-- ASSESSMENT TAB -->
     <div id="assessment" class="tab-content">
-        <div class="card">
-            <h2>System Risk Assessment Form</h2>
-            <p style="color: #94a3b8; margin-bottom: 20px;">Answer questions to receive customized security controls across all 5 layers.</p>
+        <div class="card wizard-container">
+            <h2>System Risk Assessment Wizard</h2>
+            <p style="color: #94a3b8; margin-bottom: 24px;">Answer 2 questions at a time to receive customized security controls across all 5 layers.</p>
+
+            <div class="wizard-progress">
+                <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 25%;"></div></div>
+                <span class="progress-text" id="progressText">Step 1 of 4</span>
+            </div>
 
             <form id="riskForm">
-                <div class="system-name-group"><label>System Name <span class="required">*</span></label><input type="text" id="systemName" required placeholder="e.g., Customer Support Chatbot"></div>
-                <div class="form-group"><label>Primary Users <span class="required">*</span></label><div class="radio-group"><label><input type="radio" name="users" value="public"> Public</label><label><input type="radio" name="users" value="authenticated"> Authenticated</label><label><input type="radio" name="users" value="internal"> Internal</label></div></div>
-                <div class="form-group"><label>Data Sensitivity <span class="required">*</span></label><div class="radio-group"><label><input type="radio" name="sensitivity" value="public"> Public</label><label><input type="radio" name="sensitivity" value="confidential"> Confidential</label><label><input type="radio" name="sensitivity" value="critical"> Critical (PII)</label></div></div>
-                <div class="form-group"><label>Model Hosting <span class="required">*</span></label><div class="radio-group"><label><input type="radio" name="hosting" value="vendor-api"> Vendor API</label><label><input type="radio" name="hosting" value="managed"> Managed Cloud</label><label><input type="radio" name="hosting" value="private"> Private VPC</label></div></div>
-                <div class="form-group"><label>Agent Autonomy <span class="required">*</span></label><div class="radio-group"><label><input type="radio" name="autonomy" value="readonly"> Read-Only</label><label><input type="radio" name="autonomy" value="supervised"> Supervised</label><label><input type="radio" name="autonomy" value="agentic"> Agentic</label></div></div>
-                <div class="form-group"><label>Custom Fine-tuning <span class="required">*</span></label><div class="radio-group"><label><input type="radio" name="training" value="no"> No</label><label><input type="radio" name="training" value="yes"> Yes</label></div></div>
-                <div class="form-group"><label>Third-Party Integrations <span class="required">*</span></label><select id="integrations" required><option value="0" selected>None</option><option value="1-3">1-3</option><option value="4-7">4-7</option><option value="8+">8+</option></select></div>
-                <div class="form-group"><label>Primary Use Case <span class="required">*</span></label><select id="useCase" required><option value="support" selected>Support</option><option value="analysis">Analysis</option><option value="content">Content</option><option value="coding">Coding</option><option value="search">Search/RAG</option><option value="automation">Automation</option><option value="medical">Medical</option><option value="other">Other</option></select></div>
-                <div class="button-group"><button type="submit">Analyze Risks</button><button type="reset" class="btn-secondary">Clear</button></div>
+                <!-- Step 1: System Name & Primary Users -->
+                <div class="wizard-step active" id="step1">
+                    <div class="step-title">📋 System Overview</div>
+                    <div class="two-column-layout">
+                        <div class="form-group-wizard">
+                            <label>System Name <span style="color: #94a3b8;">(optional)</span></label>
+                            <input type="text" id="systemName" placeholder="e.g., Customer Support Chatbot" style="width: 100%; padding: 12px;">
+                        </div>
+                        <div class="form-group-wizard">
+                            <label>Primary Users <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="users" value="public"> Public</label>
+                                <label><input type="radio" name="users" value="authenticated"> Authenticated</label>
+                                <label><input type="radio" name="users" value="internal"> Internal</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wizard-buttons">
+                        <button type="button" class="btn-prev" onclick="prevStep()" disabled>← Previous</button>
+                        <button type="button" class="btn-next" onclick="nextStep(1)">Next →</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Data Sensitivity & Model Hosting -->
+                <div class="wizard-step" id="step2">
+                    <div class="step-title">🗄️ Data & Model Configuration</div>
+                    <div class="two-column-layout">
+                        <div class="form-group-wizard">
+                            <label>Data Sensitivity <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="sensitivity" value="public"> Public</label>
+                                <label><input type="radio" name="sensitivity" value="confidential"> Confidential</label>
+                                <label><input type="radio" name="sensitivity" value="critical"> Critical (PII)</label>
+                            </div>
+                        </div>
+                        <div class="form-group-wizard">
+                            <label>Model Hosting <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="hosting" value="vendor-api"> Vendor API</label>
+                                <label><input type="radio" name="hosting" value="managed"> Managed Cloud</label>
+                                <label><input type="radio" name="hosting" value="private"> Private VPC</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wizard-buttons">
+                        <button type="button" class="btn-prev" onclick="prevStep()">← Previous</button>
+                        <button type="button" class="btn-next" onclick="nextStep(2)">Next →</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Agent Autonomy & Fine-tuning -->
+                <div class="wizard-step" id="step3">
+                    <div class="step-title">🤖 Autonomy & Training</div>
+                    <div class="two-column-layout">
+                        <div class="form-group-wizard">
+                            <label>Agent Autonomy <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="autonomy" value="readonly"> Read-Only</label>
+                                <label><input type="radio" name="autonomy" value="supervised"> Supervised</label>
+                                <label><input type="radio" name="autonomy" value="agentic"> Agentic</label>
+                            </div>
+                        </div>
+                        <div class="form-group-wizard">
+                            <label>Custom Fine-tuning <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="training" value="no"> No</label>
+                                <label><input type="radio" name="training" value="yes"> Yes</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wizard-buttons">
+                        <button type="button" class="btn-prev" onclick="prevStep()">← Previous</button>
+                        <button type="button" class="btn-next" onclick="nextStep(3)">Next →</button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Integrations & Use Case -->
+                <div class="wizard-step" id="step4">
+                    <div class="step-title">🔌 Integration & Purpose</div>
+                    <div class="two-column-layout">
+                        <div class="form-group-wizard">
+                            <label>Third-Party Integrations <span class="required">*</span></label>
+                            <select id="integrations" required style="width: 100%; padding: 10px;">
+                                <option value="0" selected>None</option>
+                                <option value="1-3">1-3</option>
+                                <option value="4-7">4-7</option>
+                                <option value="8+">8+</option>
+                            </select>
+                        </div>
+                        <div class="form-group-wizard">
+                            <label>Primary Use Case <span class="required">*</span></label>
+                            <select id="useCase" required style="width: 100%; padding: 10px;">
+                                <option value="support" selected>Support</option>
+                                <option value="analysis">Analysis</option>
+                                <option value="content">Content</option>
+                                <option value="coding">Coding</option>
+                                <option value="search">Search/RAG</option>
+                                <option value="automation">Automation</option>
+                                <option value="medical">Medical</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="wizard-buttons">
+                        <button type="button" class="btn-prev" onclick="prevStep()">← Previous</button>
+                        <button type="submit" class="btn-submit">🚀 Analyze Risks</button>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
@@ -526,21 +649,22 @@ function selectLayer(id) {
 
 document.getElementById('riskForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    const c = {
-        name: document.getElementById('systemName').value,
-        users: document.querySelector('input[name="users"]:checked')?.value,
-        sensitivity: document.querySelector('input[name="sensitivity"]:checked')?.value,
-        hosting: document.querySelector('input[name="hosting"]:checked')?.value,
-        autonomy: document.querySelector('input[name="autonomy"]:checked')?.value,
-        training: document.querySelector('input[name="training"]:checked')?.value,
-        integrations: document.getElementById('integrations').value,
-        useCase: document.getElementById('useCase').value
-    };
-    if (!c.users || !c.sensitivity || !c.hosting || !c.autonomy || !c.training) {
-        alert('Answer all required questions.');
-        return;
-    }
-    assessmentData = c;
+    try {
+        const c = {
+            name: document.getElementById('systemName').value,
+            users: document.querySelector('input[name="users"]:checked')?.value,
+            sensitivity: document.querySelector('input[name="sensitivity"]:checked')?.value,
+            hosting: document.querySelector('input[name="hosting"]:checked')?.value,
+            autonomy: document.querySelector('input[name="autonomy"]:checked')?.value,
+            training: document.querySelector('input[name="training"]:checked')?.value,
+            integrations: document.getElementById('integrations').value,
+            useCase: document.getElementById('useCase').value
+        };
+        if (!c.users || !c.sensitivity || !c.hosting || !c.autonomy || !c.training) {
+            alert('Answer all required questions.');
+            return;
+        }
+        assessmentData = c;
     let p = 0;
     if(c.users==='public') p+=3;
     if(c.sensitivity==='critical') p+=4;
@@ -713,8 +837,12 @@ document.getElementById('riskForm').addEventListener('submit', function(e) {
     document.getElementById('riskResults').innerHTML = html;
     switchTab(null, 'results');
 
-    // Set default to 5-Layer and auto-show framework selector
-    currentFramework = '5layer';
+        // Set default to 5-Layer and auto-show framework selector
+        currentFramework = '5layer';
+    } catch(err) {
+        console.error('Form submission error:', err);
+        alert('Error processing form. Please check the browser console for details.\n\nError: ' + err.message);
+    }
 });
 
 function selectFrameworkAndRender(fw, element) {
@@ -951,6 +1079,63 @@ function switchTab(e, t) {
     document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
     document.getElementById(t).classList.add('active');
     if(e)e.target.classList.add('active');
+}
+
+let currentStep = 1;
+const totalSteps = 4;
+
+function updateProgressBar() {
+    const progress = (currentStep / totalSteps) * 100;
+    document.getElementById('progressFill').style.width = progress + '%';
+    document.getElementById('progressText').textContent = `Step ${currentStep} of ${totalSteps}`;
+}
+
+function showStep(step) {
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+    document.getElementById(`step${step}`).classList.add('active');
+
+    // Update button states
+    const prevBtn = document.querySelector('.btn-prev');
+    prevBtn.disabled = step === 1;
+
+    updateProgressBar();
+}
+
+function nextStep(step) {
+    const required = getRequiredFieldsForStep(step);
+
+    // Validate required fields
+    const allFilled = required.every(fieldName => {
+        if (fieldName === 'users' || fieldName === 'sensitivity' || fieldName === 'hosting' || fieldName === 'autonomy' || fieldName === 'training') {
+            return document.querySelector(`input[name="${fieldName}"]:checked`) !== null;
+        }
+        return document.getElementById(fieldName).value !== '';
+    });
+
+    if (!allFilled) {
+        alert('Please answer all required questions before proceeding.');
+        return;
+    }
+
+    currentStep++;
+    showStep(currentStep);
+}
+
+function prevStep() {
+    if (currentStep > 1) {
+        currentStep--;
+        showStep(currentStep);
+    }
+}
+
+function getRequiredFieldsForStep(step) {
+    const requirements = {
+        1: ['users'],  // Primary Users is required, System Name is optional
+        2: ['sensitivity', 'hosting'],
+        3: ['autonomy', 'training'],
+        4: ['integrations', 'useCase']
+    };
+    return requirements[step] || [];
 }
 
 selectLayer(1);
