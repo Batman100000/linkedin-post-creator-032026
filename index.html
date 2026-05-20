@@ -55,6 +55,16 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes blink3times {
+            0% { opacity: 1; }
+            15% { opacity: 0.3; }
+            30% { opacity: 1; }
+            45% { opacity: 0.3; }
+            60% { opacity: 1; }
+            75% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        .onion-diagram.blink { animation: blink3times 1.5s ease-in-out; }
         .card {
             background: rgba(30, 41, 59, 0.6);
             backdrop-filter: blur(10px);
@@ -1199,6 +1209,16 @@ function switchTab(e, t) {
     document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
     document.getElementById(t).classList.add('active');
     if(e)e.target.classList.add('active');
+
+    // Trigger blink animation on visualizer tab
+    if(t === 'visualizer') {
+        const onionDiagram = document.querySelector('.onion-diagram');
+        if(onionDiagram) {
+            onionDiagram.classList.remove('blink');
+            void onionDiagram.offsetWidth; // Trigger reflow to restart animation
+            onionDiagram.classList.add('blink');
+        }
+    }
 }
 
 selectLayer(1);
