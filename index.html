@@ -312,6 +312,7 @@
 
     <!-- VISUALIZER TAB -->
     <div id="visualizer" class="tab-content active">
+        <div id="frontPageSpiderContainer" style="text-align: center; margin-bottom: 40px;"></div>
         <div class="visualizer-layout">
             <div class="onion-container">
                 <svg class="onion-diagram" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
@@ -1172,7 +1173,80 @@ function getRequiredFieldsForStep(step) {
     return requirements[step] || [];
 }
 
-// Removed: selectLayer(1); // Front page alert removed per user request
+// Render Front Page Spider Web with Green/Dark Theme
+function renderFrontPageSpiderWeb() {
+    const container = document.getElementById('frontPageSpiderContainer');
+    if (!container) return;
+
+    const size = 500;
+    const center = size / 2;
+    const radius = 150;
+    const layers = ['Data', 'Model/LLM', 'Application', 'Infrastructure', 'Compliance'];
+    const defaultRisks = [15, 15, 10, 10, 15];
+    const colors = ['#059669', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0'];
+
+    let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <linearGradient id="spiderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#059669" stop-opacity="0.8"/>
+                <stop offset="100%" stop-color="#064e3b" stop-opacity="0.6"/>
+            </linearGradient>
+            <filter id="spiderGlow"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>`;
+
+    // Draw concentric circles (web background)
+    for (let i = 1; i <= 4; i++) {
+        const r = (radius / 4) * i;
+        svg += `<circle cx="${center}" cy="${center}" r="${r}" fill="none" stroke="rgba(16,185,129,0.15)" stroke-width="1"/>`;
+    }
+
+    // Draw radial lines and layer points
+    for (let i = 0; i < layers.length; i++) {
+        const angle = (i * 2 * Math.PI / layers.length) - Math.PI / 2;
+        const x = center + radius * Math.cos(angle);
+        const y = center + radius * Math.sin(angle);
+
+        // Radial line
+        svg += `<line x1="${center}" y1="${center}" x2="${x}" y2="${y}" stroke="rgba(16,185,129,0.2)" stroke-width="1"/>`;
+
+        // Layer circle
+        svg += `<circle cx="${x}" cy="${y}" r="8" fill="${colors[i]}" stroke="#064e3b" stroke-width="2" filter="url(#spiderGlow)"/>`;
+
+        // Layer label
+        svg += `<text x="${x}" y="${y + 25}" text-anchor="middle" fill="#10b981" font-size="12" font-weight="600">${layers[i]}</text>`;
+    }
+
+    // Draw risk polygon (filled)
+    let polygonPoints = '';
+    for (let i = 0; i < layers.length; i++) {
+        const angle = (i * 2 * Math.PI / layers.length) - Math.PI / 2;
+        const riskRadius = (defaultRisks[i] / 100) * radius;
+        const x = center + riskRadius * Math.cos(angle);
+        const y = center + riskRadius * Math.sin(angle);
+        polygonPoints += `${x},${y} `;
+    }
+    svg += `<polygon points="${polygonPoints}" fill="url(#spiderGrad)" opacity="0.6" stroke="#10b981" stroke-width="2"/>`;
+
+    // Draw risk data points
+    for (let i = 0; i < layers.length; i++) {
+        const angle = (i * 2 * Math.PI / layers.length) - Math.PI / 2;
+        const riskRadius = (defaultRisks[i] / 100) * radius;
+        const x = center + riskRadius * Math.cos(angle);
+        const y = center + riskRadius * Math.sin(angle);
+        svg += `<circle cx="${x}" cy="${y}" r="5" fill="#34d399" stroke="#10b981" stroke-width="2"/>`;
+        svg += `<text x="${x}" y="${y - 12}" text-anchor="middle" fill="#a7f3d0" font-size="11" font-weight="700">${defaultRisks[i]}%</text>`;
+    }
+
+    // Draw center circle
+    svg += `<circle cx="${center}" cy="${center}" r="6" fill="#10b981" stroke="#064e3b" stroke-width="1.5"/>`;
+
+    svg += `</svg>`;
+
+    container.innerHTML = svg;
+}
+
+// Initialize front page spider web
+renderFrontPageSpiderWeb();
 </script>
 </body>
 </html>
