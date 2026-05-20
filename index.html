@@ -693,6 +693,43 @@ document.getElementById('riskForm').addEventListener('submit', function(e) {
 
     let html = `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:40px;"><div style="flex:1;min-width:300px;"><h2 style="margin-bottom:8px;">📊 Risk Assessment Results</h2><p style="color:#94a3b8;margin-bottom:12px;">System: <strong>${c.name}</strong> | ${new Date().toLocaleDateString()}</p><div style="margin-top:16px;padding:20px;background:rgba(71,85,105,0.1);border-radius:8px;"><div style="display:flex;gap:30px;align-items:center;"><div><div style="font-size:3.5rem;font-weight:900;color:${riskColor};">${p*100/15}%</div><div style="color:${riskColor};font-weight:700;font-size:1.1rem;margin-top:4px;">${riskLevel}</div></div><div style="flex:1;"><div style="color:#cbd5e1;margin-bottom:8px;"><strong>${recommendation}</strong></div><span style="font-size:0.85rem;color:#94a3b8;">Risk Score: ${p}/15</span></div></div></div></div><div style="flex:1;min-width:300px;"><h3 style="margin-bottom:16px;color:#f1f5f9;">⚙️ System Configuration</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.9rem;"><div><span style="color:#94a3b8;">👥 User Type</span><br/><strong>${c.users === 'public' ? 'Public' : 'Authenticated'}</strong></div><div><span style="color:#94a3b8;">🗄️ Data Sensitivity</span><br/><strong>${c.sensitivity === 'critical' ? 'Critical' : 'Confidential'}</strong></div><div><span style="color:#94a3b8;">☁️ Model Hosting</span><br/><strong>${c.hosting === 'vendor-api' ? 'Vendor API' : c.hosting === 'private' ? 'Private Cloud' : 'Managed Cloud'}</strong></div><div><span style="color:#94a3b8;">🤖 Autonomy Level</span><br/><strong>${c.autonomy === 'agentic' ? 'Agentic' : 'Read-Only'}</strong></div><div><span style="color:#94a3b8;">🔧 Fine-tuned Model</span><br/><strong>${c.training === 'yes' ? 'Yes' : 'No'}</strong></div><div><span style="color:#94a3b8;">🔌 Integrations</span><br/><strong>${c.integrations}</strong></div></div></div></div></div>`;
 
+    // KPI Dashboard Section
+    html += `<div class="card"><h3 style="margin-bottom:20px;">📊 Key Performance Indicators</h3>`;
+    const avgLayerRisk = Math.round(Object.values(scores).reduce((a, b) => a + b) / 5);
+    const highestRiskLayer = sorted[0];
+    const controlCount = m.length;
+    const implementationWeeks = p > 10 ? 2 : p > 5 ? 4 : 6;
+    const compliancePercentage = Math.round((5 - sorted.slice(0, 3).length) * 20 + 40);
+
+    html += `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:20px;">
+        <div style="padding:20px;background:rgba(59,130,246,0.1);border-left:4px solid #3b82f6;border-radius:8px;">
+            <div style="font-size:0.85rem;color:#94a3b8;margin-bottom:8px;font-weight:600;">🎯 OVERALL RISK</div>
+            <div style="font-size:2.2rem;font-weight:900;color:#3b82f6;">${avgLayerRisk}/100</div>
+            <div style="font-size:0.8rem;color:#cbd5e1;margin-top:4px;">${riskLevel}</div>
+        </div>
+        <div style="padding:20px;background:rgba(239,68,68,0.1);border-left:4px solid #ef4444;border-radius:8px;">
+            <div style="font-size:0.85rem;color:#94a3b8;margin-bottom:8px;font-weight:600;">⚠️ HIGHEST RISK</div>
+            <div style="font-size:1.5rem;font-weight:900;color:#ef4444;">${layerIcons[highestRiskLayer.id]} Layer ${highestRiskLayer.id}</div>
+            <div style="font-size:0.8rem;color:#cbd5e1;margin-top:4px;">${layerNames[highestRiskLayer.id]} (${highestRiskLayer.score}/100)</div>
+        </div>
+        <div style="padding:20px;background:rgba(34,197,94,0.1);border-left:4px solid #22c55e;border-radius:8px;">
+            <div style="font-size:0.85rem;color:#94a3b8;margin-bottom:8px;font-weight:600;">✓ CONTROLS</div>
+            <div style="font-size:2.2rem;font-weight:900;color:#22c55e;">${controlCount}</div>
+            <div style="font-size:0.8rem;color:#cbd5e1;margin-top:4px;">Recommended actions</div>
+        </div>
+        <div style="padding:20px;background:rgba(168,85,247,0.1);border-left:4px solid #a855f7;border-radius:8px;">
+            <div style="font-size:0.85rem;color:#94a3b8;margin-bottom:8px;font-weight:600;">📅 TIMELINE</div>
+            <div style="font-size:2.2rem;font-weight:900;color:#a855f7;">${implementationWeeks}</div>
+            <div style="font-size:0.8rem;color:#cbd5e1;margin-top:4px;">weeks to implement</div>
+        </div>
+        <div style="padding:20px;background:rgba(245,158,11,0.1);border-left:4px solid #f59e0b;border-radius:8px;">
+            <div style="font-size:0.85rem;color:#94a3b8;margin-bottom:8px;font-weight:600;">📋 COMPLIANCE</div>
+            <div style="font-size:2.2rem;font-weight:900;color:#f59e0b;">${compliancePercentage}%</div>
+            <div style="font-size:0.8rem;color:#cbd5e1;margin-top:4px;">Framework coverage</div>
+        </div>
+    </div>`;
+    html += `</div>`;
+
     // Framework Rings - Layer Risk Visualization
     html += `<div class="card"><h3 style="margin-bottom:20px;">🎯 Per-Layer Risk Breakdown</h3>`;
     const sorted = Object.entries(scores).map(e=>{return{id:parseInt(e[0]),score:e[1]};}).sort((a,b)=>b.score-a.score);
