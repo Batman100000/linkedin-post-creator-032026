@@ -450,6 +450,11 @@ function toggleControl(controlId) {
     } else {
         implementedControls.delete(controlId);
     }
+    // Update spider web in real-time
+    const spiderContainer = document.querySelector('.spider-container');
+    if (spiderContainer) {
+        renderGuidelinesWithSpider();
+    }
 }
 
 function showThreatControls(threat, layerId) {
@@ -695,10 +700,17 @@ function calculateBeforeAfterScores() {
     if(c.integrations==='8+') {before[4]+=20; before[3]+=10;} else if(c.integrations==='4-7') {before[4]+=10;}
     Object.keys(before).forEach(k=>{before[k]=Math.min(before[k],100);});
 
-    // After scores (with controls implemented - assume 40-50% reduction per layer)
-    const after = {};
-    Object.keys(before).forEach(k => {
-        after[k] = Math.max(Math.ceil(before[k] * 0.5), 5);
+    // After scores (based on implemented controls)
+    const after = {1:before[1], 2:before[2], 3:before[3], 4:before[4], 5:before[5]};
+
+    // Reduce risk per layer based on selected controls
+    implementedControls.forEach(ctrlId => {
+        const ctrl = masterControls.find(c => c.id === ctrlId);
+        if (ctrl) {
+            const layerId = parseInt(ctrl.layer.charAt(0));
+            const reduction = ctrl.mitigates ? Math.min(ctrl.mitigates.length * 8, 30) : 15;
+            after[layerId] = Math.max(Math.ceil(after[layerId] * (1 - reduction/100)), 5);
+        }
     });
 
     return {before, after};
