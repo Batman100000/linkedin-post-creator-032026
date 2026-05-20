@@ -607,9 +607,12 @@ setTimeout(() => {
     }
 }, 100);
 
-// Ensure form exists before attaching listener
-if (document.getElementById('riskForm')) {
-    document.getElementById('riskForm').addEventListener('submit', function(e) {
+// Attach form submission handler
+setTimeout(() => {
+    const riskForm = document.getElementById('riskForm');
+    if (!riskForm) return;
+
+    riskForm.addEventListener('submit', function(e) {
         e.preventDefault();
         try {
             const c = {
@@ -626,13 +629,13 @@ if (document.getElementById('riskForm')) {
                 alert('⚠️ Please answer all required questions before analyzing.');
                 return;
             }
-    assessmentData = c;
-    let p = 0;
-    if(c.users==='public') p+=3;
-    if(c.sensitivity==='critical') p+=4;
-    if(c.autonomy==='agentic') p+=4;
-    if(c.training==='yes') p+=2;
-    if(c.integrations==='8+') p+=2;
+            assessmentData = c;
+            let p = 0;
+            if(c.users==='public') p+=3;
+            if(c.sensitivity==='critical') p+=4;
+            if(c.autonomy==='agentic') p+=4;
+            if(c.training==='yes') p+=2;
+            if(c.integrations==='8+') p+=2;
     let t='LOW', cls='risk-low';
     if(p>=10) {t='CRITICAL'; cls='risk-critical';} else if(p>=7) {t='HIGH'; cls='risk-high';} else if(p>=4) {t='MEDIUM'; cls='risk-medium';}
 
@@ -867,7 +870,7 @@ if (document.getElementById('riskForm')) {
             alert('❌ Error processing form. Please check the browser console for details.');
         }
     });
-}
+}, 100);
 
 function selectFrameworkAndRender(fw, element) {
     currentFramework = fw;
