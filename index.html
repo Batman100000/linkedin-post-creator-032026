@@ -375,13 +375,6 @@
             <p style="color: #94a3b8; margin-bottom: 8px;">Complete a few questions about your system to receive customized security recommendations across all 5 layers.</p>
 
             <form id="riskForm">
-                <!-- System Identification -->
-                <div class="system-name-group" style="margin-bottom: 40px;">
-                    <label style="color: #60a5fa; font-size: 1.2rem;">What's your system called?</label>
-                    <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 12px;">(Optional - helps with reporting)</p>
-                    <input type="text" id="systemName" placeholder="e.g., Customer Support Chatbot, Data Analysis Tool">
-                </div>
-
                 <!-- System Characteristics Section -->
                 <div style="background: rgba(71,85,105,0.15); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 24px; margin-bottom: 32px;">
                     <h3 style="color: #f1f5f9; margin-bottom: 20px; font-size: 1.1rem;">System Characteristics</h3>
@@ -409,6 +402,13 @@
                     <h3 style="color: #f1f5f9; margin-bottom: 20px; font-size: 1.1rem;">Integrations & Complexity</h3>
 
                     <div class="form-group"><label>How many third-party integrations? <span class="required">*</span></label><select id="integrations" required style="margin-top: 8px;"><option value="0" selected>None - Standalone System</option><option value="1-3">1-3 Integrations</option><option value="4-7">4-7 Integrations</option><option value="8+">8+ Integrations</option></select></div>
+                </div>
+
+                <!-- System Identification (Optional) -->
+                <div class="system-name-group" style="margin-bottom: 32px;">
+                    <label style="color: #60a5fa; font-size: 1.2rem;">What's your system called?</label>
+                    <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 12px;">(Optional - helps with reporting)</p>
+                    <input type="text" id="systemName" placeholder="e.g., Customer Support Chatbot, Data Analysis Tool">
                 </div>
 
                 <div class="button-group" style="padding: 20px 0; border-top: 1px solid rgba(71,85,105,0.3);">
@@ -677,7 +677,7 @@ setTimeout(() => {
             const riskColor = p <= 5 ? '#10b981' : p <= 10 ? '#f59e0b' : '#ef4444';
             const recommendation = p <= 5 ? 'Implement optional hardening — low-priority roadmap' : p <= 10 ? 'Implement over next quarter — standard hardening roadmap' : 'Immediate action required — critical security roadmap';
 
-            let html = `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:40px;"><div style="flex:1;min-width:300px;"><h2 style="margin-bottom:8px;">Risk Assessment Results</h2><p style="color:#94a3b8;margin-bottom:12px;">System: <strong>${c.name}</strong> | ${new Date().toLocaleDateString()}</p><div style="margin-top:16px;padding:20px;background:rgba(71,85,105,0.1);border-radius:8px;"><div style="display:flex;gap:30px;align-items:center;"><div><div style="font-size:3.5rem;font-weight:900;color:${riskColor};">${p*100/15}%</div><div style="color:${riskColor};font-weight:700;font-size:1.1rem;margin-top:4px;">${riskLevel}</div></div><div style="flex:1;"><div style="color:#cbd5e1;margin-bottom:8px;"><strong>${recommendation}</strong></div><span style="font-size:0.85rem;color:#94a3b8;">Risk Score: ${p}/15</span></div></div></div></div><div style="flex:1;min-width:300px;"><h3 style="margin-bottom:16px;color:#f1f5f9;">System Configuration</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.9rem;"><div><span style="color:#94a3b8;">User Type</span><br/><strong>${c.users === 'public' ? 'Public' : 'Authenticated'}</strong></div><div><span style="color:#94a3b8;">Data Sensitivity</span><br/><strong>${c.sensitivity === 'critical' ? 'Critical' : 'Confidential'}</strong></div><div><span style="color:#94a3b8;">Model Hosting</span><br/><strong>${c.hosting === 'vendor-api' ? 'Vendor API' : c.hosting === 'private' ? 'Private Cloud' : 'Managed Cloud'}</strong></div><div><span style="color:#94a3b8;">Autonomy Level</span><br/><strong>${c.autonomy === 'agentic' ? 'Agentic' : 'Read-Only'}</strong></div><div><span style="color:#94a3b8;">Fine-tuned Model</span><br/><strong>${c.training === 'yes' ? 'Yes' : 'No'}</strong></div><div><span style="color:#94a3b8;">Integrations</span><br/><strong>${c.integrations}</strong></div></div></div></div></div>`;
+            let html = `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:40px;"><div style="flex:1;min-width:300px;"><h2 style="margin-bottom:8px;">Risk Assessment Results</h2><p style="color:#94a3b8;margin-bottom:12px;">System: <strong>${c.name}</strong> | ${new Date().toLocaleDateString()}</p><div style="margin-top:16px;padding:20px;background:rgba(71,85,105,0.1);border-radius:8px;"><div style="display:flex;gap:30px;align-items:center;"><div><div style="font-size:3.5rem;font-weight:900;color:${riskColor};">${p*100/15}%</div><div style="color:${riskColor};font-weight:700;font-size:1.1rem;margin-top:4px;">${riskLevel}</div></div><div style="flex:1;"><div style="color:#cbd5e1;margin-bottom:8px;"><strong>${recommendation}</strong></div><span style="font-size:0.85rem;color:#94a3b8;">Risk Score: ${p}/15</span></div></div></div></div><div style="flex:1;min-width:300px;"><h3 style="margin-bottom:16px;color:#f1f5f9;">System Configuration</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.9rem;"><div><span style="color:#94a3b8;">User Type</span><br/><strong>${c.users === 'public' ? 'Public' : c.users === 'authenticated' ? 'Authenticated' : 'Internal Only'}</strong></div><div><span style="color:#94a3b8;">Data Sensitivity</span><br/><strong>${c.sensitivity === 'critical' ? 'Critical (PII)' : c.sensitivity === 'confidential' ? 'Confidential' : 'Public'}</strong></div><div><span style="color:#94a3b8;">Model Hosting</span><br/><strong>${c.hosting === 'vendor-api' ? 'Vendor API' : c.hosting === 'private' ? 'Private Cloud' : 'Managed Cloud'}</strong></div><div><span style="color:#94a3b8;">Autonomy Level</span><br/><strong>${c.autonomy === 'agentic' ? 'Agentic' : c.autonomy === 'supervised' ? 'Supervised' : 'Read-Only'}</strong></div><div><span style="color:#94a3b8;">Fine-tuned Model</span><br/><strong>${c.training === 'yes' ? 'Yes' : 'No'}</strong></div><div><span style="color:#94a3b8;">Integrations</span><br/><strong>${c.integrations}</strong></div></div></div></div></div>`;
 
             // Framework Rings - Layer Risk Visualization
             html += `<div class="card"><h3 style="margin-bottom:20px;">Per-Layer Risk Breakdown</h3>`;
@@ -1001,11 +1001,11 @@ function createSpiderChart() {
             const y = center + gridR * Math.sin(p.angle);
             gridPath += (i === 0 ? 'M' : 'L') + x + ',' + y;
         }
-        gridLines.push(`<path d="${gridPath}" stroke="rgba(71,85,105,0.4)" stroke-width="2" fill="none"/>`);
+        gridLines.push(`<path d="${gridPath}" stroke="rgba(0,212,255,0.25)" stroke-width="1.5" fill="none"/>`);
     }
 
     const axisLines = points.map((p, i) => {
-        return `<line x1="${center}" y1="${center}" x2="${p.x}" y2="${p.y}" stroke="rgba(71,85,105,0.3)" stroke-width="2"/>`;
+        return `<line x1="${center}" y1="${center}" x2="${p.x}" y2="${p.y}" stroke="rgba(0,212,255,0.2)" stroke-width="1.5"/>`;
     }).join('');
 
     const layerLabels = ['Data', 'Model/LLM', 'App', 'Infra', 'Compliance'];
@@ -1018,20 +1018,24 @@ function createSpiderChart() {
 
     // Risk reduction box on the right side
     const riskReductionBox = `
-        <text x="${center + radius + 170}" y="${center - 50}" text-anchor="middle" font-size="14" font-weight="800" fill="#22c55e" letter-spacing="0.5">RISK REDUCED</text>
-        <text x="${center + radius + 170}" y="${center + 45}" text-anchor="middle" font-size="80" font-weight="900" fill="#86efac">${riskReduction}%</text>
+        <text x="${center + radius + 170}" y="${center - 50}" text-anchor="middle" font-size="14" font-weight="800" fill="#00D4FF" letter-spacing="0.5">RISK REDUCED</text>
+        <text x="${center + radius + 170}" y="${center + 45}" text-anchor="middle" font-size="80" font-weight="900" fill="#00F0FF">${riskReduction}%</text>
         <text x="${center + radius + 170}" y="${center + 120}" text-anchor="middle" font-size="11" font-weight="600" fill="#cbd5e1">With recommended</text>
         <text x="${center + radius + 170}" y="${center + 135}" text-anchor="middle" font-size="11" font-weight="600" fill="#cbd5e1">controls implemented</text>
     `;
 
     const svg = `
     <svg viewBox="0 0 ${size + 280} ${size + 50}" class="spider-svg" style="margin: 30px auto; display: block; max-width: 100%; height: auto;">
+        <defs>
+            <filter id="glow-before"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="glow-after"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
         <g>${gridLines.join('')}</g>
         <g>${axisLines}</g>
-        <polygon points="${beforePoints.join(' ')}" fill="rgba(239,68,68,0.12)" stroke="#ef4444" stroke-width="5.5" opacity="0.95" stroke-linejoin="round"/>
-        <polygon points="${afterPoints.join(' ')}" fill="rgba(34,197,94,0.18)" stroke="#22c55e" stroke-width="5.5" opacity="1" stroke-linejoin="round"/>
-        ${points.map((p, i) => `<circle cx="${center + (beforeVals[i]/maxScore)*radius*Math.cos(p.angle)}" cy="${center + (beforeVals[i]/maxScore)*radius*Math.sin(p.angle)}" r="7" fill="#ef4444" stroke="#fca5a5" stroke-width="2.5"/>`).join('')}
-        ${points.map((p, i) => `<circle cx="${center + (afterVals[i]/maxScore)*radius*Math.cos(p.angle)}" cy="${center + (afterVals[i]/maxScore)*radius*Math.sin(p.angle)}" r="7" fill="#22c55e" stroke="#86efac" stroke-width="2.5"/>`).join('')}
+        <polygon points="${beforePoints.join(' ')}" fill="rgba(255,100,50,0.15)" stroke="#FF6432" stroke-width="5.5" opacity="0.95" stroke-linejoin="round" filter="url(#glow-before)"/>
+        <polygon points="${afterPoints.join(' ')}" fill="rgba(0,212,255,0.15)" stroke="#00D4FF" stroke-width="5.5" opacity="1" stroke-linejoin="round" filter="url(#glow-after)"/>
+        ${points.map((p, i) => `<circle cx="${center + (beforeVals[i]/maxScore)*radius*Math.cos(p.angle)}" cy="${center + (beforeVals[i]/maxScore)*radius*Math.sin(p.angle)}" r="7" fill="#FF6432" stroke="#FFAA88" stroke-width="2.5"/>`).join('')}
+        ${points.map((p, i) => `<circle cx="${center + (afterVals[i]/maxScore)*radius*Math.cos(p.angle)}" cy="${center + (afterVals[i]/maxScore)*radius*Math.sin(p.angle)}" r="7" fill="#00D4FF" stroke="#00F0FF" stroke-width="2.5"/>`).join('')}
         ${labels}
         ${riskReductionBox}
     </svg>`;
