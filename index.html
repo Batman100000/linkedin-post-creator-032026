@@ -161,7 +161,13 @@
         .system-name-group label { font-size: 1.5rem; font-weight: 900; margin-bottom: 16px; color: #cfbcff; text-transform: uppercase; letter-spacing: 0.5px; }
         .system-name-group input[type="text"] { font-size: 1.125rem; padding: 16px 20px; border: 2px solid rgba(207, 188, 255, 0.3) !important; background: rgba(15, 20, 27, 0.7) !important; transition: all 0.3s ease; }
         .system-name-group input[type="text"]:focus { border-color: #cfbcff !important; background: rgba(15, 20, 27, 0.9) !important; box-shadow: 0 0 12px rgba(207, 188, 255, 0.3); }
-        label { display: block; margin-bottom: 8px; font-weight: 600; color: #f1f5f9; }
+        label { 
+        display: block; 
+        margin-bottom: 12px; 
+        font-weight: 700; 
+        color: #f1f5f9; 
+        font-size: 1rem;
+    }
         .radio-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
         input[type="radio"], input[type="text"], select {
             accent-color: #cfbcff;
@@ -268,8 +274,8 @@
         .btn-submit { padding: 12px 24px; background: linear-gradient(135deg, #cfbcff 0%, #b8a5e0 100%); color: #0f141b; font-weight: 600; }
         .btn-next:disabled, .btn-prev:disabled { opacity: 0.5; cursor: not-allowed; }
         .form-group-wizard { margin-bottom: 24px; }
-        .three-column-layout { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
-        @media (max-width: 1024px) { .three-column-layout { grid-template-columns: 1fr 1fr; } }
+        .three-column-layout { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (max-width: 1024px) { .three-column-layout { grid-template-columns: 1fr; } }
         @media (max-width: 768px) { .three-column-layout { grid-template-columns: 1fr; } }
         .layer-btn { padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; color: #f1f5f9; font-size: 0.85rem; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.4); border: none; position: relative; overflow: hidden; }
         .layer-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,0.6); }
