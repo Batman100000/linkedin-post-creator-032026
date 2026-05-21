@@ -292,7 +292,7 @@
             font-size: 0.95rem;
             color: #f1f5f9;
         }
-        .form-row > input[type="text"] { width: 100%; max-width: 400px; }
+        .form-row > input[type="text"] { width: 100%; max-width: 420px; }
         .radio-group-inline {
             display: flex;
             gap: 10px;
@@ -322,8 +322,7 @@
             transform: translateY(-1px);
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
-        .radio-group-inline input[type="radio"] { accent-color: #cfbcff; }
-        .radio-group-inline input[type="radio"]:checked + span,
+        .radio-group-inline input[type="radio"]:checked ~ span,
         .radio-group-inline label:has(input:checked) {
             background: rgba(207,188,255,0.2);
             color: #cfbcff;
@@ -489,35 +488,19 @@
 
                 <!-- Step 2: Model Hosting, Agent Autonomy & Fine-tuning -->
                 <div class="wizard-step" id="step2">
-                    <div class="step-title">🤖 Model & Autonomy Configuration</div>
-                    <div class="three-column-layout">
-                        <div class="form-group-wizard">
-                            <label>Data Sensitivity <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label><input type="radio" name="sensitivity" value="public"> Public</label>
-                                <label><input type="radio" name="sensitivity" value="confidential"> Confidential</label>
-                                <label><input type="radio" name="sensitivity" value="critical"> Critical (PII)</label>
-                            </div>
-                        </div>
-                        <div class="form-group-wizard">
-                            <label>Model Hosting <span class="required">*</span></label>
-                            <div class="radio-group">
-                                <label><input type="radio" name="hosting" value="vendor-api"> Vendor API</label>
-                                <label><input type="radio" name="hosting" value="managed"> Managed Cloud</label>
-                                <label><input type="radio" name="hosting" value="private"> Private VPC</label>
-                            </div>
-                        </div>
-                        <div class="form-group-wizard">
+                    <div class="step-title">🤖 Autonomy & Training</div>
+                    <div class="wizard-form-stack">
+                        <div class="form-group-wizard form-row">
                             <label>Agent Autonomy <span class="required">*</span></label>
-                            <div class="radio-group">
+                            <div class="radio-group-inline">
                                 <label><input type="radio" name="autonomy" value="readonly"> Read-Only</label>
                                 <label><input type="radio" name="autonomy" value="supervised"> Supervised</label>
                                 <label><input type="radio" name="autonomy" value="agentic"> Agentic</label>
                             </div>
                         </div>
-                        <div class="form-group-wizard">
+                        <div class="form-group-wizard form-row">
                             <label>Custom Fine-tuning <span class="required">*</span></label>
-                            <div class="radio-group">
+                            <div class="radio-group-inline">
                                 <label><input type="radio" name="training" value="no"> No</label>
                                 <label><input type="radio" name="training" value="yes"> Yes</label>
                             </div>
