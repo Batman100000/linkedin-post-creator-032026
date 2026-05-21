@@ -722,12 +722,6 @@ function selectLayer(id) {
         }
     });
 
-    // Update dropdown selector
-    const selector = document.getElementById('layerSelector');
-    if(selector) {
-        selector.value = id;
-    }
-
     const d = layersData[id];
     document.getElementById('layerTag').textContent = d.tag;
     document.getElementById('layerTitle').textContent = d.title;
