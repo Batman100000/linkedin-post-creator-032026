@@ -331,6 +331,33 @@
         }
         @media (max-width: 768px) {
             .form-row { padding: 14px 16px; gap: 10px; }
+        .form-row select {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(207,188,255,0.2);
+            background: rgba(207,188,255,0.05);
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 200px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+        }
+        .form-row select:hover {
+            border-color: rgba(207,188,255,0.4);
+            background-color: rgba(207,188,255,0.1);
+        }
+        .form-row select:focus {
+            outline: none;
+            border-color: #cfbcff;
+            box-shadow: 0 0 0 2px rgba(207,188,255,0.2);
+        }
+
             .form-row > input[type="text"] { max-width: 100%; }
             .radio-group-inline { gap: 8px; }
             .radio-group-inline label { padding: 7px 12px; font-size: 0.85rem; }
@@ -515,19 +542,19 @@
                 <!-- Step 3: Integrations, Use Case & Deployment -->
                 <div class="wizard-step" id="step3">
                     <div class="step-title">🔌 Integration & Deployment</div>
-                    <div class="three-column-layout">
-                        <div class="form-group-wizard">
+                    <div class="wizard-form-stack">
+                        <div class="form-group-wizard form-row">
                             <label>Third-Party Integrations <span class="required">*</span></label>
-                            <select id="integrations" required style="width: 100%; padding: 10px;">
+                            <select id="integrations" required>
                                 <option value="0" selected>None</option>
                                 <option value="1-3">1-3</option>
                                 <option value="4-7">4-7</option>
                                 <option value="8+">8+</option>
                             </select>
                         </div>
-                        <div class="form-group-wizard">
+                        <div class="form-group-wizard form-row">
                             <label>Primary Use Case <span class="required">*</span></label>
-                            <select id="useCase" required style="width: 100%; padding: 10px;">
+                            <select id="useCase" required>
                                 <option value="support" selected>Support</option>
                                 <option value="analysis">Analysis</option>
                                 <option value="content">Content</option>
@@ -537,10 +564,6 @@
                                 <option value="medical">Medical</option>
                                 <option value="other">Other</option>
                             </select>
-                        </div>
-                        <div class="form-group-wizard">
-                            <label style="color: #94a3b8; font-size: 0.9rem;">Ready to analyze</label>
-                            <div style="padding: 12px; background: rgba(207,188,255,0.08); border-radius: 6px; color: #cbd5e1; font-size: 0.9rem;">✓ All questions answered</div>
                         </div>
                     </div>
                     <div class="wizard-buttons">
