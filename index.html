@@ -276,48 +276,65 @@
         .form-group-wizard { margin-bottom: 0; }
         .wizard-form-stack { display: flex; flex-direction: column; gap: 0; }
         .form-row {
-            padding: 16px 24px;
-            border-bottom: 1px solid rgba(207,188,255,0.1);
+            padding: 18px 24px;
+            border-bottom: 1px solid rgba(207,188,255,0.08);
             display: flex;
-            align-items: center;
-            gap: 24px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
             transition: background 0.2s ease;
         }
         .form-row:last-child { border-bottom: none; }
-        .form-row:hover { background: rgba(207,188,255,0.06); }
+        .form-row:hover { background: rgba(207,188,255,0.04); }
         .form-row > label:first-child {
-            min-width: 180px;
             margin-bottom: 0;
             font-weight: 700;
             font-size: 0.95rem;
             color: #f1f5f9;
-            flex-shrink: 0;
         }
-        .form-row > input[type="text"] { flex: 1; }
+        .form-row > input[type="text"] { width: 100%; max-width: 400px; }
         .radio-group-inline {
             display: flex;
-            gap: 20px;
+            gap: 10px;
             flex-wrap: wrap;
             align-items: center;
         }
         .radio-group-inline label {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 7px;
             margin-bottom: 0;
-            font-weight: 400;
-            color: #cbd5e1;
+            font-weight: 500;
+            color: #94a3b8;
             cursor: pointer;
-            padding: 6px 14px;
-            border-radius: 6px;
+            padding: 9px 18px;
+            border-radius: 8px;
             transition: all 0.2s ease;
             font-size: 0.9rem;
-            border: 1px solid transparent;
+            border: 1px solid rgba(207,188,255,0.2);
+            background: rgba(207,188,255,0.05);
+            user-select: none;
         }
-        .radio-group-inline label:hover { background: rgba(207,188,255,0.12); color: #f1f5f9; border-color: rgba(207,188,255,0.2); }
+        .radio-group-inline label:hover {
+            background: rgba(207,188,255,0.15);
+            color: #f1f5f9;
+            border-color: rgba(207,188,255,0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .radio-group-inline input[type="radio"] { accent-color: #cfbcff; }
+        .radio-group-inline input[type="radio"]:checked + span,
+        .radio-group-inline label:has(input:checked) {
+            background: rgba(207,188,255,0.2);
+            color: #cfbcff;
+            border-color: rgba(207,188,255,0.5);
+            font-weight: 600;
+        }
         @media (max-width: 768px) {
-            .form-row { flex-direction: column; align-items: flex-start; gap: 10px; }
-            .form-row > label:first-child { min-width: auto; }
+            .form-row { padding: 14px 16px; gap: 10px; }
+            .form-row > input[type="text"] { max-width: 100%; }
+            .radio-group-inline { gap: 8px; }
+            .radio-group-inline label { padding: 7px 12px; font-size: 0.85rem; }
         }
 
         .three-column-layout { display: grid; grid-template-columns: 1fr; gap: 20px; }
@@ -423,7 +440,7 @@
     <div id="assessment" class="tab-content">
         <div class="card wizard-container">
             <h2>System Risk Assessment Wizard</h2>
-            <p style="color: #94a3b8; margin-bottom: 24px;">Answer 2 questions at a time to receive customized security controls across all 5 layers.</p>
+            <p style="color: #94a3b8; margin-bottom: 24px;">Answer a few questions to receive customized security controls across all 5 layers.</p>
 
             <div class="wizard-progress">
                 <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 33%;"></div></div>
