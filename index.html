@@ -401,13 +401,6 @@
                 <button class="tab-btn" onclick="switchTab(event, 'results')">📊 Results</button>
                 <button class="tab-btn" onclick="switchTab(event, 'guidelines')">🔐 Dynamic Guidelines</button>
             </div>
-            <select id="layerSelector" onchange="selectLayer(parseInt(this.value))" style="padding: 10px 14px; background: rgba(207,188,255,0.08); border: 1px solid rgba(207,188,255,0.3); color: #cbd5e1; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
-                <option value="1" selected>📊 Layer 1: Data</option>
-                <option value="2">🧠 Layer 2: Model/LLM</option>
-                <option value="3">⚙️ Layer 3: Application</option>
-                <option value="4">🌐 Layer 4: Infrastructure</option>
-                <option value="5">📋 Layer 5: Compliance</option>
-            </select>
         </div>
     </header>
 
@@ -794,6 +787,9 @@ document.getElementById('riskForm').addEventListener('submit', function(e) {
 
     let html = `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:40px;"><div style="flex:1;min-width:300px;"><h2 style="margin-bottom:8px;">📊 Risk Assessment Results</h2><p style="color:#94a3b8;margin-bottom:12px;">System: <strong>${c.name}</strong> | ${new Date().toLocaleDateString()}</p><div style="margin-top:16px;padding:20px;background:rgba(71,85,105,0.1);border-radius:8px;"><div style="display:flex;gap:30px;align-items:center;"><div><div style="font-size:3.5rem;font-weight:900;color:${riskColor};">${p*100/15}%</div><div style="color:${riskColor};font-weight:700;font-size:1.1rem;margin-top:4px;">${riskLevel}</div></div><div style="flex:1;"><div style="color:#cbd5e1;margin-bottom:8px;"><strong>${recommendation}</strong></div><span style="font-size:0.85rem;color:#94a3b8;">Risk Score: ${p}/15</span></div></div></div></div><div style="flex:1;min-width:300px;"><h3 style="margin-bottom:16px;color:#f1f5f9;">⚙️ System Configuration</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.9rem;"><div><span style="color:#94a3b8;">👥 User Type</span><br/><strong>${c.users === 'public' ? 'Public' : 'Authenticated'}</strong></div><div><span style="color:#94a3b8;">🗄️ Data Sensitivity</span><br/><strong>${c.sensitivity === 'critical' ? 'Critical' : 'Confidential'}</strong></div><div><span style="color:#94a3b8;">☁️ Model Hosting</span><br/><strong>${c.hosting === 'vendor-api' ? 'Vendor API' : c.hosting === 'private' ? 'Private Cloud' : 'Managed Cloud'}</strong></div><div><span style="color:#94a3b8;">🤖 Autonomy Level</span><br/><strong>${c.autonomy === 'agentic' ? 'Agentic' : 'Read-Only'}</strong></div><div><span style="color:#94a3b8;">🔧 Fine-tuned Model</span><br/><strong>${c.training === 'yes' ? 'Yes' : 'No'}</strong></div><div><span style="color:#94a3b8;">🔌 Integrations</span><br/><strong>${c.integrations}</strong></div></div></div></div></div>`;
 
+    // Sort layers by risk score (used by KPI and breakdown sections)
+    const sorted = Object.entries(scores).map(e=>{return{id:parseInt(e[0]),score:e[1]};}).sort((a,b)=>b.score-a.score);
+
     // KPI Dashboard Section
     html += `<div class="card"><h3 style="margin-bottom:20px;">📊 Key Performance Indicators</h3>`;
     const avgLayerRisk = Math.round(Object.values(scores).reduce((a, b) => a + b) / 5);
@@ -833,7 +829,6 @@ document.getElementById('riskForm').addEventListener('submit', function(e) {
 
     // Framework Rings - Layer Risk Visualization
     html += `<div class="card"><h3 style="margin-bottom:20px;">🎯 Per-Layer Risk Breakdown</h3>`;
-    const sorted = Object.entries(scores).map(e=>{return{id:parseInt(e[0]),score:e[1]};}).sort((a,b)=>b.score-a.score);
     sorted.forEach(layer=>{
         const sevLabel = layer.score>=65 ? 'Critical' : layer.score>=40 ? 'High' : layer.score>=25 ? 'Medium' : 'Low';
         const sevColor = layer.score>=65 ? '#ef4444' : layer.score>=40 ? '#f59e0b' : layer.score>=25 ? '#f59e0b' : '#10b981';
