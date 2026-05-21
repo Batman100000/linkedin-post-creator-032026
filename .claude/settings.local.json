@@ -45,7 +45,11 @@
       "Bash(taskkill /PID 31844 /F)",
       "Bash(cmd /c \"taskkill /PID 31844 /F\")",
       "Bash(echo \"exit: $?\")",
-      "Bash(start \"\" \"file:///C:/Users/asafa/OneDrive/Desktop/CLAUDECODE/linkedin-post-creator.html\")"
+      "Bash(start \"\" \"file:///C:/Users/asafa/OneDrive/Desktop/CLAUDECODE/linkedin-post-creator.html\")",
+      "PowerShell(gh pr create --title \"Fix useCase dropdown form validation\" --body \"Remove empty default option and set Customer Support as default selected value to fix form validation issues\")",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(node -e ' *)"
     ]
   }
 }
