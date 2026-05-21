@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<!-- Updated: 2026-05-20 23:14 | Cache Buster: v20260520-kpi-dashboard -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Ultimate AI Security Framework v4</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f141b 0%, #1a1f2e 100%);
+            color: #e2e8f0;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+        header {
+            background: rgba(15, 20, 27, 0.98);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(207, 188, 255, 0.15);
+            padding: 30px 0;
+            margin-bottom: 40px;
+            border-radius: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        h1 { font-size: 2.2rem; margin-bottom: 8px; font-weight: 700; color: #f1f5f9; }
+        .subtitle { color: #94a3b8; font-size: 0.95rem; }
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 10px 20px;
+            background: rgba(207, 188, 255, 0.08);
+            border: 1px solid rgba(207, 188, 255, 0.2);
+            color: #cbd5e1;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .tab-btn:hover { background: rgba(207, 188, 255, 0.15); border-color: rgba(207, 188, 255, 0.3); }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #cfbcff 0%, #b8a5e0 100%);
+            border-color: #cfbcff;
+            color: #0f141b;
+            box-shadow: 0 4px 15px rgba(207, 188, 255, 0.4);
+            font-weight: 600;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .card {
+            background: rgba(15, 20, 27, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(207, 188, 255, 0.15);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .visualizer-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .onion-container {
+            background: rgba(15, 20, 27, 0.8);
+            border: 1px solid rgba(207, 188, 255, 0.15);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .onion-diagram {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+        }
+
+        .layer-ring {
+            cursor: pointer;
+            transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: auto !important;
+        }
+
+        .layer-ring:hover { opacity: 1 !important; }
+        .layer-ring.active { opacity: 1 !important; filter: url(#glowActive) !important; }
+        .layer-ring.dimmed { opacity: 0.35 !important; }
+
+        .inspector-panel {
+            background: rgba(15, 20, 27, 0.9);
+            border: 1px solid rgba(207, 188, 255, 0.15);
+            border-radius: 16px;
+            padding: 28px;
+            min-height: 500px;
+        }
+
+        .inspector-header {
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(207, 188, 255, 0.2);
+        }
+
+        .inspector-header h2 {
+            color: #f1f5f9;
+            font-size: 1.6rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .layer-tag {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(207, 188, 255, 0.15);
+            border: 1px solid rgba(207, 188, 255, 0.4);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: #cfbcff;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .threat-section, .control-section {
+            margin-bottom: 28px;
+        }
+
+        .section-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: #f1f5f9;
+        }
+
+        .item {
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            background: rgba(207, 188, 255, 0.08);
+            border-left: 3px solid rgba(207, 188, 255, 0.4);
+            border-radius: 4px;
+            color: #cbd5e1;
+        }
+
+        .form-group { margin-bottom: 20px; }
+        .system-name-group { margin-bottom: 32px; padding: 24px; background: rgba(207, 188, 255, 0.08); border: 2px solid rgba(207, 188, 255, 0.25); border-radius: 12px; }
+        .system-name-group label { font-size: 1.5rem; font-weight: 900; margin-bottom: 16px; color: #cfbcff; text-transform: uppercase; letter-spacing: 0.5px; }
+        .system-name-group input[type="text"] { font-size: 1.125rem; padding: 16px 20px; border: 2px solid rgba(207, 188, 255, 0.3) !important; background: rgba(15, 20, 27, 0.7) !important; transition: all 0.3s ease; }
+        .system-name-group input[type="text"]:focus { border-color: #cfbcff !important; background: rgba(15, 20, 27, 0.9) !important; box-shadow: 0 0 12px rgba(207, 188, 255, 0.3); }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #f1f5f9; }
+        .radio-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        input[type="radio"], input[type="text"], select {
+            accent-color: #cfbcff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(207, 188, 255, 0.2);
+            background: rgba(15, 20, 27, 0.4);
+            color: #e2e8f0;
+        }
+        input[type="text"], select { width: 100%; }
+        .required { color: #ef4444; }
+        .button-group { display: flex; gap: 12px; margin-top: 20px; }
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #cfbcff 0%, #b8a5e0 100%);
+            color: #0f141b;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(207, 188, 255, 0.4); }
+        .btn-secondary { background: rgba(207, 188, 255, 0.12); color: #cbd5e1; border: 1px solid rgba(207, 188, 255, 0.2); }
+
+        .framework-selector { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .fw-btn {
+            padding: 8px 16px;
+            background: rgba(207, 188, 255, 0.08);
+            border: 1px solid rgba(207, 188, 255, 0.2);
+            color: #cbd5e1;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .fw-btn.active {
+            background: linear-gradient(135deg, #cfbcff 0%, #b8a5e0 100%);
+            border-color: #cfbcff;
+            color: #0f141b;
+        }
+
+        .risk-badge { display: inline-block; padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 1rem; }
+        .risk-low { background: rgba(16, 185, 129, 0.2); color: #86efac; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .risk-medium { background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .risk-high { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .risk-critical { background: rgba(239, 68, 68, 0.3); color: #fca5a5; border: 2px solid rgba(239, 68, 68, 0.5); }
+
+        .control-item { background: rgba(207, 188, 255, 0.08); border-left: 4px solid; padding: 16px; margin-bottom: 12px; border-radius: 6px; }
+        .control-title { font-weight: 700; color: #f1f5f9; margin-bottom: 6px; }
+        .control-type { display: inline-block; padding: 3px 8px; background: rgba(207, 188, 255, 0.2); color: #cfbcff; border-radius: 4px; font-size: 0.8rem; font-weight: 600; margin-right: 8px; }
+        .control-desc { color: #cbd5e1; font-size: 0.95rem; margin: 8px 0; }
+        .control-tags { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+        .tag { padding: 3px 8px; background: rgba(207, 188, 255, 0.12); border: 1px solid rgba(207, 188, 255, 0.25); border-radius: 4px; font-size: 0.75rem; font-weight: 600; font-family: monospace; }
+        .tag-nist { background: rgba(207, 188, 255, 0.15); border-color: rgba(207, 188, 255, 0.3); color: #cfbcff; }
+        .tag-iso { background: rgba(207, 188, 255, 0.15); border-color: rgba(207, 188, 255, 0.3); color: #cfbcff; }
+        .layer-section { background: rgba(207, 188, 255, 0.08); border-left: 4px solid; padding: 16px; margin-bottom: 16px; border-radius: 6px; }
+        .layer-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; }
+        footer { text-align: center; padding: 20px; color: #475569; font-size: 0.9rem; margin-top: 40px; }
+        .hidden { display: none !important; }
+        .tip-text { text-align: center; color: #94a3b8; font-size: 0.9rem; padding: 12px; }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
+        .modal-content { background: rgba(15,20,27,0.95); border: 2px solid rgba(207,188,255,0.3); border-radius: 16px; padding: 40px; max-width: 600px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+        .modal-title { font-size: 2rem; font-weight: 800; color: #cfbcff; margin-bottom: 12px; text-align: center; }
+        .modal-subtitle { text-align: center; color: #cbd5e1; margin-bottom: 30px; font-size: 0.95rem; }
+        .fw-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+        .fw-option { padding: 20px; background: rgba(207,188,255,0.08); border: 2px solid rgba(207,188,255,0.2); border-radius: 12px; cursor: pointer; text-align: center; transition: all 0.3s ease; }
+        .fw-option:hover { border-color: rgba(207,188,255,0.5); background: rgba(207,188,255,0.12); }
+        .fw-option.selected { border-color: #cfbcff; background: rgba(207,188,255,0.15); }
+        .fw-label { display: block; font-weight: 700; color: #f1f5f9; margin-bottom: 6px; font-size: 1.1rem; }
+        .fw-desc { color: #94a3b8; font-size: 0.85rem; }
+        .spider-container { background: rgba(15,20,27,0.6); border: 1px solid rgba(207,188,255,0.15); border-radius: 12px; padding: 24px; margin: 20px 0; }
+        .spider-title { font-size: 1.3rem; font-weight: 800; color: #f1f5f9; margin-bottom: 4px; }
+        .spider-subtitle { color: #94a3b8; font-size: 0.9rem; margin-bottom: 16px; }
+        .spider-svg { width: 100%; max-width: 600px; height: auto; }
+        .spider-legend { display: flex; gap: 20px; margin-top: 20px; justify-content: center; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: 8px; }
+        .legend-color { width: 20px; height: 20px; border-radius: 3px; }
+        .threats-controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 20px 0; }
+        .threats-column, .controls-column { background: rgba(15,20,27,0.6); border: 1px solid rgba(207,188,255,0.15); border-radius: 12px; padding: 20px; }
+        .column-header { font-size: 1.2rem; font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .threats-header { color: #ef4444; }
+        .controls-header { color: #22c55e; }
+        .threat-item { background: rgba(239,68,68,0.1); border-left: 4px solid #ef4444; padding: 12px; margin-bottom: 10px; border-radius: 6px; font-size: 0.95rem; color: #f1f5f9; }
+        .layer-control-item { background: rgba(34,197,94,0.1); border-left: 4px solid #22c55e; padding: 12px; margin-bottom: 10px; border-radius: 6px; font-size: 0.95rem; color: #f1f5f9; }
+        .framework-tabs { display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+        .fw-tab { padding: 10px 16px; background: rgba(207,188,255,0.08); border: 2px solid rgba(207,188,255,0.2); border-radius: 8px; cursor: pointer; font-weight: 600; color: #cbd5e1; transition: all 0.3s ease; }
+        .fw-tab.active { border-color: #cfbcff; background: rgba(207,188,255,0.15); color: #cfbcff; }
+
+        .wizard-container { position: relative; }
+        .wizard-progress { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding: 16px; background: rgba(207,188,255,0.08); border: 1px solid rgba(207,188,255,0.15); border-radius: 8px; }
+        .progress-bar { flex: 1; height: 8px; background: rgba(71,85,105,0.3); border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #cfbcff, #b8a5e0); border-radius: 4px; transition: width 0.4s ease; }
+        .progress-text { font-weight: 700; color: #cfbcff; font-size: 0.9rem; white-space: nowrap; }
+        .wizard-step { display: none; animation: fadeIn 0.3s ease; }
+        .wizard-step.active { display: block; }
+        .step-title { font-size: 1.3rem; font-weight: 700; color: #f1f5f9; margin-bottom: 24px; }
+        .step-subtitle { color: #94a3b8; margin-bottom: 12px; font-size: 0.95rem; }
+        .wizard-buttons { display: flex; gap: 12px; margin-top: 28px; justify-content: space-between; }
+        .btn-prev { background: rgba(207,188,255,0.12); color: #cbd5e1; border: 1px solid rgba(207,188,255,0.2); }
+        .btn-prev:hover { background: rgba(207,188,255,0.18); border-color: rgba(207,188,255,0.3); }
+        .btn-next { padding: 12px 24px; }
+        .btn-submit { padding: 12px 24px; background: linear-gradient(135deg, #cfbcff 0%, #b8a5e0 100%); color: #0f141b; font-weight: 600; }
+        .btn-next:disabled, .btn-prev:disabled { opacity: 0.5; cursor: not-allowed; }
+        .form-group-wizard { margin-bottom: 24px; }
+        .three-column-layout { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+        @media (max-width: 1024px) { .three-column-layout { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 768px) { .three-column-layout { grid-template-columns: 1fr; } }
+        .layer-btn { padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; color: #f1f5f9; font-size: 0.85rem; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.4); border: none; position: relative; overflow: hidden; }
+        .layer-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,0.6); }
+        .layer-btn-active { box-shadow: 0 0 15px rgba(255,255,255,0.5) !important; transform: scale(1.08); border-color: rgba(255,255,255,0.6) !important; }
+        @media (max-width: 1200px) { .visualizer-layout { grid-template-columns: 1fr; } .threats-controls-grid { grid-template-columns: 1fr; } }
+        
+        .layer-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s; }
+        .layer-btn:hover::before { left: 100%; }
+        .layer-btn { letter-spacing: 0.5px; }
+        @media (max-width: 768px) { .layer-btn { padding: 6px 11px; font-size: 0.75rem; } }
+
+        @media (max-width: 768px) { .layer-btn { padding: 10px 12px; font-size: 0.85rem; } }
+        @media (max-width: 768px) {
+            .fw-selector { grid-template-columns: 1fr; }
+            .modal-content { padding: 24px; }
+            h1 { font-size: 1.6rem; }
+            .tab-btn { padding: 8px 12px; font-size: 0.85rem; }
+            .threats-controls-grid { gap: 16px; }
+            .threats-column, .controls-column { padding: 16px; }
+            .column-header { font-size: 1rem; }
+            .threat-item, .layer-control-item { padding: 10px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>🛡️ Ultimate AI Security Framework v4</h1>
+        <p class="subtitle">Interactive 5-Layer Model with NIST AI RMF & ISO/IEC 42001 Mapping</p>
+        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab(event, 'visualizer')">🎯 Interactive Visualizer</button>
+                <button class="tab-btn" onclick="switchTab(event, 'assessment')">📋 Risk Assessment</button>
+                <button class="tab-btn" onclick="switchTab(event, 'results')">📊 Results</button>
+                <button class="tab-btn" onclick="switchTab(event, 'guidelines')">🔐 Dynamic Guidelines</button>
+            </div>
+            <select id="layerSelector" onchange="selectLayer(parseInt(this.value))" style="padding: 10px 14px; background: rgba(207,188,255,0.08); border: 1px solid rgba(207,188,255,0.3); color: #cbd5e1; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
+                <option value="1" selected>📊 Layer 1: Data</option>
+                <option value="2">🧠 Layer 2: Model/LLM</option>
+                <option value="3">⚙️ Layer 3: Application</option>
+                <option value="4">🌐 Layer 4: Infrastructure</option>
+                <option value="5">📋 Layer 5: Compliance</option>
+            </select>
+        </div>
+    </header>
+
+    <!-- VISUALIZER TAB -->
+    <div id="visualizer" class="tab-content active">
+                <div class="visualizer-layout">
+            <div class="onion-container">
+                <svg class="onion-diagram" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <radialGradient id="g5" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#db2777" stop-opacity="0.85"/><stop offset="100%" stop-color="#831843" stop-opacity="0.65"/></radialGradient>
+                        <radialGradient id="g4" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#9333ea" stop-opacity="0.85"/><stop offset="100%" stop-color="#581c87" stop-opacity="0.65"/></radialGradient>
+                        <radialGradient id="g3" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#2563eb" stop-opacity="0.85"/><stop offset="100%" stop-color="#1e3a8a" stop-opacity="0.65"/></radialGradient>
+                        <radialGradient id="g2" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#059669" stop-opacity="0.85"/><stop offset="100%" stop-color="#064e3b" stop-opacity="0.65"/></radialGradient>
+                        <radialGradient id="g1" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#d97706" stop-opacity="0.9"/><stop offset="100%" stop-color="#92400e" stop-opacity="0.7"/></radialGradient>
+                        <filter id="glow5"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                        <filter id="glow4"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                        <filter id="glow3"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                        <filter id="glow2"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                        <filter id="glow1"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                        <filter id="glowActive"><feGaussianBlur stdDeviation="14" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                    </defs>
+                    <circle class="layer-ring" data-layer="5" cx="350" cy="350" r="310" fill="url(#g5)" filter="url(#glow5)" onclick="selectLayer(5)"/>
+                    <text x="350" y="62" text-anchor="middle" fill="#fda4af" font-size="20" font-weight="700" letter-spacing="2" pointer-events="none">5. COMPLIANCE</text>
+                    <circle class="layer-ring" data-layer="4" cx="350" cy="350" r="248" fill="url(#g4)" filter="url(#glow4)" onclick="selectLayer(4)"/>
+                    <text x="350" y="126" text-anchor="middle" fill="#d8b4fe" font-size="19" font-weight="700" letter-spacing="1.5" pointer-events="none">4. INFRASTRUCTURE</text>
+                    <circle class="layer-ring" data-layer="3" cx="350" cy="350" r="190" fill="url(#g3)" filter="url(#glow3)" onclick="selectLayer(3)"/>
+                    <text x="350" y="185" text-anchor="middle" fill="#93c5fd" font-size="18" font-weight="700" letter-spacing="1.5" pointer-events="none">3. APPLICATION</text>
+                    <circle class="layer-ring" data-layer="2" cx="350" cy="350" r="130" fill="url(#g2)" filter="url(#glow2)" onclick="selectLayer(2)"/>
+                    <text x="350" y="248" text-anchor="middle" fill="#6ee7b7" font-size="17" font-weight="700" letter-spacing="1" pointer-events="none">2. MODEL / LLM</text>
+                    <circle class="layer-ring" data-layer="1" cx="350" cy="350" r="72" fill="url(#g1)" filter="url(#glow1)" onclick="selectLayer(1)"/>
+                    <text x="350" y="345" text-anchor="middle" fill="#fef3c7" font-size="22" font-weight="900" letter-spacing="2" pointer-events="none">1. DATA</text>
+                    <circle cx="350" cy="350" r="42" fill="rgba(251,191,36,0.15)" stroke="rgba(251,191,36,0.35)" stroke-width="1.5" pointer-events="none"/>
+                </svg>
+                <div class="tip-text">💡 Click any layer to explore threats & controls</div>
+                <div style="display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center;">
+                    <button class="layer-btn layer-btn-active" onclick="selectLayer(1)" data-layer="1" style="background: linear-gradient(135deg, #d97706 0%, #92400e 100%); border: 2px solid #d97706;">📊 Layer 1: Data</button>
+                    <button class="layer-btn" onclick="selectLayer(2)" data-layer="2" style="background: linear-gradient(135deg, #059669 0%, #064e3b 100%); border: 2px solid #059669;">🧠 Layer 2: Model/LLM</button>
+                    <button class="layer-btn" onclick="selectLayer(3)" data-layer="3" style="background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%); border: 2px solid #2563eb;">⚙️ Layer 3: Application</button>
+                    <button class="layer-btn" onclick="selectLayer(4)" data-layer="4" style="background: linear-gradient(135deg, #9333ea 0%, #581c87 100%); border: 2px solid #9333ea;">🌐 Layer 4: Infrastructure</button>
+                    <button class="layer-btn" onclick="selectLayer(5)" data-layer="5" style="background: linear-gradient(135deg, #db2777 0%, #831843 100%); border: 2px solid #db2777;">📋 Layer 5: Compliance</button>
+                </div>
+            </div>
+
+            <div class="inspector-panel">
+                <div class="inspector-header">
+                    <div class="layer-tag" id="layerTag">CORE DATASETS & STORAGE</div>
+                    <h2 id="layerTitle">Layer 1: Data Protection & Security</h2>
+                </div>
+                <div class="threat-section"><div class="section-title">⚠️ Threats</div><div id="threatsList"></div></div>
+                <div class="control-section"><div class="section-title">✓ Controls</div><div id="controlsList"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ASSESSMENT TAB -->
+    <div id="assessment" class="tab-content">
+        <div class="card wizard-container">
+            <h2>System Risk Assessment Wizard</h2>
+            <p style="color: #94a3b8; margin-bottom: 24px;">Answer 2 questions at a time to receive customized security controls across all 5 layers.</p>
+
+            <div class="wizard-progress">
+                <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 33%;"></div></div>
+                <span class="progress-text" id="progressText">Step 1 of 3</span>
+            </div>
+
+            <form id="riskForm">
+                <!-- Step 1: System Name, Primary Users & Data Sensitivity -->
+                <div class="wizard-step active" id="step1">
+                    <div class="step-title">📋 System Overview & Data</div>
+                    <div class="three-column-layout">
+                        <div class="form-group-wizard">
+                            <label>System Name <span style="color: #94a3b8;">(optional)</span></label>
+                            <input type="text" id="systemName" placeholder="e.g., Customer Support Chatbot" style="width: 100%; padding: 12px;">
+                        </div>
+                        <div class="form-group-wizard">
+                            <label>Primary Users <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="users" value="public"> Public</label>
+                                <label><input type="radio" name="users" value="authenticated"> Authenticated</label>
+                                <label><input type="radio" name="users" value="internal"> Internal</label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="wizard-buttons">
+                        <button type="button" class="btn-prev" onclick="prevStep()" disabled>← Previous</button>
+                        <button type="button" class="btn-next" onclick="nextStep(1)">Next →</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Model Hosting, Agent Autonomy & Fine-tuning -->
+                <div class="wizard-step" id="step2">
+                    <div class="step-title">🤖 Model & Autonomy Configuration</div>
+                    <div class="three-column-layout">
+                        <div class="form-group-wizard">
+                            <label>Data Sensitivity <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="sensitivity" value="public"> Public</label>
+                                <label><input type="radio" name="sensitivity" value="confidential"> Confidential</label>
+                                <label><input type="radio" name="sensitivity" value="critical"> Critical (PII)</label>
+                            </div>
+                        </div>
+                        <div class="form-group-wizard">
+                            <label>Model Hosting <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="hosting" value="vendor-api"> Vendor API</label>
+                                <label><input type="radio" name="hosting" value="managed"> Managed Cloud</label>
+                                <label><input type="radio" name="hosting" value="private"> Private VPC</label>
+                            </div>
+                        </div>
+                        <div class="form-group-wizard">
+                            <label>Agent Autonomy <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="autonomy" value="readonly"> Read-Only</label>
+                                <label><input type="radio" name="autonomy" value="supervised"> Supervised</label>
+                                <label><input type="radio" name="autonomy" value="agentic"> Agentic</label>
+                            </div>
+                        </div>
+                        <div class="form-group-wizard">
+                            <label>Custom Fine-tuning <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="training" value="no"> No</label>
+                                <label><input type="radio" name="training" value="yes"> Yes</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wizard-buttons">
+                        <button type="button" class="btn-prev" onclick="prevStep()">← Previous</button>
+                        <button type="button" class="btn-next" onclick="nextStep(2)">Next →</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Integrations, Use Case & Deployment -->
+                <div class="wizard-step" id="step3">
+                    <div class="step-title">🔌 Integration & Deployment</div>
+                    <div class="three-column-layout">
+                        <div class="form-group-wizard">
+                            <label>Third-Party Integrations <span class="required">*</span></label>
+                            <select id="integrations" required style="width: 100%; padding: 10px;">
+                                <option value="0" selected>None</option>
+                                <option value="1-3">1-3</option>
+                                <option value="4-7">4-7</option>
+                                <option value="8+">8+</option>
+                            </select>
+                        </div>
+                        <div class="form-group-wizard">
+                            <label>Primary Use Case <span class="required">*</span></label>
+                            <select id="useCase" required style="width: 100%; padding: 10px;">
+                                <option value="support" selected>Support</option>
+                                <option value="analysis">Analysis</option>
+                                <option value="content">Content</option>
+                                <option value="coding">Coding</option>
+                                <option value="search">Search/RAG</option>
+                                <option value="automation">Automation</option>
+                                <option value="medical">Medical</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group-wizard">
+                            <label style="color: #94a3b8; font-size: 0.9rem;">Ready to analyze</label>
+                            <div style="padding: 12px; background: rgba(207,188,255,0.08); border-radius: 6px; color: #cbd5e1; font-size: 0.9rem;">✓ All questions answered</div>
+                        </div>
+                    </div>
+                    <div class="wizard-buttons">
+                        <button type="button" class="btn-prev" onclick="prevStep()">← Previous</button>
+                        <button type="submit" class="btn-submit">🚀 Analyze Risks</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- RESULTS TAB -->
+    <div id="results" class="tab-content">
+        <div id="riskResults"></div>
+    </div>
+
+    <!-- GUIDELINES TAB -->
+    <div id="guidelines" class="tab-content">
+        <div class="card">
+            <h2>Dynamic Security Guidelines</h2>
+            <p style="color: #94a3b8; margin-bottom: 16px;">Complete Risk Assessment for customized controls.</p>
+            <div class="framework-selector">
+                <button class="fw-btn active" onclick="setFramework('5layer')">📊 5-Layer</button>
+                <button class="fw-btn" onclick="setFramework('nist')">🏛️ NIST</button>
+                <button class="fw-btn" onclick="setFramework('iso')">📋 ISO</button>
+            </div>
+        </div>
+        <div id="guidelinesContent"></div>
+    </div>
+</div>
+
+<!-- FRAMEWORK SELECTOR MODAL -->
+<div id="frameworkModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-title">🔒 Select Security Framework</div>
+        <div class="modal-subtitle">Choose how you'd like to view your recommended security controls</div>
+        <div class="fw-selector">
+            <div class="fw-option" onclick="selectFrameworkAndRender('5layer', this)">
+                <div class="fw-label">📊 5-Layer</div>
+                <div class="fw-desc">Data, Model, App, Infra, Compliance</div>
+            </div>
+            <div class="fw-option" onclick="selectFrameworkAndRender('nist', this)">
+                <div class="fw-label">🏛️ NIST AI RMF</div>
+                <div class="fw-desc">GOVERN, MAP, MEASURE, MANAGE</div>
+            </div>
+            <div class="fw-option" onclick="selectFrameworkAndRender('iso', this)">
+                <div class="fw-label">📋 ISO 42001</div>
+                <div class="fw-desc">Annex A Clauses</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>🔒 Ultimate AI Security Framework v4 | Build 2026 | For Security & DevSecOps Teams</p>
+</footer>
+
+<script>
+const layersData = {
+    1: { title: "Layer 1: Data Protection", tag: "CORE DATASETS & STORAGE", threats: ["Data poisoning", "PII leakage", "Unauthorized access", "Membership inference", "Exfiltration"], controls: ["PII scrubbing", "AES-256 encryption", "TLS 1.3", "Strict RBAC", "Audit logs"] },
+    2: { title: "Layer 2: LLM / Model Security", tag: "WEIGHTS & ALGORITHMIC SYSTEM", threats: ["Jailbreak attacks", "Prompt injection", "Model weight theft", "Hallucinations", "Output poisoning"], controls: ["Input filtering", "Prompt hardening", "Alignment verification", "Output monitoring", "Token budgeting"] },
+    3: { title: "Layer 3: Application & Agents", tag: "ORCHESTRATION & COMPONENT APIS", threats: ["BOLA in tools", "Overprivileged agents", "Session hijacking", "XSS attacks", "Authorization bypass"], controls: ["Least privilege", "HITL gates", "JSON validation", "Sanitization", "Credential rotation"] },
+    4: { title: "Layer 4: Infrastructure", tag: "NETWORKING & SECURE INFRA", threats: ["DDoS attacks", "Model exfil", "Credential leaks", "Supply chain", "Takeover"], controls: ["VPC segment", "Secrets vault", "Rate limiting", "Vuln scanning", "IDS monitoring"] },
+    5: { title: "Layer 5: Compliance & Governance", tag: "LEGAL & ENTERPRISE AUDITABILITY", threats: ["Uncontrolled automation", "Violations", "Discrimination", "No audit trail", "IP issues"], controls: ["Crypto logs", "DSAR automation", "Ethics board", "Documentation", "Red-teaming"] }
+};
+
+const masterControls = [
+    // Layer 1: Data Security & Privacy
+    { id: "D1", layer: "1. DATA", type: "Preventive", title: "Encryption at rest & transit", description: "AES-256 encryption at rest, TLS 1.3 in transit.", trigger: c => true, nist: "MANAGE-1", iso: "A.10.7", mitigates: ["Data poisoning", "PII leakage", "Unauthorized access", "Exfiltration"] },
+    { id: "D2", layer: "1. DATA", type: "Preventive", title: "RBAC + MFA + least privilege access", description: "Role-based access control with MFA enforcement.", trigger: c => c.sensitivity === 'critical', nist: "MANAGE-1", iso: "A.10.6", mitigates: ["Unauthorized access", "PII leakage"] },
+    { id: "D3", layer: "1. DATA", type: "Preventive", title: "Data retention policies & right-to-delete mechanisms", description: "Automated data lifecycle and GDPR deletion.", trigger: c => c.sensitivity === 'critical', nist: "MAP-2", iso: "A.10.6", mitigates: ["PII leakage", "Membership inference"] },
+    { id: "D4", layer: "1. DATA", type: "Preventive", title: "Data lineage & provenance tracking", description: "Immutable log of training/fine-tuning data origin.", trigger: c => c.sensitivity === 'critical', nist: "MAP-2", iso: "A.10.6", mitigates: ["Data poisoning"] },
+    { id: "D5", layer: "1. DATA", type: "Preventive", title: "DLP, PII masking, data classification", description: "Real-time PII stripping/hashing before data lake.", trigger: c => c.sensitivity === 'critical', nist: "MAP-2", iso: "A.10.6", mitigates: ["PII leakage", "Unauthorized access"] },
+    { id: "D6", layer: "1. DATA", type: "Preventive", title: "RAG access filtering & poisoning detection", description: "Validate RAG source integrity and detect anomalies.", trigger: c => true, nist: "MEASURE-2", iso: "A.10.7", mitigates: ["Data poisoning"] },
+
+    // Layer 2: Model / LLM Security
+    { id: "M1", layer: "2. MODEL / LLM", type: "Preventive", title: "Prompt injection & jailbreak protection", description: "Defensive gateway to block adversarial prompts.", trigger: c => c.users === 'public', nist: "MANAGE-2", iso: "A.9.2", mitigates: ["Prompt injection", "Jailbreak attacks"] },
+    { id: "M2", layer: "2. MODEL / LLM", type: "Preventive", title: "Input/output validation & content safety", description: "Scan outputs for hallucinations and harmful content.", trigger: c => c.users === 'public', nist: "MEASURE-2", iso: "A.9.4", mitigates: ["Hallucinations", "Output poisoning", "Jailbreak attacks"] },
+    { id: "M3", layer: "2. MODEL / LLM", type: "Preventive", title: "Model registry + AI/ML SBOM", description: "Track all model versions and dependencies.", trigger: c => true, nist: "MAP-1", iso: "A.9.1", mitigates: ["Model weight theft"] },
+    { id: "M4", layer: "2. MODEL / LLM", type: "Preventive", title: "Security evaluation before deployment", description: "Red teaming and adversarial testing pre-release.", trigger: c => true, nist: "MEASURE-1", iso: "A.9.3", mitigates: ["Jailbreak attacks", "Prompt injection"] },
+    { id: "M5", layer: "2. MODEL / LLM", type: "Preventive", title: "Drift & anomaly detection monitoring", description: "Monitor model outputs for behavioral drift.", trigger: c => true, nist: "MEASURE-2", iso: "A.9.4", mitigates: ["Hallucinations", "Output poisoning"] },
+    { id: "M6", layer: "2. MODEL / LLM", type: "Preventive", title: "Confidence thresholds + human escalation", description: "Route uncertain outputs to human review.", trigger: c => c.autonomy === 'agentic', nist: "MANAGE-3", iso: "A.9.3", mitigates: ["Hallucinations", "Output poisoning"] },
+    { id: "M7", layer: "2. MODEL / LLM", type: "Preventive", title: "Vendor governance & third-party assurance", description: "DPA verification and zero-training data clauses.", trigger: c => c.hosting === 'vendor-api', nist: "MAP-1", iso: "A.9.1", mitigates: ["Model weight theft"] },
+
+    // Layer 3: Application & Agent Security
+    { id: "A1", layer: "3. APPLICATION", type: "Preventive", title: "Strict schema validation for LLM outputs", description: "JSON/XML validation for model outputs.", trigger: c => true, nist: "MANAGE-3", iso: "A.8.3", mitigates: ["XSS attacks", "Authorization bypass"] },
+    { id: "A2", layer: "3. APPLICATION", type: "Preventive", title: "Output sanitization & Content Security Policy (CSP)", description: "HTML/CSS/JS sanitization and CSP headers.", trigger: c => true, nist: "MANAGE-3", iso: "A.8.3", mitigates: ["XSS attacks"] },
+    { id: "A3", layer: "3. APPLICATION", type: "Preventive", title: "Session isolation & cross-user context prevention", description: "Prevent prompt injection across user sessions.", trigger: c => c.autonomy === 'agentic', nist: "MANAGE-3", iso: "A.8.3", mitigates: ["Session hijacking", "Authorization bypass"] },
+    { id: "A4", layer: "3. APPLICATION", type: "Preventive", title: "Tool allowlists & permission boundaries", description: "Restrict agent access to specific tools/APIs.", trigger: c => c.autonomy === 'agentic', nist: "MANAGE-3", iso: "A.8.3", mitigates: ["Overprivileged agents"] },
+    { id: "A5", layer: "3. APPLICATION", type: "Preventive", title: "Agent observability (prompt → tool → output trace)", description: "Full audit trail of agent decisions.", trigger: c => c.autonomy === 'agentic', nist: "GOVERN-1", iso: "A.8.2", mitigates: ["Overprivileged agents", "Session hijacking"] },
+    { id: "A6", layer: "3. APPLICATION", type: "Preventive", title: "Authentication & SSO (SAML 2.0, OIDC)", description: "Enterprise authentication and token management.", trigger: c => true, nist: "MANAGE-3", iso: "A.8.3", mitigates: ["Session hijacking", "Authorization bypass"] },
+
+    // Layer 4: Infrastructure Security
+    { id: "I1", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Network segmentation (VPC/VPN isolation)", description: "Dedicated VPCs for AI training/inference isolation.", trigger: c => c.hosting === 'private', nist: "MANAGE-1", iso: "A.7.3", mitigates: ["DDoS attacks", "Model exfil", "Credential leaks"] },
+    { id: "I2", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Secrets management + automated key rotation", description: "Centralized secrets vault with rotation policies.", trigger: c => true, nist: "MANAGE-1", iso: "A.7.3", mitigates: ["Credential leaks"] },
+    { id: "I3", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Runtime monitoring & anomaly detection", description: "SIEM integration with real-time alerting.", trigger: c => true, nist: "MEASURE-2", iso: "A.7.4", mitigates: ["Model exfil", "Takeover"] },
+    { id: "I4", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Supply chain scanning (Snyk, Dependabot)", description: "Automated vulnerability scanning of dependencies.", trigger: c => true, nist: "MEASURE-3", iso: "A.7.2", mitigates: ["Supply chain"] },
+    { id: "I5", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "Logging → SIEM integration", description: "Immutable audit logging with SIEM forwarding.", trigger: c => c.sensitivity === 'critical', nist: "GOVERN-1", iso: "A.8.2", mitigates: ["Model exfil", "Takeover"] },
+    { id: "I6", layer: "4. INFRASTRUCTURE", type: "Preventive", title: "DDoS protection + resilience + incident response", description: "Cloud-based DDoS mitigation and recovery plans.", trigger: c => c.hosting === 'vendor-api', nist: "MANAGE-1", iso: "A.7.1", mitigates: ["DDoS attacks"] },
+
+    // Layer 5: Governance & Compliance
+    { id: "C1", layer: "5. COMPLIANCE", type: "Directive", title: "Immutable audit logging (cryptographically signed)", description: "Tamper-proof logs with digital signatures.", trigger: c => c.sensitivity === 'critical', nist: "GOVERN-1", iso: "A.8.2", mitigates: ["Uncontrolled automation", "No audit trail"] },
+    { id: "C2", layer: "5. COMPLIANCE", type: "Directive", title: "AI inventory & risk classification", description: "Document all AI systems and risk levels.", trigger: c => true, nist: "MAP-1", iso: "A.1.1", mitigates: ["Uncontrolled automation"] },
+    { id: "C3", layer: "5. COMPLIANCE", type: "Directive", title: "Bias & fairness monitoring", description: "Continuous monitoring for model bias.", trigger: c => true, nist: "MEASURE-1", iso: "A.3.1", mitigates: ["Discrimination"] },
+    { id: "C4", layer: "5. COMPLIANCE", type: "Directive", title: "Change management for models/prompts", description: "Formal approval process for model updates.", trigger: c => true, nist: "MANAGE-2", iso: "A.2.2", mitigates: ["Uncontrolled automation"] },
+    { id: "C5", layer: "5. COMPLIANCE", type: "Directive", title: "AI governance board review process", description: "Executive oversight of AI deployments.", trigger: c => true, nist: "MAP-1", iso: "A.1.1", mitigates: ["Uncontrolled automation", "Discrimination"] },
+    { id: "C6", layer: "5. COMPLIANCE", type: "Directive", title: "Continuous assurance (KPIs/KRIs)", description: "Key Risk Indicators and monitoring dashboards.", trigger: c => true, nist: "MEASURE-1", iso: "A.3.2", mitigates: ["Uncontrolled automation"] },
+    { id: "C7", layer: "5. COMPLIANCE", type: "Directive", title: "Periodic red teaming & compliance reviews", description: "Quarterly adversarial testing and audits.", trigger: c => c.sensitivity === 'critical', nist: "MEASURE-3", iso: "A.3.3", mitigates: ["Discrimination", "Violations"] }
+];
+
+let currentFramework = '5layer';
+let assessmentData = null;
+let implementedControls = new Set();
+
+function toggleControl(controlId) {
+    const checkbox = document.getElementById(`ctrl-${controlId}`);
+    if (checkbox.checked) {
+        implementedControls.add(controlId);
+    } else {
+        implementedControls.delete(controlId);
+    }
+    // Update spider web in real-time
+    const spiderContainer = document.querySelector('.spider-container');
+    if (spiderContainer) {
+        renderGuidelinesWithSpider();
+    }
+}
+
+function showThreatControls(threat, layerId) {
+    const layerData = layersData[layerId];
+    const threats = layerData ? layerData.threats : [];
+    const threatNum = threats.indexOf(threat) + 1;
+
+    const filteredControls = masterControls.filter(c => {
+        const cLayerId = parseInt(c.layer.charAt(0));
+        return cLayerId === layerId && (c.mitigates||[]).includes(threat);
+    });
+
+    let html = '';
+    if (filteredControls.length === 0) {
+        html = `<div style="padding:12px;background:rgba(34,197,94,0.1);border-left:4px solid #22c55e;border-radius:6px;color:#cbd5e1;margin-bottom:12px;"><span style="background:#ef4444;color:white;font-weight:bold;padding:2px 8px;border-radius:4px;font-size:0.85rem;">T${threatNum}</span> <strong>"${threat}"</strong><br/><span style="margin-left:30px;font-size:0.9rem;">Review all recommended controls above for comprehensive coverage.</span></div>`;
+    } else {
+        html = `<div style="padding:12px;background:rgba(34,197,94,0.15);border-left:4px solid #22c55e;border-radius:6px;margin-bottom:12px;color:#22c55e;"><span style="background:#ef4444;color:white;font-weight:bold;padding:2px 8px;border-radius:4px;font-size:0.85rem;margin-right:8px;">T${threatNum}</span><strong>"${threat}" is addressed by:</strong></div>`;
+        html += filteredControls.map((ctrl, idx) => {
+            const ctrlNum = masterControls.filter(c => parseInt(c.layer.charAt(0)) === layerId).indexOf(ctrl) + 1;
+            return `<div class="layer-control-item" style="border-left-color:#22c55e;background:rgba(34,197,94,0.1);"><div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:#22c55e;color:white;font-weight:bold;padding:2px 8px;border-radius:4px;min-width:24px;text-align:center;font-size:0.85rem;margin-top:2px;">C${ctrlNum}</span><div style="flex:1;"><strong>${ctrl.title}</strong><br/><span style="font-size:0.85rem;color:#cbd5e1;">${ctrl.description}</span></div></div></div>`;
+        }).join('');
+    }
+
+    document.getElementById(`controls-layer-${layerId}`).innerHTML = html;
+}
+
+function selectLayer(id) {
+    document.querySelectorAll('.layer-ring').forEach((r,i) => r.classList.toggle('dimmed', i+1 !== id));
+    document.querySelectorAll('.layer-ring').forEach((r,i) => { if(i+1 === id) r.classList.add('active'); else r.classList.remove('active'); });
+
+    // Update button highlighting
+    document.querySelectorAll('.layer-btn').forEach(btn => {
+        if(btn.getAttribute('data-layer') == id) {
+            btn.classList.add('layer-btn-active');
+        } else {
+            btn.classList.remove('layer-btn-active');
+        }
+    });
+
+    // Update dropdown selector
+    const selector = document.getElementById('layerSelector');
+    if(selector) {
+        selector.value = id;
+    }
+
+    const d = layersData[id];
+    document.getElementById('layerTag').textContent = d.tag;
+    document.getElementById('layerTitle').textContent = d.title;
+    document.getElementById('threatsList').innerHTML = d.threats.map(t => `<div class="item">⚠️ ${t}</div>`).join('');
+    document.getElementById('controlsList').innerHTML = d.controls.map(c => `<div class="item">✓ ${c}</div>`).join('');
+}
+
+document.getElementById('riskForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    try {
+        const c = {
+            name: document.getElementById('systemName').value,
+            users: document.querySelector('input[name="users"]:checked')?.value,
+            sensitivity: document.querySelector('input[name="sensitivity"]:checked')?.value,
+            hosting: document.querySelector('input[name="hosting"]:checked')?.value,
+            autonomy: document.querySelector('input[name="autonomy"]:checked')?.value,
+            training: document.querySelector('input[name="training"]:checked')?.value,
+            integrations: document.getElementById('integrations').value,
+            useCase: document.getElementById('useCase').value
+        };
+        if (!c.users || !c.sensitivity || !c.hosting || !c.autonomy || !c.training) {
+            alert('Answer all required questions.');
+            return;
+        }
+        assessmentData = c;
+    let p = 0;
+    if(c.users==='public') p+=3;
+    if(c.sensitivity==='critical') p+=4;
+    if(c.autonomy==='agentic') p+=4;
+    if(c.training==='yes') p+=2;
+    if(c.integrations==='8+') p+=2;
+    let t='LOW', cls='risk-low';
+    if(p>=10) {t='CRITICAL'; cls='risk-critical';} else if(p>=7) {t='HIGH'; cls='risk-high';} else if(p>=4) {t='MEDIUM'; cls='risk-medium';}
+
+    // Calculate per-layer scores
+    let scores = {1:15, 2:15, 3:10, 4:10, 5:15};
+    if(c.users==='public') {scores[2]+=25; scores[3]+=20; scores[4]+=15;}
+    if(c.sensitivity==='critical') {scores[1]+=30; scores[5]+=25; scores[3]+=10;}
+    if(c.autonomy==='agentic') {scores[3]+=30; scores[4]+=15; scores[2]+=10;}
+    if(c.hosting==='vendor-api') {scores[5]+=15;} else if(c.hosting==='private') {scores[4]+=25;}
+    if(c.training==='yes') {scores[2]+=20; scores[1]+=15;}
+    if(c.integrations==='8+') {scores[4]+=20; scores[3]+=10;} else if(c.integrations==='4-7') {scores[4]+=10;}
+    Object.keys(scores).forEach(k=>{scores[k]=Math.min(scores[k],100);});
+
+    // Get matching controls
+    const m = masterControls.filter(ctrl=>{try{return ctrl.trigger(c);}catch(e){return false;}});
+    const byLayer = {1:[],2:[],3:[],4:[],5:[]};
+    m.forEach(ctrl=>{const layer=parseInt(ctrl.layer[0]); if(byLayer[layer]) byLayer[layer].push(ctrl);});
+
+    const layerNames = {1:'Data',2:'Model/LLM',3:'Application',4:'Infrastructure',5:'Compliance'};
+    const layerIcons = {1:'📊',2:'🧠',3:'⚙️',4:'🌐',5:'📋'};
+    const layerColors = {1:'#f59e0b',2:'#10b981',3:'#3b82f6',4:'#a855f7',5:'#ec4899'};
+
+    const riskLevel = p <= 5 ? 'LOW RISK' : p <= 10 ? 'MEDIUM RISK' : 'HIGH RISK';
+    const riskColor = p <= 5 ? '#10b981' : p <= 10 ? '#f59e0b' : '#ef4444';
+    const recommendation = p <= 5 ? 'Implement optional hardening — low-priority roadmap' : p <= 10 ? 'Implement over next quarter — standard hardening roadmap' : 'Immediate action required — critical security roadmap';
+
+    let html = `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:40px;"><div style="flex:1;min-width:300px;"><h2 style="margin-bottom:8px;">📊 Risk Assessment Results</h2><p style="color:#94a3b8;margin-bottom:12px;">System: <strong>${c.name}</strong> | ${new Date().toLocaleDateString()}</p><div style="margin-top:16px;padding:20px;background:rgba(71,85,105,0.1);border-radius:8px;"><div style="display:flex;gap:30px;align-items:center;"><div><div style="font-size:3.5rem;font-weight:900;color:${riskColor};">${p*100/15}%</div><div style="color:${riskColor};font-weight:700;font-size:1.1rem;margin-top:4px;">${riskLevel}</div></div><div style="flex:1;"><div style="color:#cbd5e1;margin-bottom:8px;"><strong>${recommendation}</strong></div><span style="font-size:0.85rem;color:#94a3b8;">Risk Score: ${p}/15</span></div></div></div></div><div style="flex:1;min-width:300px;"><h3 style="margin-bottom:16px;color:#f1f5f9;">⚙️ System Configuration</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.9rem;"><div><span style="color:#94a3b8;">👥 User Type</span><br/><strong>${c.users === 'public' ? 'Public' : 'Authenticated'}</strong></div><div><span style="color:#94a3b8;">🗄️ Data Sensitivity</span><br/><strong>${c.sensitivity === 'critical' ? 'Critical' : 'Confidential'}</strong></div><div><span style="color:#94a3b8;">☁️ Model Hosting</span><br/><strong>${c.hosting === 'vendor-api' ? 'Vendor API' : c.hosting === 'private' ? 'Private Cloud' : 'Managed Cloud'}</strong></div><div><span style="color:#94a3b8;">🤖 Autonomy Level</span><br/><strong>${c.autonomy === 'agentic' ? 'Agentic' : 'Read-Only'}</strong></div><div><span style="color:#94a3b8;">🔧 Fine-tuned Model</span><br/><strong>${c.training === 'yes' ? 'Yes' : 'No'}</strong></div><div><span style="color:#94a3b8;">🔌 Integrations</span><br/><strong>${c.integrations}</strong></div></div></div></div></div>`;
+
+    // KPI Dashboard Section
+    html += `<div class="card"><h3 style="margin-bottom:20px;">📊 Key Performance Indicators</h3>`;
+    const avgLayerRisk = Math.round(Object.values(scores).reduce((a, b) => a + b) / 5);
+    const highestRiskLayer = sorted[0];
+    const controlCount = m.length;
+    const implementationWeeks = p > 10 ? 2 : p > 5 ? 4 : 6;
+    const compliancePercentage = Math.round((5 - sorted.slice(0, 3).length) * 20 + 40);
+
+    html += `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:20px;">
+        <div style="padding:20px;background:rgba(59,130,246,0.1);border-left:4px solid #3b82f6;border-radius:8px;">
+            <div style="font-size:0.85rem;color:#94a3b8;margin-bottom:8px;font-weight:600;">🎯 OVERALL RISK</div>
+            <div style="font-size:2.2rem;font-weight:900;color:#3b82f6;">${avgLayerRisk}/100</div>
+            <div style="font-size:0.8rem;color:#cbd5e1;margin-top:4px;">${riskLevel}</div>
+        </div>
+        <div style="padding:20px;background:rgba(239,68,68,0.1);border-left:4px solid #ef4444;border-radius:8px;">
+            <div style="font-size:0.85rem;color:#94a3b8;margin-bottom:8px;font-weight:600;">⚠️ HIGHEST RISK</div>
+            <div style="font-size:1.5rem;font-weight:900;color:#ef4444;">${layerIcons[highestRiskLayer.id]} Layer ${highestRiskLayer.id}</div>
+            <div style="font-size:0.8rem;color:#cbd5e1;margin-top:4px;">${layerNames[highestRiskLayer.id]} (${highestRiskLayer.score}/100)</div>
+        </div>
+        <div style="padding:20px;background:rgba(34,197,94,0.1);border-left:4px solid #22c55e;border-radius:8px;">
+            <div style="font-size:0.85rem;color:#94a3b8;margin-bottom:8px;font-weight:600;">✓ CONTROLS</div>
+            <div style="font-size:2.2rem;font-weight:900;color:#22c55e;">${controlCount}</div>
+            <div style="font-size:0.8rem;color:#cbd5e1;margin-top:4px;">Recommended actions</div>
+        </div>
+        <div style="padding:20px;background:rgba(168,85,247,0.1);border-left:4px solid #a855f7;border-radius:8px;">
+            <div style="font-size:0.85rem;color:#94a3b8;margin-bottom:8px;font-weight:600;">📅 TIMELINE</div>
+            <div style="font-size:2.2rem;font-weight:900;color:#a855f7;">${implementationWeeks}</div>
+            <div style="font-size:0.8rem;color:#cbd5e1;margin-top:4px;">weeks to implement</div>
+        </div>
+        <div style="padding:20px;background:rgba(245,158,11,0.1);border-left:4px solid #f59e0b;border-radius:8px;">
+            <div style="font-size:0.85rem;color:#94a3b8;margin-bottom:8px;font-weight:600;">📋 COMPLIANCE</div>
+            <div style="font-size:2.2rem;font-weight:900;color:#f59e0b;">${compliancePercentage}%</div>
+            <div style="font-size:0.8rem;color:#cbd5e1;margin-top:4px;">Framework coverage</div>
+        </div>
+    </div>`;
+    html += `</div>`;
+
+    // Framework Rings - Layer Risk Visualization
+    html += `<div class="card"><h3 style="margin-bottom:20px;">🎯 Per-Layer Risk Breakdown</h3>`;
+    const sorted = Object.entries(scores).map(e=>{return{id:parseInt(e[0]),score:e[1]};}).sort((a,b)=>b.score-a.score);
+    sorted.forEach(layer=>{
+        const sevLabel = layer.score>=65 ? 'Critical' : layer.score>=40 ? 'High' : layer.score>=25 ? 'Medium' : 'Low';
+        const sevColor = layer.score>=65 ? '#ef4444' : layer.score>=40 ? '#f59e0b' : layer.score>=25 ? '#f59e0b' : '#10b981';
+        html += `<div style="margin-bottom:20px;padding:16px;background:rgba(71,85,105,0.15);border-radius:8px;border-left:4px solid ${layerColors[layer.id]};">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:1.3rem;">${layerIcons[layer.id]}</span><span style="font-weight:700;color:#f1f5f9;">Layer ${layer.id}: ${layerNames[layer.id]}</span></div>
+                <div style="display:flex;align-items:center;gap:12px;"><span style="font-size:0.75rem;padding:3px 10px;background:${sevColor}20;color:${sevColor};border:1px solid ${sevColor}40;border-radius:4px;font-weight:700;">${sevLabel}</span><span style="font-weight:800;font-size:1.1rem;color:${layerColors[layer.id]};">${layer.score}/100</span></div>
+            </div>
+            <div style="width:100%;height:8px;background:rgba(71,85,105,0.3);border-radius:4px;overflow:hidden;"><div style="width:${layer.score}%;height:100%;background:${layerColors[layer.id]};border-radius:4px;"></div></div>
+        </div>`;
+    });
+    html += `</div>`;
+
+    // Framework selector tabs - 5-Layer, NIST, ISO
+    html += `<div class="card"><h3 style="margin-bottom:16px;">📋 View Controls By Framework</h3><div class="framework-tabs">
+        <button class="fw-tab active" onclick="switchResultsFramework(event, '5layer')">📊 5-Layer Model</button>
+        <button class="fw-tab" onclick="switchResultsFramework(event, 'nist')">🏛️ NIST AI RMF</button>
+        <button class="fw-tab" onclick="switchResultsFramework(event, 'iso')">📋 ISO 42001</button>
+    </div></div>`;
+
+    // 5-Layer view: Threats & Controls side by side
+    html += `<div id="framework-5layer">`;
+    sorted.forEach(layer=>{
+        const threats = layersData[layer.id].threats;
+        const controls = byLayer[layer.id];
+        html += `<div class="card">
+            <div class="layer-title" style="color:${layerColors[layer.id]};margin-bottom:20px;">${layerIcons[layer.id]} Layer ${layer.id}: ${layerNames[layer.id]} (Risk: ${layer.score}/100)</div>
+            <div style="margin-bottom:16px;padding:12px;background:rgba(71,85,105,0.2);border-radius:8px;font-size:0.9rem;color:#cbd5e1;">💡 Click on any threat to see which controls mitigate it</div>
+            <div class="threats-controls-grid">
+                <div class="threats-column">
+                    <div class="column-header threats-header">⚠️ Threats to Address</div>
+                    ${threats.map((t, idx) => {
+                        const threatNum = idx + 1;
+                        return `<div class="threat-item" style="cursor:pointer;transition:all 0.2s ease;display:flex;gap:10px;align-items:flex-start;" onclick="showThreatControls('${t}',${layer.id})" onmouseover="this.style.background='rgba(239,68,68,0.2)'" onmouseout="this.style.background='rgba(239,68,68,0.1)'"><span style="background:#ef4444;color:white;font-weight:bold;padding:2px 8px;border-radius:4px;min-width:24px;text-align:center;font-size:0.85rem;">${threatNum}</span><span>${t}</span></div>`;
+                    }).join('')}
+                </div>
+                <div class="controls-column">
+                    <div class="column-header controls-header">✓ Recommended Controls</div>
+                    <div id="controls-layer-${layer.id}">
+                        ${controls.length === 0 ? '<p style="color:#94a3b8;">No specialized controls needed.</p>' :
+                        controls.map((ctrl, cIdx) => {
+                            const mitigatesThreats = threats.filter((t, tIdx) => (ctrl.mitigates||[]).includes(t)).map(t => threats.indexOf(t) + 1);
+                            return `<div class="layer-control-item"><div style="display:flex;gap:8px;align-items:flex-start;"><span style="background:#22c55e;color:white;font-weight:bold;padding:2px 8px;border-radius:4px;min-width:24px;text-align:center;font-size:0.85rem;margin-top:2px;">${cIdx + 1}</span><div style="flex:1;"><strong>${ctrl.title}</strong><br/><span style="font-size:0.85rem;color:#cbd5e1;">${ctrl.description}</span><div style="margin-top:8px;font-size:0.8rem;color:#22c55e;"><strong>Closes Threat${mitigatesThreats.length===1?'':'s'}:</strong> ${mitigatesThreats.length > 0 ? mitigatesThreats.join(', ') : 'N/A'}</div></div></div></div>`;
+                        }).join('')}
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    });
+    html += `</div>`;
+
+    // NIST view
+    html += `<div id="framework-nist" style="display:none;">`;
+    const nistGroups = {};
+    m.forEach(ctrl => {
+        if(!nistGroups[ctrl.nist]) nistGroups[ctrl.nist] = [];
+        nistGroups[ctrl.nist].push(ctrl);
+    });
+    Object.keys(nistGroups).sort().forEach(nist => {
+        html += `<div class="card"><h3 style="color:#3b82f6;margin-bottom:16px;">🏛️ NIST: ${nist}</h3>`;
+        nistGroups[nist].forEach(ctrl => {
+            const layerColor = {1:'#f59e0b',2:'#10b981',3:'#3b82f6',4:'#a855f7',5:'#ec4899'}[parseInt(ctrl.layer[0])];
+            html += `<div class="control-item" style="border-left-color:${layerColor};margin-bottom:12px;"><div class="control-title">${ctrl.title}</div><span class="control-type">${ctrl.type}</span><div class="control-desc">${ctrl.description}</div><div class="control-tags"><span class="tag tag-iso">ISO: ${ctrl.iso}</span></div></div>`;
+        });
+        html += `</div>`;
+    });
+    html += `</div>`;
+
+    // ISO view
+    html += `<div id="framework-iso" style="display:none;">`;
+    const isoGroups = {};
+    m.forEach(ctrl => {
+        if(!isoGroups[ctrl.iso]) isoGroups[ctrl.iso] = [];
+        isoGroups[ctrl.iso].push(ctrl);
+    });
+    Object.keys(isoGroups).sort().forEach(iso => {
+        html += `<div class="card"><h3 style="color:#a855f7;margin-bottom:16px;">📋 ISO: ${iso}</h3>`;
+        isoGroups[iso].forEach(ctrl => {
+            const layerColor = {1:'#f59e0b',2:'#10b981',3:'#3b82f6',4:'#a855f7',5:'#ec4899'}[parseInt(ctrl.layer[0])];
+            html += `<div class="control-item" style="border-left-color:${layerColor};margin-bottom:12px;"><div class="control-title">${ctrl.title}</div><span class="control-type">${ctrl.type}</span><div class="control-desc">${ctrl.description}</div><div class="control-tags"><span class="tag tag-nist">NIST: ${ctrl.nist}</span></div></div>`;
+        });
+        html += `</div>`;
+    });
+    html += `</div>`;
+
+    // Priority Security Recommendations
+    html += `<div class="card"><h3 style="margin-bottom:20px;">🎯 Priority Security Recommendations</h3>`;
+    const topRisks = sorted.slice(0, 2);
+    topRisks.forEach(layer => {
+        const sevColor = layer.score >= 65 ? '#ef4444' : layer.score >= 40 ? '#f59e0b' : '#10b981';
+        const layerControls = byLayer[layer.id];
+        const recommendation = {
+            1: 'Implement comprehensive PII masking, data encryption (AES-256), and access controls. Enable data lineage tracking to detect poisoning attempts.',
+            2: 'Protect custom model weights with access controls and integrity checksums. Apply gradient constraints to prevent training data leakage.',
+            3: 'Enforce schema validation on all LLM outputs. Implement session isolation to prevent cross-user prompt injection.',
+            4: 'Deploy network segmentation (VPCs) and secrets management with automated key rotation.',
+            5: 'Implement DSAR automation for right-to-be-forgotten compliance. Maintain immutable cryptographic audit logs of all interactions.'
+        }[layer.id];
+
+        html += `<div style="margin-bottom:16px;padding:16px;background:rgba(${sevColor.match(/\d+/g).join(',')},0.1);border-left:4px solid ${sevColor};border-radius:8px;"><div style="display:flex;gap:12px;align-items:flex-start;"><span style="font-size:1.2rem;font-weight:700;color:${sevColor};min-width:24px;">${layer.score >= 40 ? 'HIGH' : 'MEDIUM'}</span><div style="flex:1;"><div style="font-weight:700;color:${sevColor};margin-bottom:4px;">${layerIcons[layer.id]} Layer ${layer.id}: ${layerNames[layer.id]}</div><div style="color:#cbd5e1;font-size:0.9rem;">${recommendation}</div></div></div></div>`;
+    });
+    html += `</div>`;
+
+    // Recommended Next Steps
+    html += `<div class="card"><h3 style="margin-bottom:20px;">📋 Recommended Next Steps</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+            <div style="padding:16px;background:rgba(59,130,246,0.1);border-left:4px solid #3b82f6;border-radius:8px;">
+                <div style="font-size:1.5rem;font-weight:900;color:#3b82f6;margin-bottom:8px;">1</div>
+                <div style="font-weight:700;color:#f1f5f9;margin-bottom:8px;">Review Layer Details</div>
+                <div style="color:#cbd5e1;font-size:0.9rem;">Use the Interactive Visualizer to explore threats and controls for your highest-risk layers.</div>
+            </div>
+            <div style="padding:16px;background:rgba(168,85,247,0.1);border-left:4px solid #a855f7;border-radius:8px;">
+                <div style="font-size:1.5rem;font-weight:900;color:#a855f7;margin-bottom:8px;">2</div>
+                <div style="font-weight:700;color:#f1f5f9;margin-bottom:8px;">Implement Controls</div>
+                <div style="color:#cbd5e1;font-size:0.9rem;">Follow the Security Guidelines tab for specific technical controls per layer.</div>
+            </div>
+            <div style="padding:16px;background:rgba(34,197,94,0.1);border-left:4px solid #22c55e;border-radius:8px;">
+                <div style="font-size:1.5rem;font-weight:900;color:#22c55e;margin-bottom:8px;">3</div>
+                <div style="font-weight:700;color:#f1f5f9;margin-bottom:8px;">Follow Roadmap</div>
+                <div style="color:#cbd5e1;font-size:0.9rem;">Use the Implementation Playbook for a structured 4-month deployment plan.</div>
+            </div>
+            <div style="padding:16px;background:rgba(245,158,11,0.1);border-left:4px solid #f59e0b;border-radius:8px;">
+                <div style="font-size:1.5rem;font-weight:900;color:#f59e0b;margin-bottom:8px;">4</div>
+                <div style="font-weight:700;color:#f1f5f9;margin-bottom:8px;">Schedule Review</div>
+                <div style="color:#cbd5e1;font-size:0.9rem;">Conduct a team security review meeting to assign owners and set deadlines.</div>
+            </div>
+        </div>
+    </div>`;
+
+    // Footer
+    html += `<div style="text-align:center;padding:24px;border-top:1px solid rgba(71,85,105,0.3);margin-top:20px;color:#94a3b8;font-size:0.85rem;">🔒 Ultimate AI Security Framework | Build 2025 | For Security & DevSecOps Teams</div>`;
+
+    document.getElementById('riskResults').innerHTML = html;
+    switchTab(null, 'results');
+
+        // Set default to 5-Layer and auto-show framework selector
+        currentFramework = '5layer';
+    } catch(err) {
+        console.error('Form submission error:', err);
+        alert('Error processing form. Please check the browser console for details.\n\nError: ' + err.message);
+    }
+});
+
+function selectFrameworkAndRender(fw, element) {
+    currentFramework = fw;
+    document.querySelectorAll('.fw-option').forEach(o => o.classList.remove('selected'));
+    element.classList.add('selected');
+
+    setTimeout(() => {
+        document.getElementById('frameworkModal').style.display = 'none';
+        switchTab(null, 'guidelines');
+        renderGuidelinesWithSpider();
+    }, 300);
+}
+
+function switchResultsFramework(e, fw) {
+    e.preventDefault();
+    currentFramework = fw;
+
+    // Hide all frameworks
+    document.getElementById('framework-5layer').style.display = 'none';
+    document.getElementById('framework-nist').style.display = 'none';
+    document.getElementById('framework-iso').style.display = 'none';
+
+    // Show selected framework
+    const fwMap = {'5layer': 'framework-5layer', 'nist': 'framework-nist', 'iso': 'framework-iso'};
+    document.getElementById(fwMap[fw]).style.display = 'block';
+
+    // Update active tab styling
+    document.querySelectorAll('.fw-tab').forEach(btn => btn.classList.remove('active'));
+    e.target.classList.add('active');
+}
+
+function setFramework(f) {
+    currentFramework = f;
+    document.querySelectorAll('.fw-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    renderGuidelinesWithSpider();
+}
+
+function calculateBeforeAfterScores() {
+    if (!assessmentData) return null;
+    const c = assessmentData;
+
+    // Before scores (current risk)
+    let before = {1:15, 2:15, 3:10, 4:10, 5:15};
+    if(c.users==='public') {before[2]+=25; before[3]+=20; before[4]+=15;}
+    if(c.sensitivity==='critical') {before[1]+=30; before[5]+=25; before[3]+=10;}
+    if(c.autonomy==='agentic') {before[3]+=30; before[4]+=15; before[2]+=10;}
+    if(c.hosting==='vendor-api') {before[5]+=15;} else if(c.hosting==='private') {before[4]+=25;}
+    if(c.training==='yes') {before[2]+=20; before[1]+=15;}
+    if(c.integrations==='8+') {before[4]+=20; before[3]+=10;} else if(c.integrations==='4-7') {before[4]+=10;}
+    Object.keys(before).forEach(k=>{before[k]=Math.min(before[k],100);});
+
+    // After scores (based on implemented controls)
+    const after = {1:before[1], 2:before[2], 3:before[3], 4:before[4], 5:before[5]};
+
+    // Reduce risk per layer based on selected controls
+    implementedControls.forEach(ctrlId => {
+        const ctrl = masterControls.find(c => c.id === ctrlId);
+        if (ctrl) {
+            const layerId = parseInt(ctrl.layer.charAt(0));
+            const reduction = ctrl.mitigates ? Math.min(ctrl.mitigates.length * 8, 30) : 15;
+            after[layerId] = Math.max(Math.ceil(after[layerId] * (1 - reduction/100)), 5);
+        }
+    });
+
+    return {before, after};
+}
+
+function createSpiderChart() {
+    const scores = calculateBeforeAfterScores();
+    if (!scores) return '';
+
+    const size = 700;
+    const center = size / 2;
+    const radius = 180;
+    const layers = 5;
+    const maxScore = 100;
+
+    const points = [];
+    const beforePoints = [];
+    const afterPoints = [];
+
+    for (let i = 0; i < layers; i++) {
+        const angle = (i * 2 * Math.PI / layers) - Math.PI / 2;
+        const x = center + radius * Math.cos(angle);
+        const y = center + radius * Math.sin(angle);
+        points.push({x, y, angle});
+    }
+
+    const beforeVals = [scores.before[1], scores.before[2], scores.before[3], scores.before[4], scores.before[5]];
+    const afterVals = [scores.after[1], scores.after[2], scores.after[3], scores.after[4], scores.after[5]];
+
+    // Calculate overall risk reduction
+    const beforeTotal = beforeVals.reduce((a,b) => a+b, 0);
+    const afterTotal = afterVals.reduce((a,b) => a+b, 0);
+    const riskReduction = Math.round(((beforeTotal - afterTotal) / beforeTotal) * 100);
+
+    points.forEach((p, i) => {
+        const beforeR = (beforeVals[i] / maxScore) * radius;
+        const afterR = (afterVals[i] / maxScore) * radius;
+        beforePoints.push(`${center + beforeR * Math.cos(p.angle)},${center + beforeR * Math.sin(p.angle)}`);
+        afterPoints.push(`${center + afterR * Math.cos(p.angle)},${center + afterR * Math.sin(p.angle)}`);
+    });
+
+    const gridLines = [];
+    for (let r = 1; r <= 4; r++) {
+        const gridR = (r / 4) * radius;
+        let gridPath = '';
+        for (let i = 0; i <= layers; i++) {
+            const p = points[i % layers];
+            const x = center + gridR * Math.cos(p.angle);
+            const y = center + gridR * Math.sin(p.angle);
+            gridPath += (i === 0 ? 'M' : 'L') + x + ',' + y;
+        }
+        gridLines.push(`<path d="${gridPath}" stroke="rgba(71,85,105,0.4)" stroke-width="2" fill="none"/>`);
+    }
+
+    const axisLines = points.map((p, i) => {
+        return `<line x1="${center}" y1="${center}" x2="${p.x}" y2="${p.y}" stroke="rgba(71,85,105,0.3)" stroke-width="2"/>`;
+    }).join('');
+
+    const layerLabels = ['Data', 'Model/LLM', 'App', 'Infra', 'Compliance'];
+    const labels = points.map((p, i) => {
+        const offset = 55;
+        const x = center + (radius + offset) * Math.cos(p.angle);
+        const y = center + (radius + offset) * Math.sin(p.angle);
+        return `<text x="${x}" y="${y}" text-anchor="middle" font-size="16" font-weight="800" fill="#f1f5f9">${layerLabels[i]}</text>`;
+    }).join('');
+
+    // Risk reduction box on the right side
+    const riskReductionBox = `
+        <text x="${center + radius + 170}" y="${center - 50}" text-anchor="middle" font-size="14" font-weight="800" fill="#22c55e" letter-spacing="0.5">RISK REDUCED</text>
+        <text x="${center + radius + 170}" y="${center + 45}" text-anchor="middle" font-size="80" font-weight="900" fill="#86efac">${riskReduction}%</text>
+        <text x="${center + radius + 170}" y="${center + 120}" text-anchor="middle" font-size="11" font-weight="600" fill="#cbd5e1">With recommended</text>
+        <text x="${center + radius + 170}" y="${center + 135}" text-anchor="middle" font-size="11" font-weight="600" fill="#cbd5e1">controls implemented</text>
+    `;
+
+    const svg = `
+    <svg viewBox="0 0 ${size + 280} ${size + 50}" class="spider-svg" style="margin: 30px auto; display: block; max-width: 100%; height: auto;">
+        <g>${gridLines.join('')}</g>
+        <g>${axisLines}</g>
+        <polygon points="${beforePoints.join(' ')}" fill="rgba(239,68,68,0.12)" stroke="#ef4444" stroke-width="5.5" opacity="0.95" stroke-linejoin="round"/>
+        <polygon points="${afterPoints.join(' ')}" fill="rgba(34,197,94,0.18)" stroke="#22c55e" stroke-width="5.5" opacity="1" stroke-linejoin="round"/>
+        ${points.map((p, i) => `<circle cx="${center + (beforeVals[i]/maxScore)*radius*Math.cos(p.angle)}" cy="${center + (beforeVals[i]/maxScore)*radius*Math.sin(p.angle)}" r="7" fill="#ef4444" stroke="#fca5a5" stroke-width="2.5"/>`).join('')}
+        ${points.map((p, i) => `<circle cx="${center + (afterVals[i]/maxScore)*radius*Math.cos(p.angle)}" cy="${center + (afterVals[i]/maxScore)*radius*Math.sin(p.angle)}" r="7" fill="#22c55e" stroke="#86efac" stroke-width="2.5"/>`).join('')}
+        ${labels}
+        ${riskReductionBox}
+    </svg>`;
+
+    return svg;
+}
+
+function renderGuidelinesWithSpider() {
+    if(!assessmentData) {
+        document.getElementById('guidelinesContent').innerHTML = '<div class="card"><p style="color:#94a3b8;">Complete Assessment first.</p></div>';
+        return;
+    }
+
+    // Add spider web visualization
+    const scores = calculateBeforeAfterScores();
+    let h = `
+    <div class="spider-container">
+        <div class="spider-title">📈 Before & After Implementation</div>
+        <div class="spider-subtitle">Risk reduction potential through recommended controls</div>
+        ${createSpiderChart()}
+        <div class="spider-legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ef4444;"></div>
+                <span style="color: #cbd5e1; font-size: 0.9rem;">Current Risk (Before)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #22c55e;"></div>
+                <span style="color: #cbd5e1; font-size: 0.9rem;">Risk After Controls (After)</span>
+            </div>
+        </div>
+    </div>`;
+
+    const m = masterControls.filter(c => {try{return c.trigger(assessmentData);}catch(e){return false;}});
+
+    if(currentFramework==='5layer') {
+        const l = ['1. DATA','2. MODEL / LLM','3. APPLICATION','4. INFRASTRUCTURE','5. COMPLIANCE'];
+        const col = {'1. DATA':'#f59e0b','2. MODEL / LLM':'#10b981','3. APPLICATION':'#3b82f6','4. INFRASTRUCTURE':'#a855f7','5. COMPLIANCE':'#ec4899'};
+        h += `<div style="margin-top: 20px;"><h3 style="margin-bottom: 16px;">🔒 Threats & Controls by Layer</h3>`;
+        l.forEach(layerName => {
+            const lc = m.filter(c=>c.layer===layerName);
+            const layerId = parseInt(layerName.charAt(0));
+            const layerThreats = layersData[layerId]?.threats || [];
+            h += `
+                <div style="margin-bottom: 28px;">
+                    <div style="color:${col[layerName]}; font-weight: 700; font-size: 1.1rem; margin-bottom: 12px;">${layerName}</div>
+                    <div class="threats-controls-grid">
+                        <div class="threats-column">
+                            <div class="column-header threats-header">🔴 Active Threats</div>
+                            ${layerThreats.map(t => `<div class="threat-item">${t}</div>`).join('')}
+                        </div>
+                        <div class="controls-column">
+                            <div class="column-header" style="color: #22c55e;">🟢 Recommended Controls</div>
+                            ${lc.length===0 ? '<p style="color:#94a3b8;">No specialized controls needed.</p>' : lc.map(c=>`<div class="control-item" style="border-left-color:#22c55e;background:rgba(34,197,94,0.08);display:flex;gap:10px;align-items:flex-start;"><input type="checkbox" id="ctrl-${c.id}" onchange="toggleControl('${c.id}')" style="margin-top:4px;cursor:pointer;accent-color:#22c55e;"/><div style="flex:1;"><label for="ctrl-${c.id}" style="cursor:pointer;"><div class="control-title" style="margin:0;">${c.title}</div></label><div style="font-size:0.9rem;color:#cbd5e1;margin-top:6px;">${c.description}</div></div></div>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        h += '</div>';
+    } else {
+        const g = {};
+        const k = currentFramework==='nist' ? 'nist' : 'iso';
+        m.forEach(c=>{if(!g[c[k]]) g[c[k]]=[];g[c[k]].push(c);});
+        h += `<div style="margin-top: 20px;"><h3 style="margin-bottom: 16px;">🔧 Recommended Controls</h3>`;
+        Object.keys(g).sort().forEach(x=>{
+            const lbl = k==='nist' ? `🏛️ NIST: ${x}` : `📋 ISO: ${x}`;
+            h+=`<div class="card"><h3 style="color:${k==='nist'?'#3b82f6':'#a855f7'};margin-bottom:16px;">${lbl}</h3>`;
+            g[x].forEach(c=>h+=renderControl(c));
+            h+='</div>';
+        });
+        h += '</div>';
+    }
+    document.getElementById('guidelinesContent').innerHTML = h;
+}
+
+function renderGuidelines() {
+    renderGuidelinesWithSpider();
+}
+
+function renderControl(c) {
+    const col = {'1. DATA':'#f59e0b','2. MODEL / LLM':'#10b981','3. APPLICATION':'#3b82f6','4. INFRASTRUCTURE':'#a855f7','5. COMPLIANCE':'#ec4899'};
+    return `<div class="control-item" style="border-left-color:${col[c.layer]};"><div class="control-title">${c.title}</div><span class="control-type">${c.type}</span><div class="control-desc">${c.description}</div><div class="control-tags"><span class="tag tag-nist">NIST: ${c.nist}</span><span class="tag tag-iso">ISO: ${c.iso}</span></div></div>`;
+}
+
+function switchTab(e, t) {
+    if(e)e.preventDefault();
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById(t).classList.add('active');
+    if(e)e.target.classList.add('active');
+}
+
+let currentStep = 1;
+const totalSteps = 3;
+
+function updateProgressBar() {
+    const progress = (currentStep / totalSteps) * 100;
+    document.getElementById('progressFill').style.width = progress + '%';
+    document.getElementById('progressText').textContent = `Step ${currentStep} of ${totalSteps}`;
+}
+
+function showStep(step) {
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+    document.getElementById(`step${step}`).classList.add('active');
+
+    // Update button states
+    const prevBtn = document.querySelector('.btn-prev');
+    prevBtn.disabled = step === 1;
+
+    updateProgressBar();
+}
+
+function nextStep(step) {
+    const required = getRequiredFieldsForStep(step);
+
+    // Validate required fields
+    const allFilled = required.every(fieldName => {
+        if (fieldName === 'users' || fieldName === 'sensitivity' || fieldName === 'hosting' || fieldName === 'autonomy' || fieldName === 'training') {
+            return document.querySelector(`input[name="${fieldName}"]:checked`) !== null;
+        }
+        return document.getElementById(fieldName).value !== '';
+    });
+
+    if (!allFilled) {
+        alert('Please answer all required questions before proceeding.');
+        return;
+    }
+
+    currentStep++;
+    showStep(currentStep);
+}
+
+function prevStep() {
+    if (currentStep > 1) {
+        currentStep--;
+        showStep(currentStep);
+    }
+}
+
+function getRequiredFieldsForStep(step) {
+    const requirements = {
+        1: ['users', 'sensitivity'],  // Primary Users & Data Sensitivity required, System Name optional
+        2: ['hosting', 'autonomy', 'training'],  // Model Hosting, Autonomy, Fine-tuning required
+        3: ['integrations', 'useCase']  // Integrations & Use Case required
+    };
+    return requirements[step] || [];
+}
+
+// Render Front Page Spider Web with Green/Dark Theme
+function renderFrontPageSpiderWeb() {
+    const container = document.getElementById('frontPageSpiderContainer');
+    if (!container) return;
+
+    const size = 500;
+    const center = size / 2;
+    const radius = 150;
+    const layers = ['Data', 'Model/LLM', 'Application', 'Infrastructure', 'Compliance'];
+    const defaultRisks = [15, 15, 10, 10, 15];
+    const colors = ['#059669', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0'];
+
+    let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <linearGradient id="spiderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#059669" stop-opacity="0.8"/>
+                <stop offset="100%" stop-color="#064e3b" stop-opacity="0.6"/>
+            </linearGradient>
+            <filter id="spiderGlow"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>`;
+
+    // Draw concentric circles (web background)
+    for (let i = 1; i <= 4; i++) {
+        const r = (radius / 4) * i;
+        svg += `<circle cx="${center}" cy="${center}" r="${r}" fill="none" stroke="rgba(16,185,129,0.15)" stroke-width="1"/>`;
+    }
+
+    // Draw radial lines and layer points
+    for (let i = 0; i < layers.length; i++) {
+        const angle = (i * 2 * Math.PI / layers.length) - Math.PI / 2;
+        const x = center + radius * Math.cos(angle);
+        const y = center + radius * Math.sin(angle);
+
+        // Radial line
+        svg += `<line x1="${center}" y1="${center}" x2="${x}" y2="${y}" stroke="rgba(16,185,129,0.2)" stroke-width="1"/>`;
+
+        // Layer circle
+        svg += `<circle cx="${x}" cy="${y}" r="8" fill="${colors[i]}" stroke="#064e3b" stroke-width="2" filter="url(#spiderGlow)"/>`;
+
+        // Layer label
+        svg += `<text x="${x}" y="${y + 25}" text-anchor="middle" fill="#10b981" font-size="12" font-weight="600">${layers[i]}</text>`;
+    }
+
+    // Draw risk polygon (filled)
+    let polygonPoints = '';
+    for (let i = 0; i < layers.length; i++) {
+        const angle = (i * 2 * Math.PI / layers.length) - Math.PI / 2;
+        const riskRadius = (defaultRisks[i] / 100) * radius;
+        const x = center + riskRadius * Math.cos(angle);
+        const y = center + riskRadius * Math.sin(angle);
+        polygonPoints += `${x},${y} `;
+    }
+    svg += `<polygon points="${polygonPoints}" fill="url(#spiderGrad)" opacity="0.6" stroke="#10b981" stroke-width="2"/>`;
+
+    // Draw risk data points
+    for (let i = 0; i < layers.length; i++) {
+        const angle = (i * 2 * Math.PI / layers.length) - Math.PI / 2;
+        const riskRadius = (defaultRisks[i] / 100) * radius;
+        const x = center + riskRadius * Math.cos(angle);
+        const y = center + riskRadius * Math.sin(angle);
+        svg += `<circle cx="${x}" cy="${y}" r="5" fill="#34d399" stroke="#10b981" stroke-width="2"/>`;
+        svg += `<text x="${x}" y="${y - 12}" text-anchor="middle" fill="#a7f3d0" font-size="11" font-weight="700">${defaultRisks[i]}%</text>`;
+    }
+
+    // Draw center circle
+    svg += `<circle cx="${center}" cy="${center}" r="6" fill="#10b981" stroke="#064e3b" stroke-width="1.5"/>`;
+
+    svg += `</svg>`;
+
+    container.innerHTML = svg;
+}
+
+// Initialize front page spider web
+// // renderFrontPageSpiderWeb(); Removed per user request // Removed per user request
+</script>
+</body>
+</html>
