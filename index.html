@@ -538,25 +538,25 @@
                     <div class="wizard-form-stack">
                         <div class="form-group-wizard form-row">
                             <label>Third-Party Integrations <span class="required">*</span></label>
-                            <select id="integrations" required>
-                                <option value="0" selected>None</option>
-                                <option value="1-3">1-3</option>
-                                <option value="4-7">4-7</option>
-                                <option value="8+">8+</option>
-                            </select>
+                            <div class="radio-group-inline">
+                                <label><input type="radio" name="integrations" value="0"> None</label>
+                                <label><input type="radio" name="integrations" value="1-3"> 1-3</label>
+                                <label><input type="radio" name="integrations" value="4-7"> 4-7</label>
+                                <label><input type="radio" name="integrations" value="8+"> 8+</label>
+                            </div>
                         </div>
                         <div class="form-group-wizard form-row">
                             <label>Primary Use Case <span class="required">*</span></label>
-                            <select id="useCase" required>
-                                <option value="support" selected>Support</option>
-                                <option value="analysis">Analysis</option>
-                                <option value="content">Content</option>
-                                <option value="coding">Coding</option>
-                                <option value="search">Search/RAG</option>
-                                <option value="automation">Automation</option>
-                                <option value="medical">Medical</option>
-                                <option value="other">Other</option>
-                            </select>
+                            <div class="radio-group-inline">
+                                <label><input type="radio" name="useCase" value="support"> Support</label>
+                                <label><input type="radio" name="useCase" value="analysis"> Analysis</label>
+                                <label><input type="radio" name="useCase" value="content"> Content</label>
+                                <label><input type="radio" name="useCase" value="coding"> Coding</label>
+                                <label><input type="radio" name="useCase" value="search"> Search/RAG</label>
+                                <label><input type="radio" name="useCase" value="automation"> Automation</label>
+                                <label><input type="radio" name="useCase" value="medical"> Medical</label>
+                                <label><input type="radio" name="useCase" value="other"> Other</label>
+                            </div>
                         </div>
                     </div>
                     <div class="wizard-buttons">
@@ -745,8 +745,8 @@ document.getElementById('riskForm').addEventListener('submit', function(e) {
             hosting: document.querySelector('input[name="hosting"]:checked')?.value,
             autonomy: document.querySelector('input[name="autonomy"]:checked')?.value,
             training: document.querySelector('input[name="training"]:checked')?.value,
-            integrations: document.getElementById('integrations').value,
-            useCase: document.getElementById('useCase').value
+            integrations: document.querySelector('input[name="integrations"]:checked')?.value || '0',
+            useCase: document.querySelector('input[name="useCase"]:checked')?.value || 'support'
         };
         if (!c.users || !c.sensitivity || !c.hosting || !c.autonomy || !c.training) {
             alert('Answer all required questions.');
@@ -1233,10 +1233,7 @@ function nextStep(step) {
 
     // Validate required fields
     const allFilled = required.every(fieldName => {
-        if (fieldName === 'users' || fieldName === 'sensitivity' || fieldName === 'hosting' || fieldName === 'autonomy' || fieldName === 'training') {
-            return document.querySelector(`input[name="${fieldName}"]:checked`) !== null;
-        }
-        return document.getElementById(fieldName).value !== '';
+        return document.querySelector(`input[name="${fieldName}"]:checked`) !== null;
     });
 
     if (!allFilled) {
