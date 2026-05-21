@@ -273,7 +273,53 @@
         .btn-next { padding: 12px 24px; }
         .btn-submit { padding: 12px 24px; background: linear-gradient(135deg, #cfbcff 0%, #b8a5e0 100%); color: #0f141b; font-weight: 600; }
         .btn-next:disabled, .btn-prev:disabled { opacity: 0.5; cursor: not-allowed; }
-        .form-group-wizard { margin-bottom: 24px; }
+        .form-group-wizard { margin-bottom: 0; }
+        .wizard-form-stack { display: flex; flex-direction: column; gap: 0; }
+        .form-row {
+            padding: 16px 24px;
+            border-bottom: 1px solid rgba(207,188,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            transition: background 0.2s ease;
+        }
+        .form-row:last-child { border-bottom: none; }
+        .form-row:hover { background: rgba(207,188,255,0.06); }
+        .form-row > label:first-child {
+            min-width: 180px;
+            margin-bottom: 0;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #f1f5f9;
+            flex-shrink: 0;
+        }
+        .form-row > input[type="text"] { flex: 1; }
+        .radio-group-inline {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .radio-group-inline label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0;
+            font-weight: 400;
+            color: #cbd5e1;
+            cursor: pointer;
+            padding: 6px 14px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            border: 1px solid transparent;
+        }
+        .radio-group-inline label:hover { background: rgba(207,188,255,0.12); color: #f1f5f9; border-color: rgba(207,188,255,0.2); }
+        @media (max-width: 768px) {
+            .form-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .form-row > label:first-child { min-width: auto; }
+        }
+
         .three-column-layout { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (max-width: 1024px) { .three-column-layout { grid-template-columns: 1fr; } }
         @media (max-width: 768px) { .three-column-layout { grid-template-columns: 1fr; } }
@@ -387,21 +433,36 @@
             <form id="riskForm">
                 <!-- Step 1: System Name, Primary Users & Data Sensitivity -->
                 <div class="wizard-step active" id="step1">
-                    <div class="step-title">📋 System Overview & Data</div>
-                    <div class="three-column-layout">
-                        <div class="form-group-wizard">
+                    <div class="step-title">📋 System Overview, Data & Infrastructure</div>
+                    <div class="wizard-form-stack">
+                        <div class="form-group-wizard form-row">
                             <label>System Name <span style="color: #94a3b8;">(optional)</span></label>
-                            <input type="text" id="systemName" placeholder="e.g., Customer Support Chatbot" style="width: 100%; padding: 12px;">
+                            <input type="text" id="systemName" placeholder="e.g., Customer Support Chatbot" style="flex:1; padding: 12px;">
                         </div>
-                        <div class="form-group-wizard">
+                        <div class="form-group-wizard form-row">
                             <label>Primary Users <span class="required">*</span></label>
-                            <div class="radio-group">
+                            <div class="radio-group-inline">
                                 <label><input type="radio" name="users" value="public"> Public</label>
                                 <label><input type="radio" name="users" value="authenticated"> Authenticated</label>
                                 <label><input type="radio" name="users" value="internal"> Internal</label>
                             </div>
                         </div>
-
+                        <div class="form-group-wizard form-row">
+                            <label>Data Sensitivity <span class="required">*</span></label>
+                            <div class="radio-group-inline">
+                                <label><input type="radio" name="sensitivity" value="public"> Public</label>
+                                <label><input type="radio" name="sensitivity" value="confidential"> Confidential</label>
+                                <label><input type="radio" name="sensitivity" value="critical"> Critical (PII)</label>
+                            </div>
+                        </div>
+                        <div class="form-group-wizard form-row">
+                            <label>Model Hosting <span class="required">*</span></label>
+                            <div class="radio-group-inline">
+                                <label><input type="radio" name="hosting" value="vendor-api"> Vendor API</label>
+                                <label><input type="radio" name="hosting" value="managed"> Managed Cloud</label>
+                                <label><input type="radio" name="hosting" value="private"> Private VPC</label>
+                            </div>
+                        </div>
                     </div>
                     <div class="wizard-buttons">
                         <button type="button" class="btn-prev" onclick="prevStep()" disabled>← Previous</button>
@@ -1178,8 +1239,8 @@ function prevStep() {
 
 function getRequiredFieldsForStep(step) {
     const requirements = {
-        1: ['users', 'sensitivity'],  // Primary Users & Data Sensitivity required, System Name optional
-        2: ['hosting', 'autonomy', 'training'],  // Model Hosting, Autonomy, Fine-tuning required
+        1: ['users', 'sensitivity', 'hosting'],  // Primary Users & Data Sensitivity required, System Name optional
+        2: ['autonomy', 'training'],  // Model Hosting, Autonomy, Fine-tuning required
         3: ['integrations', 'useCase']  // Integrations & Use Case required
     };
     return requirements[step] || [];
