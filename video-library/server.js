@@ -187,9 +187,16 @@ http.createServer(async (req, res) => {
   // ── /api/scan ─────────────────────────────────────────
   if (route === '/api/scan') {
     try {
-      const items = fs.readdirSync(WATCH_FOLDER, { withFileTypes: true }).map(d => ({
-        name: d.name, path: path.join(WATCH_FOLDER, d.name), isDir: d.isDirectory()
-      }));
+      const items = fs.readdirSync(WATCH_FOLDER, { withFileTypes: true }).map(d => {
+        const fullPath = path.join(WATCH_FOLDER, d.name);
+        const stat = fs.statSync(fullPath);
+        return {
+          name: d.name,
+          path: fullPath,
+          isDir: d.isDirectory(),
+          mtime: stat.mtimeMs  // Last modified time in milliseconds
+        };
+      });
       return json(res, items);
     } catch(e) { return json(res, { error: e.message }, 500); }
   }

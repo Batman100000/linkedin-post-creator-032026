@@ -840,6 +840,19 @@ async function refreshFolder() {
     btn.classList.remove('syncing'); btn.disabled = false; return;
   }
 
+  // Check if folder state changed since last refresh
+  const cacheKey = 'asaflib-folder-cache';
+  const lastCache = localStorage.getItem(cacheKey);
+  const newCache = JSON.stringify(items.map(i => ({ name: i.name, mtime: i.mtime })).sort((a,b) => a.name.localeCompare(b.name)));
+
+  if (lastCache === newCache) {
+    clearProgress();
+    showToast('✓ הספריה ללא שינויים');
+    btn.classList.remove('syncing'); btn.disabled = false;
+    return;
+  }
+  localStorage.setItem(cacheKey, newCache);
+
   setProgress(60, 'מסנכרן רשימה...');
   const folderNames = new Set(items.map(i => i.name.toLowerCase()));
   let added = 0, removed = 0;
