@@ -854,7 +854,7 @@ async function refreshFolder() {
   setProgress(80, 'מוסיף פריטים חדשים...');
   // Add new items
   const knownNames = new Set([...document.querySelectorAll('[data-path]')].map(c => c.dataset.path.split('\\').pop().split('/').pop().toLowerCase()));
-  const MUSIC_KW  = /mp3|music|billboard|songs|chart|acoustic|party|flac|album/i;
+  const MUSIC_KW  = /mp3|music|billboard|songs|chart|acoustic|party|flac|album|rock/i;
   const SERIES_KW = /\bS\d{2}\b|season\s*\d|complete/i;
   const ROOT = 'C:\\Users\\asafa\\FinishDownloads';
 
@@ -864,7 +864,23 @@ async function refreshFolder() {
   );
 
   const videoNewItems = [];
-  newItems.forEach(item => {
+
+  // First pass: check actual folder contents to determine type
+  const itemTypePromises = newItems.map(async item => {
+    const itemPath = ROOT + '\\' + item.name;
+    try {
+      const typeRes = await fetch(`http://localhost:8001/api/folder-type?path=${encodeURIComponent(itemPath)}`);
+      const typeData = await typeRes.json();
+      return { item, isMusic: typeData.isMusic };
+    } catch(_) {
+      // Fallback to name-based detection
+      return { item, isMusic: MUSIC_KW.test(item.name) };
+    }
+  });
+
+  const itemsWithTypes = await Promise.all(itemTypePromises);
+
+  itemsWithTypes.forEach(({ item, isMusic }) => {
     added++;
     const itemPath   = ROOT + '\\' + item.name;
     const uid        = 'new-' + Date.now() + '-' + added;
@@ -872,7 +888,7 @@ async function refreshFolder() {
     const yearMatch  = item.name.match(/\b(19|20)\d{2}\b/);
     const year       = yearMatch ? yearMatch[0] : '';
 
-    if (MUSIC_KW.test(item.name)) {
+    if (isMusic) {
       document.getElementById('grid-music').insertAdjacentHTML('beforeend', `
         <div class="music-card" data-id="${uid}" data-path="${itemPath}" data-search="${item.name.toLowerCase()}">
           <div class="music-icon">🎵</div>

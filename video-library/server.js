@@ -194,6 +194,38 @@ http.createServer(async (req, res) => {
     } catch(e) { return json(res, { error: e.message }, 500); }
   }
 
+  // ── /api/folder-type?path=X ────────────────────────────
+  if (route === '/api/folder-type') {
+    const folderPath = params.get('path');
+    if (!folderPath) return json(res, { error: 'missing path' }, 400);
+    const resolved = path.resolve(folderPath);
+    const watchResolved = path.resolve(WATCH_FOLDER);
+    if (!resolved.startsWith(watchResolved)) return json(res, { error: 'access denied' }, 403);
+
+    try {
+      // Recursively find all files in folder tree
+      function walkDir(dir) {
+        const files = [];
+        try {
+          fs.readdirSync(dir, { withFileTypes: true }).forEach(entry => {
+            if (entry.isFile()) {
+              files.push(path.extname(entry.name).toLowerCase());
+            } else if (entry.isDirectory()) {
+              files.push(...walkDir(path.join(dir, entry.name)));
+            }
+          });
+        } catch(_) {}
+        return files;
+      }
+
+      const allExts = walkDir(resolved);
+      const hasMP3 = allExts.some(ext => ['.mp3', '.flac', '.wav', '.m4a'].includes(ext));
+      const hasVideo = allExts.some(ext => ['.mkv','.mp4','.avi','.mov','.wmv','.m4v','.flv','.webm','.ts','.m2ts'].includes(ext));
+
+      return json(res, { hasMP3, hasVideo, isMusic: hasMP3 && !hasVideo, fileCount: allExts.length });
+    } catch(e) { return json(res, { error: 'read error' }, 500); }
+  }
+
   // ── /api/subtitles/search?title=X&year=Y&folder=X ────
   if (route === '/api/subtitles/search') {
     const title  = params.get('title') || '';
