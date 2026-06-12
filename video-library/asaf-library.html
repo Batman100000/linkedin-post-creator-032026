@@ -918,18 +918,18 @@ async function refreshFolder() {
     try {
       const typeRes = await fetch(`http://localhost:8001/api/folder-type?path=${encodeURIComponent(itemPath)}`);
       const typeData = await typeRes.json();
-      return { item, isMusic: typeData.isMusic };
+      return { item, isMusic: typeData.isMusic, videoCount: typeData.fileCount };
     } catch(_) {
       // Fallback to name-based detection
-      return { item, isMusic: MUSIC_KW.test(item.name) };
+      return { item, isMusic: MUSIC_KW.test(item.name), videoCount: 0 };
     }
   });
 
   const itemsWithTypes = await Promise.all(itemTypePromises);
 
-  itemsWithTypes.forEach(({ item, isMusic }) => {
-    // Skip music folders (only show movies/series)
-    if (isMusic) return;
+  itemsWithTypes.forEach(({ item, isMusic, videoCount }) => {
+    // Skip music folders and empty folders
+    if (isMusic || videoCount === 0) return;
 
     added++;
     const itemPath   = ROOT + '\\' + item.name;
