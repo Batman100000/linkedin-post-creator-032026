@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import http.server
 import socketserver
+import ssl
 import json
 import os
 from pathlib import Path
@@ -153,8 +154,23 @@ class LibraryHandler(http.server.SimpleHTTPRequestHandler):
         super().end_headers()
 
 if __name__ == '__main__':
-    os.chdir(os.path.dirname(__file__))
+    server_dir = os.path.dirname(os.path.abspath(__file__))
+    os.chdir(server_dir)
+
+    cert_file = os.path.join(server_dir, 'cert.pem')
+    key_file = os.path.join(server_dir, 'key.pem')
+    use_https = os.path.exists(cert_file) and os.path.exists(key_file)
+
     with socketserver.TCPServer(('', PORT), LibraryHandler) as httpd:
-        print(f'Server running at http://localhost:{PORT}')
+        if use_https:
+            context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+            context.load_cert_chain(cert_file, key_file)
+            httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
+            protocol = 'https'
+        else:
+            protocol = 'http'
+
+        print(f'Server running at {protocol}://localhost:{PORT}')
+        print(f'Certificate: {cert_file if use_https else "Not configured"}')
         print(f'Press Ctrl+C to stop')
         httpd.serve_forever()
