@@ -54,6 +54,22 @@ body {
 }
 .search-inner input::placeholder { color: #666; }
 
+/* ── SPLIT LAYOUT ── */
+.split-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  padding: 32px 0 8px;
+  border-bottom: 1px solid #1e1e1e;
+}
+.split-pane {
+  padding: 0 40px;
+  min-height: 0;
+}
+.split-pane:first-child {
+  border-right: 1px solid #1e1e1e;
+}
+
 /* ── SECTION ── */
 .section { padding: 32px 40px 8px; }
 .section-title {
@@ -242,8 +258,10 @@ footer {
   </div>
 </div>
 
-<!-- ═══ SERIES ═══ -->
-<div class="section">
+<!-- ═══ SERIES + MOVIES SPLIT ═══ -->
+<div class="split-layout">
+
+<div class="split-pane">
   <div class="section-title">📺 Series <span class="section-count" id="count-series">1</span></div>
   <div class="card-grid" id="grid-series">
 
@@ -267,8 +285,7 @@ footer {
   </div>
 </div>
 
-<!-- ═══ MOVIES ═══ -->
-<div class="section">
+<div class="split-pane">
   <div class="section-title">🎬 Movies <span class="section-count" id="count-movies">13</span></div>
   <div class="card-grid" id="grid-movies">
 
@@ -494,6 +511,8 @@ footer {
 
   </div>
 </div>
+
+</div><!-- end split-layout -->
 
 <!-- ═══ MUSIC ═══ -->
 <div class="section">
