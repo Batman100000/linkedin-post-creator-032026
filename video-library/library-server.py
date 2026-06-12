@@ -139,6 +139,10 @@ class LibraryHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_json({'error': str(e)}, 500)
             return
 
+        # Route / to asaf-library.html
+        if route == '/' or route == '':
+            self.path = '/asaf-library.html'
+
         # Default: serve static files
         return super().do_GET()
 
