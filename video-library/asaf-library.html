@@ -246,6 +246,45 @@ body.hide-watched .card.watched { display: none !important; }
 .sub-dl-btn.done { background: #0a2a0a; color: #4caf50; border-color: #4caf50; }
 .sub-dl-btn.loading { opacity: 0.6; pointer-events: none; }
 
+/* play button */
+.cabtn-play {
+  background: #e50914; color: #fff; font-weight: 700;
+  border: none;
+}
+.cabtn-play:hover { background: #ff1a1a; }
+
+/* episode picker modal */
+#ep-modal-bg {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85); z-index: 10000;
+  align-items: center; justify-content: center;
+}
+#ep-modal-bg.open { display: flex; }
+#ep-modal {
+  background: #1a1a1a; border: 1px solid #333; border-radius: 12px;
+  width: 480px; max-width: 95vw; max-height: 75vh;
+  display: flex; flex-direction: column; overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.9);
+}
+#ep-modal-head {
+  padding: 16px 20px 12px; border-bottom: 1px solid #252525;
+  display: flex; align-items: center; justify-content: space-between;
+}
+#ep-modal-title { font-size: 15px; font-weight: 800; color: #fff; }
+#ep-modal-close { background:none; border:none; color:#666; font-size:20px; cursor:pointer; }
+#ep-modal-close:hover { color:#fff; }
+#ep-modal-body { overflow-y: auto; padding: 10px 14px; flex: 1; }
+.ep-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: 7px; margin-bottom: 5px;
+  background: #222; border: 1px solid #2a2a2a;
+  cursor: pointer; transition: all 0.13s;
+}
+.ep-item:hover { background: #2a2a2a; border-color: #e50914; }
+.ep-num { font-size: 11px; color: #e50914; font-weight: 800; min-width: 28px; }
+.ep-name { font-size: 12px; color: #ddd; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ep-play-icon { color: #e50914; font-size: 14px; }
+
 /* subtitle button on card */
 .cabtn-sub {
   background: rgba(100,180,255,0.15); color: #88ccff;
@@ -646,6 +685,17 @@ footer {
 </div>
 
 <footer>🎬 Asaf's Library · 13 Movies · 1 Series · 5 Music · Posters via TMDB</footer>
+<!-- EPISODE PICKER MODAL -->
+<div id="ep-modal-bg" onclick="if(event.target===this)closeEpModal()">
+  <div id="ep-modal">
+    <div id="ep-modal-head">
+      <div id="ep-modal-title">▶ בחר פרק</div>
+      <button id="ep-modal-close" onclick="closeEpModal()">✕</button>
+    </div>
+    <div id="ep-modal-body"></div>
+  </div>
+</div>
+
 <!-- SUBTITLE MODAL -->
 <div id="sub-modal-bg" onclick="if(event.target===this)closeSubModal()">
   <div id="sub-modal">
@@ -849,6 +899,49 @@ async function refreshFolder() {
   showToast(parts.length ? '🔄 ' + parts.join(' · ') : '✓ הספריה מסונכרנת');
 }
 
+// ── Play ───────────────────────────────────────────────
+const VIDEO_EXT = /\.(mkv|mp4|avi|mov|wmv|m4v|flv|webm|ts|m2ts)$/i;
+
+async function playCard(btn) {
+  const card = btn.closest('[data-id]');
+  const p    = card.dataset.path || '';
+  // If it's a direct video file — play immediately
+  if (VIDEO_EXT.test(p)) { playFile(p); return; }
+  // It's a folder — fetch episode list
+  try {
+    const res  = await fetch(`http://localhost:8001/api/episodes?path=${encodeURIComponent(p)}`);
+    const eps  = await res.json();
+    if (eps.error) throw new Error(eps.error);
+    if (eps.length === 1) { playFile(eps[0].path); return; }
+    if (eps.length === 0) { showToast('לא נמצאו קבצי וידאו בתיקייה'); return; }
+    showEpisodePicker(card, eps);
+  } catch(e) { showToast('⚠ ' + e.message); }
+}
+
+function playFile(filePath) {
+  fetch(`http://localhost:8001/api/play?path=${encodeURIComponent(filePath)}`)
+    .then(r => r.json())
+    .then(d => { if (d.error) showToast('⚠ ' + d.error); else showToast('▶ מפעיל...'); })
+    .catch(() => showToast('⚠ ודא שהשרת רץ (start-library.bat)'));
+}
+
+function showEpisodePicker(card, eps) {
+  const title = card.querySelector('.card-title')?.textContent.trim() || 'פרקים';
+  document.getElementById('ep-modal-title').textContent = '▶ ' + title;
+  document.getElementById('ep-modal-body').innerHTML = eps.map((ep, i) =>
+    `<div class="ep-item" onclick="playFile('${ep.path.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}');closeEpModal();">
+      <span class="ep-num">${String(i+1).padStart(2,'0')}</span>
+      <span class="ep-name">${ep.name}</span>
+      <span class="ep-play-icon">▶</span>
+    </div>`
+  ).join('');
+  document.getElementById('ep-modal-bg').classList.add('open');
+}
+
+function closeEpModal() {
+  document.getElementById('ep-modal-bg').classList.remove('open');
+}
+
 // ── Subtitle modal ─────────────────────────────────────
 let _subSavePath = '';
 
@@ -933,6 +1026,16 @@ function injectSubtitleButtons() {
   });
 }
 
+function injectPlayButtons() {
+  document.querySelectorAll('#grid-movies .card-actions, #grid-series .card-actions').forEach(actions => {
+    if (!actions.querySelector('.cabtn-play')) {
+      actions.insertAdjacentHTML('afterbegin',
+        '<button class="cabtn cabtn-play" onclick="event.stopPropagation();playCard(this)">▶ נגן</button>'
+      );
+    }
+  });
+}
+
 // ── Click poster to open, buttons stay independent ────
 function initCardClicks() {
   document.querySelectorAll('.card-poster').forEach(poster => {
@@ -959,6 +1062,7 @@ function applyState() {
 
 applyState();
 injectTypeBadges();
+injectPlayButtons();
 injectSubtitleButtons();
 initCardClicks();
 </script>

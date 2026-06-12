@@ -1,8 +1,11 @@
-const http  = require('http');
-const https = require('https');
-const fs    = require('fs');
-const path  = require('path');
-const zlib  = require('zlib');
+const http   = require('http');
+const https  = require('https');
+const fs     = require('fs');
+const path   = require('path');
+const zlib   = require('zlib');
+const { exec } = require('child_process');
+
+const VIDEO_EXT = new Set(['.mkv','.mp4','.avi','.mov','.wmv','.m4v','.flv','.webm','.ts','.m2ts']);
 
 const HTML_FILE    = path.join(__dirname, 'asaf-library.html');
 const WATCH_FOLDER = 'C:\\Users\\asafa\\FinishDownloads';
@@ -46,6 +49,32 @@ http.createServer(async (req, res) => {
   const urlObj  = new URL(req.url, `http://localhost:${PORT}`);
   const route   = urlObj.pathname;
   const params  = urlObj.searchParams;
+
+  // ── /api/play?path=X ──────────────────────────────────
+  if (route === '/api/play') {
+    const filePath = params.get('path');
+    if (!filePath) return json(res, { error: 'missing path' }, 400);
+    // Use start "" to open with default player (Windows)
+    exec(`start "" "${filePath}"`, err => {
+      if (err) return json(res, { error: err.message }, 500);
+      json(res, { ok: true });
+    });
+    return;
+  }
+
+  // ── /api/episodes?path=X ──────────────────────────────
+  if (route === '/api/episodes') {
+    const folderPath = params.get('path');
+    if (!folderPath) return json(res, { error: 'missing path' }, 400);
+    try {
+      const files = fs.readdirSync(folderPath)
+        .filter(f => VIDEO_EXT.has(path.extname(f).toLowerCase()))
+        .sort()
+        .map(f => ({ name: f, path: path.join(folderPath, f) }));
+      json(res, files);
+    } catch(e) { json(res, { error: e.message }, 500); }
+    return;
+  }
 
   // ── /api/scan ─────────────────────────────────────────
   if (route === '/api/scan') {
