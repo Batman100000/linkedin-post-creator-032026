@@ -50,6 +50,23 @@ http.createServer(async (req, res) => {
   const route   = urlObj.pathname;
   const params  = urlObj.searchParams;
 
+  // ── /api/poster?title=X&year=Y ───────────────────────
+  if (route === '/api/poster') {
+    const title = params.get('title') || '';
+    const year  = params.get('year')  || '';
+    const q     = encodeURIComponent(title);
+    const omdbUrl = `https://www.omdbapi.com/?t=${q}&y=${year}&apikey=b9bd48a6`;
+    try {
+      const { body } = await fetchUrl(omdbUrl);
+      const data = JSON.parse(body.toString());
+      if (data.Poster && data.Poster !== 'N/A') {
+        return json(res, { poster: data.Poster, title: data.Title, year: data.Year, imdb: data.imdbRating });
+      }
+      // fallback: search TMDB without key via scrape
+      return json(res, { poster: null });
+    } catch(e) { return json(res, { poster: null }); }
+  }
+
   // ── /api/play?path=X ──────────────────────────────────
   if (route === '/api/play') {
     const filePath = params.get('path');
