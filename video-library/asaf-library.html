@@ -624,8 +624,8 @@ footer {
   </div>
 </div>
 
-<!-- ═══ MUSIC ═══ -->
-<div class="section">
+<!-- ═══ MUSIC ═══ (hidden) -->
+<div class="section" style="display:none">
   <div class="section-title">🎵 Music <span class="section-count" id="count-music">5</span></div>
   <div class="music-grid" id="grid-music">
 
@@ -779,7 +779,7 @@ function doSearch(q) {
 
 // ── Counts ─────────────────────────────────────────────
 function updateCounts() {
-  [['grid-series','count-series'],['grid-movies','count-movies'],['grid-music','count-music']].forEach(([grid,badge]) => {
+  [['grid-series','count-series'],['grid-movies','count-movies']].forEach(([grid,badge]) => {
     const g = document.getElementById(grid);
     const b = document.getElementById(badge);
     if (!g||!b) return;
@@ -881,6 +881,9 @@ async function refreshFolder() {
   const itemsWithTypes = await Promise.all(itemTypePromises);
 
   itemsWithTypes.forEach(({ item, isMusic }) => {
+    // Skip music folders (only show movies/series)
+    if (isMusic) return;
+
     added++;
     const itemPath   = ROOT + '\\' + item.name;
     const uid        = 'new-' + Date.now() + '-' + added;
@@ -888,20 +891,7 @@ async function refreshFolder() {
     const yearMatch  = item.name.match(/\b(19|20)\d{2}\b/);
     const year       = yearMatch ? yearMatch[0] : '';
 
-    if (isMusic) {
-      document.getElementById('grid-music').insertAdjacentHTML('beforeend', `
-        <div class="music-card" data-id="${uid}" data-path="${itemPath}" data-search="${item.name.toLowerCase()}">
-          <div class="music-icon">🎵</div>
-          <div class="music-info">
-            <div class="music-title">${cleanTitle}</div>
-            <div class="music-sub">חדש</div>
-            <div class="music-actions">
-              <button class="cabtn cabtn-open" onclick="openCard(this)">📁 Open</button>
-              <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-            </div>
-          </div>
-        </div>`);
-    } else {
+    {
       const gridId = SERIES_KW.test(item.name) ? 'grid-series' : 'grid-movies';
       document.getElementById(gridId).insertAdjacentHTML('beforeend', `
         <div class="card" data-id="${uid}" data-path="${itemPath}" data-title="${cleanTitle}" data-year="${year}" data-search="${item.name.toLowerCase()}">
