@@ -224,7 +224,7 @@ footer {
     </button>
     <button class="hbtn" id="refreshFolderBtn" onclick="refreshFolder()">
       <svg width="13" height="13" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/></svg>
-      Refresh Folder
+      REFRESH BASED ON FOLDER
     </button>
   </div>
 </div>
@@ -769,118 +769,127 @@ function applyState() {
   updateCounts();
 }
 
-// ── Refresh Folder sync ────────────────────────────────
+// ── Refresh Folder sync (File System Access API — no server needed) ──
+let _folderHandle = null;
+
+async function getOrPickFolder() {
+  // Try stored handle first
+  if (_folderHandle) {
+    const perm = await _folderHandle.queryPermission({ mode: 'read' });
+    if (perm === 'granted') return _folderHandle;
+    const req = await _folderHandle.requestPermission({ mode: 'read' });
+    if (req === 'granted') return _folderHandle;
+  }
+  // Ask user to pick the folder
+  try {
+    _folderHandle = await window.showDirectoryPicker({ mode: 'read', startIn: 'downloads' });
+    return _folderHandle;
+  } catch(e) {
+    return null; // user cancelled
+  }
+}
+
 async function refreshFolder() {
   const btn = document.getElementById('refreshFolderBtn');
   btn.classList.add('syncing');
   btn.disabled = true;
 
-  let items;
-  try {
-    const res = await fetch('http://localhost:8001/api/scan');
-    if (!res.ok) throw new Error('Server error ' + res.status);
-    items = await res.json();
-  } catch(e) {
-    showToast('⚠ Server not running — start server.js first');
+  const dir = await getOrPickFolder();
+  if (!dir) {
+    showToast('⚠ לא נבחרה תיקייה');
     btn.classList.remove('syncing'); btn.disabled = false;
     return;
   }
 
+  // Read folder contents
+  const items = [];
+  for await (const [name, handle] of dir.entries()) {
+    items.push({ name, isDir: handle.kind === 'directory' });
+  }
+
   const folderNames = new Set(items.map(i => i.name.toLowerCase()));
-  const folderPaths = items.map(i => i.path);
   let added = 0, removed = 0, restored = 0;
 
   // 1. Check existing rows — mark missing / restore found
   document.querySelectorAll('tbody tr[data-path]').forEach(row => {
-    const rowBase = row.dataset.path.split('\\').pop().toLowerCase();
+    const rowBase = row.dataset.path.split('\\').pop().split('/').pop().toLowerCase();
     const exists  = folderNames.has(rowBase);
     if (!exists) {
-      if (!row.classList.contains('missing-row')) {
-        row.classList.add('missing-row'); removed++;
-      }
+      if (!row.classList.contains('missing-row')) { row.classList.add('missing-row'); removed++; }
     } else {
-      if (row.classList.contains('missing-row')) {
-        row.classList.remove('missing-row'); restored++;
-      }
+      if (row.classList.contains('missing-row'))  { row.classList.remove('missing-row'); restored++; }
     }
   });
 
-  // 2. Find items in folder not already in any row
-  const knownPaths = new Set(
+  // 2. Find new items not yet in any row
+  const knownNames = new Set(
     [...document.querySelectorAll('tbody tr[data-path]')]
-      .map(r => r.dataset.path.split('\\').pop().toLowerCase())
+      .map(r => r.dataset.path.split('\\').pop().split('/').pop().toLowerCase())
   );
 
-  const VIDEO_EXT = /\.(mp4|mkv|avi|mov|wmv|m4v|flv|webm)$/i;
   const MUSIC_KW  = /mp3|music|billboard|songs|chart|acoustic|party|flac|album/i;
-  const SERIES_KW = /\bS\d{2}\b|season|complete/i;
+  const SERIES_KW = /\bS\d{2}\b|season\s*\d|complete/i;
+  const folderPath = 'C:\\Users\\asafa\\FinishDownloads';
 
   items.forEach(item => {
-    const base = item.name.toLowerCase();
-    if (knownPaths.has(base)) return;
-    // Skip obvious non-media
-    if (/^\.|^desktop\.ini$/i.test(item.name)) return;
+    if (knownNames.has(item.name.toLowerCase())) return;
+    if (/^\.|^desktop\.ini$|^thumbs\.db$/i.test(item.name)) return;
 
     added++;
+    const fullPath = folderPath + '\\' + item.name;
+    const uid = 'new-' + Date.now() + '-' + added;
     let tableId, rowHtml;
 
     if (MUSIC_KW.test(item.name)) {
       tableId = 'tbl-music';
-      rowHtml = `
-        <tr data-id="new-${Date.now()}-${added}" data-path="${item.path}" data-search="${item.name.toLowerCase()}" class="new-row">
-          <td class="music-icon-cell">🎵</td>
-          <td class="music-title-cell"><div class="title-main">${item.name}</div><div class="title-sub">New item</div></td>
-          <td class="year-cell">—</td>
-          <td><div class="genre-chips"><span class="genre-chip">Music</span></div></td>
-          <td class="actions-cell">
-            <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-            <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-          </td>
-        </tr>`;
+      rowHtml = `<tr data-id="${uid}" data-path="${fullPath}" data-search="${item.name.toLowerCase()}" class="new-row">
+        <td class="music-icon-cell">🎵</td>
+        <td class="music-title-cell"><div class="title-main">${item.name}</div><div class="title-sub">חדש</div></td>
+        <td class="year-cell">—</td>
+        <td><div class="genre-chips"><span class="genre-chip">Music</span></div></td>
+        <td class="actions-cell">
+          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
+          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
+        </td></tr>`;
     } else if (SERIES_KW.test(item.name)) {
       tableId = 'tbl-series';
-      rowHtml = `
-        <tr data-id="new-${Date.now()}-${added}" data-path="${item.path}" data-search="${item.name.toLowerCase()}" class="new-row">
-          <td class="poster-cell"><div class="poster-wrap"><img src="" alt="" style="display:none"></div></td>
-          <td class="title-cell"><div class="title-main">${item.name}</div><div class="title-sub">New series</div></td>
-          <td><div class="ep-chips"><span class="ep-chip">Unknown</span></div></td>
-          <td><div class="genre-chips"><span class="genre-chip">Series</span></div></td>
-          <td><span class="imdb-na">N/A</span></td>
-          <td class="actions-cell">
-            <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-            <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
-            <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-          </td>
-        </tr>`;
+      rowHtml = `<tr data-id="${uid}" data-path="${fullPath}" data-search="${item.name.toLowerCase()}" class="new-row">
+        <td class="poster-cell"><div class="poster-wrap" style="background:#1a2a1a"></div></td>
+        <td class="title-cell"><div class="title-main">${item.name}</div><div class="title-sub">סדרה חדשה</div></td>
+        <td><div class="ep-chips"><span class="ep-chip">?</span></div></td>
+        <td><div class="genre-chips"><span class="genre-chip">Series</span></div></td>
+        <td><span class="imdb-na">N/A</span></td>
+        <td class="actions-cell">
+          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
+          <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
+          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
+        </td></tr>`;
     } else {
       tableId = 'tbl-movies';
-      rowHtml = `
-        <tr data-id="new-${Date.now()}-${added}" data-path="${item.path}" data-search="${item.name.toLowerCase()}" class="new-row">
-          <td class="poster-cell"><div class="poster-wrap"><img src="" alt="" style="display:none"></div></td>
-          <td class="title-cell"><div class="title-main">${item.name}</div><div class="title-sub">New item</div></td>
-          <td class="year-cell">—</td>
-          <td><div class="genre-chips"><span class="genre-chip">Unknown</span></div></td>
-          <td><span class="imdb-na">N/A</span></td>
-          <td class="actions-cell">
-            <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-            <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
-            <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-          </td>
-        </tr>`;
+      rowHtml = `<tr data-id="${uid}" data-path="${fullPath}" data-search="${item.name.toLowerCase()}" class="new-row">
+        <td class="poster-cell"><div class="poster-wrap" style="background:#1a2a1a"></div></td>
+        <td class="title-cell"><div class="title-main">${item.name}</div><div class="title-sub">חדש</div></td>
+        <td class="year-cell">—</td>
+        <td><div class="genre-chips"><span class="genre-chip">Unknown</span></div></td>
+        <td><span class="imdb-na">N/A</span></td>
+        <td class="actions-cell">
+          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
+          <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
+          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
+        </td></tr>`;
     }
 
-    const tbody = document.querySelector(`#${tableId} tbody`);
-    if (tbody) tbody.insertAdjacentHTML('beforeend', rowHtml);
+    document.querySelector(`#${tableId} tbody`).insertAdjacentHTML('beforeend', rowHtml);
   });
 
   updateCounts();
   btn.classList.remove('syncing'); btn.disabled = false;
 
   const parts = [];
-  if (added)    parts.push(`${added} new`);
-  if (removed)  parts.push(`${removed} missing`);
-  if (restored) parts.push(`${restored} restored`);
-  showToast(parts.length ? '🔄 ' + parts.join(' · ') : '✓ Folder in sync — nothing changed');
+  if (added)    parts.push(`${added} חדשים`);
+  if (removed)  parts.push(`${removed} חסרים`);
+  if (restored) parts.push(`${restored} חזרו`);
+  showToast(parts.length ? '🔄 ' + parts.join(' · ') : '✓ הספריה מסונכרנת');
 }
 
 applyState();
