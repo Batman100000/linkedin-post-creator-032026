@@ -5,6 +5,9 @@ const path   = require('path');
 const zlib   = require('zlib');
 const { exec } = require('child_process');
 
+// Load API key from environment (or use provided key)
+const OMDB_KEY = process.env.OMDB_API_KEY || 'b9bd48a6';
+
 const VIDEO_EXT = new Set(['.mkv','.mp4','.avi','.mov','.wmv','.m4v','.flv','.webm','.ts','.m2ts']);
 
 const HTML_FILE    = path.join(__dirname, 'asaf-library.html');
@@ -92,7 +95,7 @@ http.createServer(async (req, res) => {
     // 1) Try OMDB
     try {
       const q = encodeURIComponent(title);
-      const { body } = await fetchUrl(`https://www.omdbapi.com/?t=${q}&y=${year}&apikey=b9bd48a6`);
+      const { body } = await fetchUrl(`https://www.omdbapi.com/?t=${q}&y=${year}&apikey=${OMDB_KEY}`);
       const data = JSON.parse(body.toString());
       if (data.Poster && data.Poster !== 'N/A' && data.Response !== 'False') {
         const cached = await cacheImage(data.Poster);
@@ -143,9 +146,19 @@ http.createServer(async (req, res) => {
   if (route === '/api/play') {
     const filePath = params.get('path');
     if (!filePath) return json(res, { error: 'missing path' }, 400);
+    // Prevent path traversal — file must be under WATCH_FOLDER
+    const resolved = path.resolve(filePath);
+    const watchResolved = path.resolve(WATCH_FOLDER);
+    if (!resolved.startsWith(watchResolved)) {
+      return json(res, { error: 'access denied' }, 403);
+    }
+    // Verify file exists and is a video
+    if (!VIDEO_EXT.has(path.extname(filePath).toLowerCase())) {
+      return json(res, { error: 'not a video file' }, 400);
+    }
     // Use start "" to open with default player (Windows)
     exec(`start "" "${filePath}"`, err => {
-      if (err) return json(res, { error: err.message }, 500);
+      if (err) return json(res, { error: 'play failed' }, 500);
       json(res, { ok: true });
     });
     return;
@@ -155,13 +168,19 @@ http.createServer(async (req, res) => {
   if (route === '/api/episodes') {
     const folderPath = params.get('path');
     if (!folderPath) return json(res, { error: 'missing path' }, 400);
+    // Prevent path traversal
+    const resolved = path.resolve(folderPath);
+    const watchResolved = path.resolve(WATCH_FOLDER);
+    if (!resolved.startsWith(watchResolved)) {
+      return json(res, { error: 'access denied' }, 403);
+    }
     try {
-      const files = fs.readdirSync(folderPath)
+      const files = fs.readdirSync(resolved)
         .filter(f => VIDEO_EXT.has(path.extname(f).toLowerCase()))
         .sort()
-        .map(f => ({ name: f, path: path.join(folderPath, f) }));
+        .map(f => ({ name: f, path: path.join(resolved, f) }));
       json(res, files);
-    } catch(e) { json(res, { error: e.message }, 500); }
+    } catch(e) { json(res, { error: 'folder read error' }, 500); }
     return;
   }
 
@@ -206,23 +225,53 @@ http.createServer(async (req, res) => {
 
     if (!dlUrl || !savePath) return json(res, { error: 'missing params' }, 400);
 
+    // Prevent path traversal in savePath
+    const resolved = path.resolve(savePath);
+    const watchResolved = path.resolve(WATCH_FOLDER);
+    if (!resolved.startsWith(watchResolved)) {
+      return json(res, { error: 'access denied' }, 403);
+    }
+
     try {
       const { body } = await fetchUrl(dlUrl);
+
+      // Limit subtitle file size to 10MB
+      if (body.length > 10 * 1024 * 1024) {
+        return json(res, { error: 'file too large' }, 413);
+      }
 
       let srtBuf;
       try { srtBuf = await extractGzip(body); }
       catch { srtBuf = body; }  // already decompressed
 
-      const safeName = title.replace(/[\\/:*?"<>|]/g, '_');
-      const destFile = path.join(savePath, safeName + '.he.srt');
+      const safeName = title.replace(/[\\/:*?"<>|]+/g, '_').slice(0, 100);  // Max 100 chars
+      const destFile = path.join(resolved, safeName + '.he.srt');
+
+      // Final path check
+      const destResolved = path.resolve(destFile);
+      if (!destResolved.startsWith(watchResolved)) {
+        return json(res, { error: 'invalid path' }, 403);
+      }
+
       fs.writeFileSync(destFile, srtBuf);
       return json(res, { saved: destFile });
-    } catch(e) { return json(res, { error: e.message }, 500); }
+    } catch(e) { return json(res, { error: 'download failed' }, 500); }
   }
 
   // ── /posters/ static images ───────────────────────────
   if (route.startsWith('/posters/')) {
-    const imgFile = path.join(POSTERS_DIR, path.basename(route));
+    const filename = path.basename(route);
+    // Reject if filename has path separators
+    if (filename.includes('/') || filename.includes('\\') || filename === '..') {
+      res.writeHead(403); res.end('Forbidden'); return;
+    }
+    const imgFile = path.join(POSTERS_DIR, filename);
+    const resolved = path.resolve(imgFile);
+    const dirResolved = path.resolve(POSTERS_DIR);
+    // Prevent path traversal
+    if (!resolved.startsWith(dirResolved)) {
+      res.writeHead(403); res.end('Forbidden'); return;
+    }
     fs.readFile(imgFile, (err, data) => {
       if (err) { res.writeHead(404); res.end('Not found'); return; }
       res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Access-Control-Allow-Origin':'*',
@@ -234,6 +283,12 @@ http.createServer(async (req, res) => {
 
   // ── static files ──────────────────────────────────────
   let filePath = route === '/' ? HTML_FILE : path.join(__dirname, route);
+  const resolved = path.resolve(filePath);
+  const dirResolved = path.resolve(__dirname);
+  // Prevent path traversal — only serve files under __dirname
+  if (!resolved.startsWith(dirResolved)) {
+    res.writeHead(403); res.end('Forbidden'); return;
+  }
   fs.readFile(filePath, (err, data) => {
     if (err) { res.writeHead(404); res.end('Not found'); return; }
     const ext = path.extname(filePath);
