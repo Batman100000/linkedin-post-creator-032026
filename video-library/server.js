@@ -210,6 +210,66 @@ http.createServer(async (req, res) => {
     } catch(e) { return json(res, { error: e.message }, 500); }
   }
 
+  // ── /api/operations-report ────────────────────────────
+  if (route === '/api/operations-report') {
+    try {
+      const MUSIC_KW  = /mp3|music|billboard|songs|chart|acoustic|party|flac|album|rock/i;
+      const SERIES_KW = /\bS\d{2}\b|season\s*\d|complete/i;
+
+      const items = fs.readdirSync(WATCH_FOLDER, { withFileTypes: true })
+        .filter(d => d.isDirectory() && !/^\.|desktop\.ini|thumbs\.db/i.test(d.name))
+        .map(d => {
+          const fullPath = path.join(WATCH_FOLDER, d.name);
+          const stat = fs.statSync(fullPath);
+
+          // Count video files recursively
+          function countVideos(dir) {
+            let count = 0;
+            try {
+              fs.readdirSync(dir, { withFileTypes: true }).forEach(entry => {
+                if (entry.isFile() && VIDEO_EXT.has(path.extname(entry.name).toLowerCase())) {
+                  count++;
+                } else if (entry.isDirectory()) {
+                  count += countVideos(path.join(dir, entry.name));
+                }
+              });
+            } catch(_) {}
+            return count;
+          }
+
+          const videoCount = countVideos(fullPath);
+          const isMusic = MUSIC_KW.test(d.name);
+          const isSeries = SERIES_KW.test(d.name);
+          const hasPoster = fs.existsSync(path.join(POSTERS_DIR, d.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.jpg'));
+
+          return {
+            name: d.name,
+            videoCount: videoCount,
+            isMusic: isMusic,
+            isSeries: isSeries,
+            hasPoster: hasPoster,
+            shouldDisplay: !isMusic && videoCount > 0,
+            mtime: stat.mtimeMs
+          };
+        })
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      const report = {
+        totalFolders: items.length,
+        totalVideos: items.reduce((s, i) => s + i.videoCount, 0),
+        musicFolders: items.filter(i => i.isMusic).length,
+        videoFolders: items.filter(i => !i.isMusic).length,
+        seriesFolders: items.filter(i => !i.isMusic && i.isSeries).length,
+        movieFolders: items.filter(i => !i.isMusic && !i.isSeries).length,
+        emptyFolders: items.filter(i => i.videoCount === 0).length,
+        postersFound: items.filter(i => i.hasPoster).length,
+        items: items
+      };
+
+      return json(res, report);
+    } catch(e) { return json(res, { error: e.message }, 500); }
+  }
+
   // ── /api/count-videos ─────────────────────────────────
   if (route === '/api/count-videos') {
     try {

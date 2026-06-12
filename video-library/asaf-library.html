@@ -351,6 +351,10 @@ footer {
     </div>
   </div>
   <div class="header-right">
+    <button class="hbtn" onclick="openOperationsCenter()" title="View detailed folder report">
+      <svg width="13" height="13" fill="currentColor" viewBox="0 0 16 16"><path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/><path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/></svg>
+      Operations
+    </button>
     <div id="stats-display" style="font-size:11px;color:#888;padding:0 12px;border-right:1px solid rgba(255,255,255,0.1)">
       📊 Loading...
     </div>
@@ -1180,6 +1184,52 @@ function applyPosterToCard(uid, posterUrl, title) {
   if (noPost) noPost.style.display = 'none';
 }
 
+// ── Operations Center ──────────────────────────────────
+async function openOperationsCenter() {
+  const modal = document.getElementById('ops-modal');
+  const tbody = document.getElementById('ops-tbody');
+  const summaryDiv = document.getElementById('ops-summary');
+
+  tbody.innerHTML = '<tr><td colspan="8">Loading...</td></tr>';
+
+  try {
+    const res = await fetch('http://localhost:8001/api/operations-report');
+    const data = await res.json();
+
+    // Summary
+    summaryDiv.innerHTML = `
+      📊 <strong>Total:</strong> ${data.totalVideos} videos ·
+      ${data.videoFolders} folders ·
+      ${data.seriesFolders} series ·
+      ${data.movieFolders} movies ·
+      ${data.emptyFolders} empty ·
+      ${data.postersFound}/${data.videoFolders} posters
+    `;
+
+    // Build table
+    tbody.innerHTML = data.items.map((item, idx) => `
+      <tr style="background:${!item.shouldDisplay ? 'rgba(255,100,100,0.1)' : 'transparent'}">
+        <td>${idx + 1}</td>
+        <td>${item.name}</td>
+        <td style="text-align:center">${item.videoCount}</td>
+        <td style="text-align:center">${item.isMusic ? '🎵 Music' : item.isSeries ? '📺 Series' : '🎬 Movie'}</td>
+        <td style="text-align:center">${item.videoCount === 0 ? '❌ Empty' : '✓'}</td>
+        <td style="text-align:center">${item.hasPoster ? '✓' : '❌'}</td>
+        <td style="text-align:center">${item.shouldDisplay ? '✓ YES' : '❌ NO'}</td>
+        <td style="font-size:10px;color:#666">${item.isMusic ? 'Music folder' : item.videoCount === 0 ? 'No videos' : '—'}</td>
+      </tr>
+    `).join('');
+
+    modal.style.display = 'flex';
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="8">❌ Error: ${e.message}</td></tr>`;
+  }
+}
+
+function closeOpsModal() {
+  document.getElementById('ops-modal').style.display = 'none';
+}
+
 applyState();
 injectTypeBadges();
 injectPlayButtons();
@@ -1188,5 +1238,34 @@ initCardClicks();
 initPosters();
 updateStatsDisplay();
 </script>
+
+<!-- OPERATIONS CENTER MODAL -->
+<div id="ops-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:1000;flex-direction:column;padding:20px;overflow-y:auto">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <h2 style="margin:0;color:#fff">🔧 Operations Center</h2>
+    <button style="background:#e50914;border:none;color:white;padding:8px 16px;border-radius:4px;cursor:pointer;font-weight:bold" onclick="closeOpsModal()">✕ Close</button>
+  </div>
+
+  <div id="ops-summary" style="color:#4caf50;font-size:12px;margin-bottom:16px;padding:12px;background:rgba(76,175,80,0.1);border-radius:4px"></div>
+
+  <table style="width:100%;border-collapse:collapse;color:#e5e5e5;font-size:12px">
+    <thead style="background:#1a1a1a;border-bottom:2px solid #e50914">
+      <tr>
+        <th style="padding:10px;text-align:left">#</th>
+        <th style="padding:10px;text-align:left">Folder Name</th>
+        <th style="padding:10px;text-align:center">Videos</th>
+        <th style="padding:10px;text-align:center">Type</th>
+        <th style="padding:10px;text-align:center">Valid</th>
+        <th style="padding:10px;text-align:center">Poster</th>
+        <th style="padding:10px;text-align:center">Shown</th>
+        <th style="padding:10px;text-align:left">Note</th>
+      </tr>
+    </thead>
+    <tbody id="ops-tbody">
+      <tr><td colspan="8">Loading...</td></tr>
+    </tbody>
+  </table>
+</div>
+
 </body>
 </html>
