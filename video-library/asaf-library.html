@@ -7,761 +7,548 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  background: #141414;
+  background: #0a0a0a;
   color: #e5e5e5;
   font-family: 'Segoe UI', Arial, sans-serif;
   min-height: 100vh;
 }
 
-/* ── HEADER ── */
 .header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 18px 40px;
   background: linear-gradient(to bottom, #000 0%, transparent 100%);
   position: sticky; top: 0; z-index: 100;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
   border-bottom: 1px solid rgba(255,255,255,0.05);
 }
-.header-left { display: flex; align-items: center; gap: 14px; }
 .header-title { font-size: 28px; font-weight: 900; color: #e50914; letter-spacing: -0.5px; }
 .header-sub { font-size: 11px; color: #555; margin-top: 2px; }
-.header-right { display: flex; gap: 8px; align-items: center; }
+.header-right { display: flex; gap: 10px; align-items: center; }
+
+.stats-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; padding: 6px 12px; border-radius: 20px;
+  background: rgba(76,175,80,0.15); color: #4caf50;
+  border: 1px solid rgba(76,175,80,0.3);
+  font-weight: 600;
+}
+.stats-pill.warning { background: rgba(255,107,107,0.15); color: #ff6b6b; border-color: rgba(255,107,107,0.3); }
+
 .hbtn {
   display: inline-flex; align-items: center; gap: 6px;
   background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
-  color: #ccc; font-size: 12px; border-radius: 6px; padding: 7px 14px;
+  color: #ddd; font-size: 12px; border-radius: 6px; padding: 7px 14px;
   cursor: pointer; transition: all 0.15s; font-family: inherit; white-space: nowrap;
+  font-weight: 500;
 }
 .hbtn:hover { background: rgba(255,255,255,0.2); color: #fff; }
-.hbtn.active { color: #4caf50; border-color: #4caf50; }
+.hbtn:disabled { opacity: 0.5; cursor: not-allowed; }
 .hbtn-refresh {
-  background: rgba(229,9,20,0.15); border-color: rgba(229,9,20,0.4); color: #ff6b6b;
+  background: rgba(229,9,20,0.2); border-color: rgba(229,9,20,0.4); color: #ff8a8a;
 }
-.hbtn-refresh:hover { background: rgba(229,9,20,0.3); color: #fff; }
+.hbtn-refresh:hover { background: rgba(229,9,20,0.35); color: #fff; }
 .hbtn.syncing svg { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── SEARCH ── */
-.search-bar { padding: 16px 40px 0; }
+.search-bar { padding: 16px 40px; }
 .search-inner {
   display: flex; align-items: center; gap: 10px;
-  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 8px; padding: 9px 16px; max-width: 380px;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px; padding: 10px 16px; max-width: 480px;
 }
 .search-inner input {
-  background: none; border: none; outline: none;
-  color: #fff; font-size: 13px; width: 100%; font-family: inherit;
+  background: none; border: none; outline: none; color: #fff; font-size: 13px;
+  flex: 1; font-family: inherit;
 }
-.search-inner input::placeholder { color: #666; }
 
-/* ── SECTION ── */
-.section { padding: 32px 40px 8px; }
+.section { padding: 8px 40px 40px; }
 .section-title {
-  font-size: 20px; font-weight: 800; color: #fff;
-  margin-bottom: 18px; display: flex; align-items: center; gap: 10px;
+  font-size: 22px; font-weight: 800; color: #fff;
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 16px;
 }
 .section-count {
-  font-size: 12px; color: #888; background: rgba(255,255,255,0.08);
-  border-radius: 10px; padding: 2px 10px; font-weight: 400;
+  font-size: 12px; background: rgba(255,255,255,0.1); padding: 3px 10px;
+  border-radius: 12px; color: #aaa; font-weight: 600;
 }
 
-/* ── CARD GRID ── */
-.card-grid {
+.grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 12px;
-}
-.music-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
 }
 
-/* ── CARD ── */
 .card {
   position: relative;
-  border-radius: 8px;
-  overflow: visible;
-  cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, z-index 0s 0.25s;
-  background: #1f1f1f;
   aspect-ratio: 2/3;
+  border-radius: 8px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
-.card-poster { border-radius: 8px; overflow: hidden; }
 .card:hover {
-  transform: scale(1.08);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-  z-index: 10;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgba(229,9,20,0.3);
+  z-index: 5;
 }
-.card.watched { opacity: 0.45; }
-.card.watched:hover { opacity: 1; }
-.card.hidden-card { display: none !important; }
-.card.search-hidden { display: none !important; }
-body.hide-watched .card.watched { display: none !important; }
 
-/* poster */
 .card-poster {
   width: 100%; height: 100%;
-  background: #1f1f1f;
   position: relative;
+  display: flex; align-items: center; justify-content: center;
 }
 .card-poster img {
+  width: 100%; height: 100%; object-fit: cover;
+  opacity: 0; transition: opacity 0.3s;
+}
+.card-poster img.loaded { opacity: 1; }
+
+.card-no-poster {
+  font-size: 13px; padding: 16px; text-align: center; color: #ccc;
+  font-weight: 700; line-height: 1.3;
+  background: linear-gradient(135deg, #2a1a1a, #1a0a0a);
   width: 100%; height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: opacity 0.3s;
+  display: flex; align-items: center; justify-content: center;
 }
 
-/* watched ribbon */
-.card.watched::before {
-  content: '✓ WATCHED';
-  position: absolute; top: 10px; left: -22px;
-  background: #4caf50; color: #fff;
-  font-size: 9px; font-weight: 800; letter-spacing: 1px;
-  padding: 3px 28px; transform: rotate(-35deg);
-  z-index: 5; pointer-events: none;
-}
-
-/* ── OVERLAY ── */
 .card-overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.1) 100%);
-  display: flex; flex-direction: column; justify-content: flex-end;
-  padding: 12px;
-  opacity: 0; transition: opacity 0.25s ease;
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+  padding: 14px 12px 12px;
+  opacity: 0; transition: opacity 0.2s;
+  transform: translateY(8px);
 }
-.card:hover .card-overlay { opacity: 1; }
+.card:hover .card-overlay { opacity: 1; transform: translateY(0); }
 
 .card-title {
-  font-size: 13px; font-weight: 800; color: #fff;
-  margin-bottom: 4px; line-height: 1.2;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  font-size: 13px; font-weight: 700; color: #fff;
+  margin-bottom: 6px; line-height: 1.2;
 }
-.card-meta { font-size: 10px; color: #aaa; margin-bottom: 6px; }
+.card-meta { font-size: 11px; color: #aaa; margin-bottom: 8px; }
 
-.genre-chips { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; }
-.genre-chip {
-  font-size: 9px; color: #bbb; background: rgba(255,255,255,0.12);
-  border-radius: 3px; padding: 2px 6px; white-space: nowrap;
-}
-
-.imdb-badge {
-  display: inline-flex; align-items: center; gap: 3px;
-  background: #f5c518; color: #000;
-  font-size: 10px; font-weight: 900; border-radius: 4px;
-  padding: 3px 7px; margin-bottom: 8px; width: fit-content;
-}
-
-/* card action buttons */
-.card-actions { display: flex; gap: 5px; flex-wrap: wrap; }
+.card-actions { display: flex; flex-wrap: wrap; gap: 4px; }
 .cabtn {
-  font-size: 10px; border-radius: 4px; padding: 4px 8px;
-  cursor: pointer; border: none; font-family: inherit;
-  transition: all 0.13s; display: inline-flex; align-items: center; gap: 3px;
+  font-size: 10px; padding: 4px 8px; border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5);
+  color: #fff; cursor: pointer; font-family: inherit; font-weight: 600;
+  transition: all 0.15s;
 }
-.cabtn-open  { background: #fff; color: #000; font-weight: 700; }
-.cabtn-open:hover  { background: #e5e5e5; }
-.cabtn-saw   { background: rgba(76,175,80,0.25); color: #90ee90; border: 1px solid rgba(76,175,80,0.4); }
-.cabtn-saw:hover   { background: rgba(76,175,80,0.4); }
-.card.watched .cabtn-saw { background: rgba(200,60,60,0.25); color: #ff8888; border-color: rgba(200,60,60,0.4); }
-.cabtn-remove { background: rgba(255,255,255,0.08); color: #aaa; border: 1px solid rgba(255,255,255,0.15); }
-.cabtn-remove:hover { background: rgba(255,255,255,0.15); color: #fff; }
+.cabtn:hover { background: rgba(255,255,255,0.2); }
+.cabtn-play { background: rgba(229,9,20,0.8); border-color: #e50914; }
+.cabtn-play:hover { background: #e50914; }
 
-/* title below card (always visible) */
-.card-label {
-  padding: 7px 2px 2px;
-  font-size: 12px; font-weight: 700; color: #ccc;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+.card-type {
+  position: absolute; top: 8px; left: 8px;
+  background: rgba(0,0,0,0.8); color: #fff;
+  font-size: 10px; padding: 3px 7px; border-radius: 3px;
+  z-index: 2; font-weight: 700;
 }
-.card-year { font-size: 10px; color: #666; margin-top: 2px; }
+.card-empty-badge {
+  position: absolute; top: 8px; right: 8px;
+  background: rgba(255,165,0,0.9); color: #000;
+  font-size: 9px; padding: 3px 6px; border-radius: 3px;
+  z-index: 2; font-weight: 700;
+}
 
-/* ── MUSIC CARD ── */
-.music-card {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 10px; padding: 18px;
-  display: flex; align-items: center; gap: 14px;
-  cursor: pointer; transition: all 0.2s;
-  position: relative;
+.toast {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+  background: rgba(20,20,20,0.95); color: #fff;
+  padding: 14px 24px; border-radius: 8px;
+  font-size: 13px; z-index: 1000;
+  border: 1px solid rgba(255,255,255,0.15);
+  opacity: 0; transition: opacity 0.3s; pointer-events: none;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
 }
-.music-card:hover { background: linear-gradient(135deg, #1e1e3a 0%, #1a2547 100%); border-color: rgba(255,255,255,0.18); transform: translateY(-2px); }
-.music-card.hidden-card { display: none !important; }
-.music-card.search-hidden { display: none !important; }
-.music-icon { font-size: 32px; flex-shrink: 0; }
-.music-info { flex: 1; overflow: hidden; }
-.music-title { font-size: 13px; font-weight: 700; color: #fff; }
-.music-sub { font-size: 11px; color: #666; margin-top: 3px; }
-.music-actions { display: flex; gap: 5px; margin-top: 8px; }
+.toast.show { opacity: 1; }
 
-/* ── TOAST ── */
-#toast {
-  position: fixed; bottom: 26px; left: 50%;
-  transform: translateX(-50%) translateY(50px);
-  background: #1a1a1a; color: #fff; font-size: 13px;
-  padding: 10px 24px; border-radius: 8px; opacity: 0;
-  transition: all 0.25s; pointer-events: none; z-index: 9999;
-  border-left: 3px solid #e50914; box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+.progress-wrap {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 3px; background: rgba(255,255,255,0.05);
+  z-index: 200; opacity: 0; transition: opacity 0.3s;
 }
-#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.progress-wrap.show { opacity: 1; }
+.progress-bar {
+  height: 100%; background: linear-gradient(to right, #e50914, #ff6b6b);
+  width: 0%; transition: width 0.4s;
+}
 
-footer {
-  margin: 20px 40px 30px;
-  color: #333; font-size: 11px;
-  padding-top: 16px; border-top: 1px solid #1e1e1e;
+.modal {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.92); z-index: 500;
+  overflow-y: auto; padding: 30px;
 }
+.modal.show { display: block; }
+.modal-content {
+  background: #1a1a1a; max-width: 1300px; margin: 0 auto;
+  border-radius: 12px; padding: 24px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 20px;
+}
+.modal-title { font-size: 22px; font-weight: 800; color: #fff; }
+.modal-close {
+  background: #e50914; border: none; color: #fff;
+  padding: 8px 16px; border-radius: 6px; cursor: pointer;
+  font-weight: 600; font-size: 12px;
+}
+
+.ops-summary {
+  background: rgba(76,175,80,0.1); padding: 14px 18px;
+  border-radius: 8px; margin-bottom: 20px;
+  border: 1px solid rgba(76,175,80,0.3);
+  display: flex; gap: 24px; flex-wrap: wrap;
+}
+.ops-stat { display: flex; flex-direction: column; gap: 2px; }
+.ops-stat-label { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; }
+.ops-stat-value { font-size: 18px; font-weight: 800; color: #4caf50; }
+
+.ops-table {
+  width: 100%; border-collapse: collapse; font-size: 12px; color: #ddd;
+}
+.ops-table th {
+  background: #0a0a0a; padding: 12px 10px; text-align: left;
+  border-bottom: 2px solid #e50914; font-weight: 700; color: #fff;
+}
+.ops-table td {
+  padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.ops-table tr:hover { background: rgba(255,255,255,0.03); }
+.ops-table tr.row-empty { background: rgba(255,165,0,0.08); }
+.ops-table tr.row-music { background: rgba(150,150,150,0.05); color: #888; }
+.ops-row-status { font-weight: 700; text-align: center; }
+.ops-status-yes { color: #4caf50; }
+.ops-status-no { color: #ff6b6b; }
+
+.empty-state { text-align: center; padding: 60px 20px; color: #555; font-size: 14px; }
 </style>
 </head>
-<body class="hide-watched">
+<body>
 
-<!-- HEADER -->
+<div class="progress-wrap" id="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+
 <div class="header">
-  <div class="header-left">
-    <div>
-      <div class="header-title">ASAF'S LIBRARY</div>
-      <div class="header-sub">C:\Users\asafa\FinishDownloads</div>
-    </div>
+  <div>
+    <div class="header-title">ASAF'S LIBRARY</div>
+    <div class="header-sub">C:\Users\asafa\FinishDownloads</div>
   </div>
   <div class="header-right">
-    <button class="hbtn" id="toggleWatchedBtn" onclick="toggleHideWatched()">
-      <svg width="13" height="13" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/></svg>
-      Show Watched
-    </button>
-    <button class="hbtn hbtn-refresh" id="refreshFolderBtn" onclick="refreshFolder()">
-      <svg width="13" height="13" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/></svg>
-      REFRESH BASED ON FOLDER
+    <div id="stats-display" class="stats-pill">📊 Loading...</div>
+    <button class="hbtn" onclick="openOperationsCenter()">⚙️ Operations</button>
+    <button class="hbtn hbtn-refresh" id="refreshBtn" onclick="refreshLibrary()">
+      <svg width="13" height="13" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+      </svg>
+      REFRESH
     </button>
   </div>
 </div>
 
-<!-- SEARCH -->
 <div class="search-bar">
   <div class="search-inner">
-    <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/></svg>
-    <input type="text" id="searchInput" placeholder="Search movies, series, music…" oninput="doSearch(this.value)">
+    <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+    </svg>
+    <input type="text" id="searchInput" placeholder="Search movies & series…" oninput="filterCards(this.value)">
   </div>
 </div>
 
-<!-- ═══ SERIES ═══ -->
 <div class="section">
-  <div class="section-title">📺 Series <span class="section-count" id="count-series">1</span></div>
-  <div class="card-grid" id="grid-series">
-
-    <div class="card" data-id="s0" data-path="C:\Users\asafa\FinishDownloads\Spider-Noir.S01.1080p.WEBRip.10Bit.DDP5.1.x265-NeoNoir" data-search="spider-noir 2024 action animation crime">
-      <div class="card-poster">
-        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/iiIzxf4FPOhH8T7avb0DCMYVwDQ.jpg" alt="Spider-Noir">
-        <div class="card-overlay">
-          <div class="card-title">Spider-Noir</div>
-          <div class="card-meta">2024 · S01 · Amazon Prime</div>
-          <div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Animation</span><span class="genre-chip">Crime</span></div>
-          <div class="imdb-badge">★ 7.8</div>
-          <div class="card-actions">
-            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
-            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
-            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
+  <div class="section-title">📺 Series <span class="section-count" id="count-series">0</span></div>
+  <div class="grid" id="grid-series"></div>
+  <div class="empty-state" id="empty-series" style="display:none">No series yet</div>
 </div>
 
-<!-- ═══ MOVIES ═══ -->
 <div class="section">
-  <div class="section-title">🎬 Movies <span class="section-count" id="count-movies">13</span></div>
-  <div class="card-grid" id="grid-movies">
+  <div class="section-title">🎬 Movies <span class="section-count" id="count-movies">0</span></div>
+  <div class="grid" id="grid-movies"></div>
+  <div class="empty-state" id="empty-movies" style="display:none">No movies yet</div>
+</div>
 
-    <div class="card" data-id="m0" data-path="C:\Users\asafa\FinishDownloads\We.Live.in.Time.2024.1080p.AMZN.WEBRip.1400MB.DD5.1.x264-GalaxyRG[TGx]" data-search="we live in time 2024 drama romance">
-      <div class="card-poster">
-        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/82cCNsGo41sA8hkyvYnPTQxdSkb.jpg" alt="We Live in Time">
-        <div class="card-overlay">
-          <div class="card-title">We Live in Time</div>
-          <div class="card-meta">2024 · 107 min</div>
-          <div class="genre-chips"><span class="genre-chip">Drama</span><span class="genre-chip">Romance</span></div>
-          <div class="imdb-badge">★ 7.4</div>
-          <div class="card-actions">
-            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
-            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
-            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-          </div>
-        </div>
-      </div>
+<div class="modal" id="ops-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">⚙️ Operations Center</div>
+      <button class="modal-close" onclick="closeOpsModal()">✕ Close</button>
     </div>
-
-    <div class="card" data-id="m1" data-path="C:\Users\asafa\FinishDownloads\Ghosted.2023.1080p.WEBRip.1400MB.DD5.1.x264-GalaxyRG[TGx]" data-search="ghosted 2023 action adventure comedy">
-      <div class="card-poster">
-        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/iSZxxbWA01HIEdZUz3vkS9vJXIr.jpg" alt="Ghosted">
-        <div class="card-overlay">
-          <div class="card-title">Ghosted</div>
-          <div class="card-meta">2023 · 116 min</div>
-          <div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Adventure</span><span class="genre-chip">Comedy</span></div>
-          <div class="imdb-badge">★ 5.5</div>
-          <div class="card-actions">
-            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
-            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
-            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="m2" data-path="C:\Users\asafa\FinishDownloads\[www.Torrenting.com] - It Ends With Us (2024) 1080p WEBRip 5.1-LAMA" data-search="it ends with us 2024 drama romance">
-      <div class="card-poster">
-        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/3KQ686Isg0CkfIXo1whjSPjfjB0.jpg" alt="It Ends with Us">
-        <div class="card-overlay">
-          <div class="card-title">It Ends with Us</div>
-          <div class="card-meta">2024 · 130 min</div>
-          <div class="genre-chips"><span class="genre-chip">Drama</span><span class="genre-chip">Romance</span></div>
-          <div class="imdb-badge">★ 6.2</div>
-          <div class="card-actions">
-            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
-            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
-            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="m3" data-path="C:\Users\asafa\FinishDownloads\Wolfs.2024.1080p.ATVP.WEBRip.1400MB.DD5.1.x264-GalaxyRG[TGx]" data-search="wolfs 2024 action comedy crime">
-      <div class="card-poster">
-        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/vOX1Zng472PC2KnS0B9nRfM8aaZ.jpg" alt="Wolfs">
-        <div class="card-overlay">
-          <div class="card-title">Wolfs</div>
-          <div class="card-meta">2024 · 95 min</div>
-          <div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Comedy</span><span class="genre-chip">Crime</span></div>
-          <div class="imdb-badge">★ 6.3</div>
-          <div class="card-actions">
-            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
-            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
-            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="m4" data-path="C:\Users\asafa\FinishDownloads\The Killers Game (2024) [720p] [WEBRip] [YTS.MX]" data-search="the killers game 2024 action comedy">
-      <div class="card-poster">
-        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/scPJaGU6HTYgrj5DeUiUFKuhX5p.jpg" alt="The Killer's Game">
-        <div class="card-overlay">
-          <div class="card-title">The Killer's Game</div>
-          <div class="card-meta">2024 · 103 min</div>
-          <div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Comedy</span></div>
-          <div class="imdb-badge">★ 5.8</div>
-          <div class="card-actions">
-            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
-            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
-            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="m5" data-path="C:\Users\asafa\FinishDownloads\The.Instigators.2024.1080p.WEBRip.1400MB.DD5.1.x264-GalaxyRG[TGx]" data-search="the instigators 2024 action comedy crime">
-      <div class="card-poster">
-        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/dnYWsIFDmygCjNg65rY3uBymx81.jpg" alt="The Instigators">
-        <div class="card-overlay">
-          <div class="card-title">The Instigators</div>
-          <div class="card-meta">2024 · 100 min</div>
-          <div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Comedy</span><span class="genre-chip">Crime</span></div>
-          <div class="imdb-badge">★ 6.1</div>
-          <div class="card-actions">
-            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
-            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
-            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="m6" data-path="C:\Users\asafa\FinishDownloads\Normal.2025.1080p.WEBRip.10Bit.DDP.5.1.x265-NeoNoir.mkv" data-search="normal 2025 drama thriller">
-      <div class="card-poster">
-        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/koqvUHndq9ORZPJnJr5AOejHICm.jpg" alt="Normal">
-        <div class="card-overlay">
-          <div class="card-title">Normal</div>
-          <div class="card-meta">2025 · 98 min</div>
-          <div class="genre-chips"><span class="genre-chip">Drama</span><span class="genre-chip">Thriller</span></div>
-          <div class="imdb-badge">★ 6.8</div>
-          <div class="card-actions">
-            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
-            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
-            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="m7" data-path="C:\Users\asafa\FinishDownloads\Master Of The Universe 2026 1080p WEB-DL HEVC x265 5.1 BONE.mkv" data-search="masters of the universe 2026 action adventure fantasy">
-      <div class="card-poster">
-        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/5Et1L8ysbZ15B9JfDsoicn4ROnq.jpg" alt="Masters of the Universe">
-        <div class="card-overlay">
-          <div class="card-title">Masters of the Universe</div>
-          <div class="card-meta">2026</div>
-          <div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Adventure</span><span class="genre-chip">Fantasy</span></div>
-          <div class="card-actions">
-            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
-            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
-            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="m8" data-path="C:\Users\asafa\FinishDownloads\The.Housemaid.2025.1080p.WEBRip.AAC5.1.10bits.x265-Rapta.mkv" data-search="the housemaid 2025 drama thriller">
-      <div class="card-poster">
-        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/ktjBpYrLlP18f5rsf2rTOO0aG40.jpg" alt="The Housemaid">
-        <div class="card-overlay">
-          <div class="card-title">The Housemaid</div>
-          <div class="card-meta">2025 · 118 min</div>
-          <div class="genre-chips"><span class="genre-chip">Drama</span><span class="genre-chip">Thriller</span></div>
-          <div class="imdb-badge">★ 6.4</div>
-          <div class="card-actions">
-            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
-            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
-            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="m9" data-path="C:\Users\asafa\FinishDownloads\Nuremberg 2025 1080p HDRip HC HEVC x265 5.1 BONE.mkv" data-search="nuremberg 2025 biography drama history war">
-      <div class="card-poster">
-        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/htKaQHnevZTnHUMlUmbt0mUNPVD.jpg" alt="Nuremberg">
-        <div class="card-overlay">
-          <div class="card-title">Nuremberg</div>
-          <div class="card-meta">2025 · 148 min</div>
-          <div class="genre-chips"><span class="genre-chip">Biography</span><span class="genre-chip">History</span><span class="genre-chip">War</span></div>
-          <div class="imdb-badge">★ 7.4</div>
-          <div class="card-actions">
-            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
-            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
-            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="m10" data-path="C:\Users\asafa\FinishDownloads\Marty Supreme (2025) [1080p] [WEBRip] [5.1] [YTS.BZ]" data-search="marty supreme 2025 biography drama sport timothee chalamet">
-      <div class="card-poster">
-        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/w6pnewEfz05jxUxUeYjs3tbHIq4.jpg" alt="Marty Supreme">
-        <div class="card-overlay">
-          <div class="card-title">Marty Supreme</div>
-          <div class="card-meta">2025 · Timothée Chalamet</div>
-          <div class="genre-chips"><span class="genre-chip">Drama</span><span class="genre-chip">Sport</span></div>
-          <div class="imdb-badge">★ 7.8</div>
-          <div class="card-actions">
-            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
-            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
-            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="m11" data-path="C:\Users\asafa\FinishDownloads\[www.UIndex.org]    -    Ballerina 2025 1080p AMZN WEB-DL DDP5 1 Atmos H 264-BYNDR" data-search="ballerina 2025 action crime thriller john wick">
-      <div class="card-poster">
-        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/zpRpjzIYDtzX5sQ1oG2Et7jva1e.jpg" alt="Ballerina">
-        <div class="card-overlay">
-          <div class="card-title">Ballerina</div>
-          <div class="card-meta">2025 · 120 min · John Wick Universe</div>
-          <div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Crime</span><span class="genre-chip">Thriller</span></div>
-          <div class="imdb-badge">★ 7.0</div>
-          <div class="card-actions">
-            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
-            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
-            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" data-id="m12" data-path="C:\Users\asafa\FinishDownloads\The Order (2024) [1080p] [WEBRip] [5.1] [YTS.MX]" data-search="the order 2024 crime drama thriller jude law">
-      <div class="card-poster">
-        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/4YHzTTTeD0V3EiylKKOtedZBxj8.jpg" alt="The Order">
-        <div class="card-overlay">
-          <div class="card-title">The Order</div>
-          <div class="card-meta">2024 · 116 min · Jude Law</div>
-          <div class="genre-chips"><span class="genre-chip">Crime</span><span class="genre-chip">Drama</span><span class="genre-chip">Thriller</span></div>
-          <div class="imdb-badge">★ 6.6</div>
-          <div class="card-actions">
-            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
-            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
-            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
+    <div id="ops-content"></div>
   </div>
 </div>
 
-<!-- ═══ MUSIC ═══ -->
-<div class="section">
-  <div class="section-title">🎵 Music <span class="section-count" id="count-music">5</span></div>
-  <div class="music-grid" id="grid-music">
-
-    <div class="music-card" data-id="mu0" data-path="C:\Users\asafa\FinishDownloads\Billboard Hot 100 Singles Chart (03-August-2024) Mp3 320kbps [PMEDIA] ⭐️" data-search="billboard hot 100 2024 chart">
-      <div class="music-icon">🎵</div>
-      <div class="music-info">
-        <div class="music-title">Billboard Hot 100</div>
-        <div class="music-sub">August 2024 · MP3 320kbps</div>
-        <div class="music-actions">
-          <button class="cabtn cabtn-open" onclick="openCard(this)">📁 Open</button>
-          <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="music-card" data-id="mu1" data-path="C:\Users\asafa\FinishDownloads\Various Artists - 100 Greatest Party Songs (2022) Mp3 320kbps [PMEDIA] ⭐️" data-search="100 greatest party songs 2022 various">
-      <div class="music-icon">🎉</div>
-      <div class="music-info">
-        <div class="music-title">100 Greatest Party Songs</div>
-        <div class="music-sub">2022 · Various Artists · MP3 320kbps</div>
-        <div class="music-actions">
-          <button class="cabtn cabtn-open" onclick="openCard(this)">📁 Open</button>
-          <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="music-card" data-id="mu2" data-path="C:\Users\asafa\FinishDownloads\MP3 NEW RELEASES 2025 WEEK 29 - [GloDLS]" data-search="new releases 2025 week 29 mp3">
-      <div class="music-icon">🆕</div>
-      <div class="music-info">
-        <div class="music-title">MP3 New Releases 2025</div>
-        <div class="music-sub">Week 29 · 2025</div>
-        <div class="music-actions">
-          <button class="cabtn cabtn-open" onclick="openCard(this)">📁 Open</button>
-          <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="music-card" data-id="mu3" data-path="C:\Users\asafa\FinishDownloads\Various Artists - Top Movie Songs (2025)" data-search="top movie songs 2025 various">
-      <div class="music-icon">🎬</div>
-      <div class="music-info">
-        <div class="music-title">Top Movie Songs</div>
-        <div class="music-sub">2025 · Various Artists</div>
-        <div class="music-actions">
-          <button class="cabtn cabtn-open" onclick="openCard(this)">📁 Open</button>
-          <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="music-card" data-id="mu4" data-path="C:\Users\asafa\FinishDownloads\Various Artists - Soft Acoustic Songs (2025)" data-search="soft acoustic songs 2025 various">
-      <div class="music-icon">🎸</div>
-      <div class="music-info">
-        <div class="music-title">Soft Acoustic Songs</div>
-        <div class="music-sub">2025 · Various Artists</div>
-        <div class="music-actions">
-          <button class="cabtn cabtn-open" onclick="openCard(this)">📁 Open</button>
-          <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<footer>🎬 Asaf's Library · 13 Movies · 1 Series · 5 Music · Posters via TMDB</footer>
-<div id="toast"></div>
+<div class="toast" id="toast"></div>
 
 <script>
-// ── State ──────────────────────────────────────────────
-function getState() {
-  try { const r = JSON.parse(localStorage.getItem('asaflib4') || '{}');
-    return { watched: new Set(r.watched||[]), hidden: new Set(r.hidden||[]) };
-  } catch(e) { return { watched: new Set(), hidden: new Set() }; }
-}
-function saveState(s) {
-  try { localStorage.setItem('asaflib4', JSON.stringify({ watched:[...s.watched], hidden:[...s.hidden] })); } catch(e) {}
-}
+const API = 'https://localhost:8001';
+const SERIES_KW = /\bS\d{2}\b|season\s*\d|complete|S01|S02/i;
 
-// ── Actions ────────────────────────────────────────────
-function openCard(btn) {
-  const card = btn.closest('[data-path]');
-  window.open('file:///' + card.dataset.path.replace(/\\/g,'/'), '_blank');
-}
-
-function toggleWatched(btn) {
-  const card = btn.closest('[data-id]');
-  const id   = card.dataset.id;
-  const now  = card.classList.toggle('watched');
-  btn.textContent = now ? '↩ Unwatch' : '👁 Saw It';
-  const s = getState();
-  now ? s.watched.add(id) : s.watched.delete(id);
-  saveState(s); updateCounts();
-  showToast(now ? 'Marked as watched ✓' : 'Unmarked');
-}
-
-function removeCard(btn) {
-  const card = btn.closest('[data-id]');
-  card.classList.add('hidden-card');
-  const s = getState(); s.hidden.add(card.dataset.id); saveState(s);
-  updateCounts(); showToast('Removed');
-}
-
-let hideWatched = true;
-function toggleHideWatched() {
-  hideWatched = !hideWatched;
-  document.body.classList.toggle('hide-watched', hideWatched);
-  const btn = document.getElementById('toggleWatchedBtn');
-  btn.childNodes.forEach(n => { if(n.nodeType===3) n.textContent = ' ' + (hideWatched ? 'Show Watched' : 'Hide Watched'); });
-  btn.classList.toggle('active', !hideWatched);
-  updateCounts();
-}
-
-// ── Search ─────────────────────────────────────────────
-function doSearch(q) {
-  const term = q.trim().toLowerCase();
-  document.querySelectorAll('[data-search]').forEach(card => {
-    const match = !term || card.dataset.search.includes(term) ||
-      (card.querySelector('.card-title, .music-title')?.textContent.toLowerCase().includes(term));
-    card.classList.toggle('search-hidden', !match);
-  });
-  updateCounts();
-}
-
-// ── Counts ─────────────────────────────────────────────
-function updateCounts() {
-  [['grid-series','count-series'],['grid-movies','count-movies'],['grid-music','count-music']].forEach(([grid,badge]) => {
-    const g = document.getElementById(grid);
-    const b = document.getElementById(badge);
-    if (!g||!b) return;
-    b.textContent = [...g.querySelectorAll('[data-id]')].filter(c =>
-      !c.classList.contains('hidden-card') &&
-      !c.classList.contains('search-hidden') &&
-      !(hideWatched && c.classList.contains('watched'))
-    ).length;
-  });
-}
-
-// ── Toast ──────────────────────────────────────────────
-let _tt;
-function showToast(msg) {
+function showToast(msg, ms=2500) {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(_tt); _tt = setTimeout(() => t.classList.remove('show'), 2200);
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(() => t.classList.remove('show'), ms);
+}
+function setProgress(pct) {
+  const wrap = document.getElementById('progress-wrap');
+  wrap.classList.add('show');
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+function clearProgress() {
+  document.getElementById('progress-bar').style.width = '100%';
+  setTimeout(() => {
+    document.getElementById('progress-wrap').classList.remove('show');
+    document.getElementById('progress-bar').style.width = '0%';
+  }, 400);
 }
 
-// ── Refresh Folder (File System Access API) ────────────
-let _folderHandle = null;
+function cleanTitle(name) {
+  return name
+    .replace(/www\.[^\s-]+\s*-?\s*/gi, '')
+    .replace(/\.\d{4}\..*$/, '')
+    .replace(/\[\d{4}p\].*$/i, '')
+    .replace(/\b(WEBRip|BluRay|HDTV|x264|x265|REPACK|HEVC|DDP|Atmos|YTS\.\w+|GalaxyRG|GalaxyTV|TGx|PMZ|PMEDIA|LAMA|BYNDR|HIndi|TsS|GloDLS).*/gi, '')
+    .replace(/[._\[\]\(\)]/g, ' ')
+    .replace(/\b(1080p|720p|480p|2160p|HDR|DV)\b/gi, '')
+    .replace(/\s+/g, ' ').trim();
+}
+function getYear(name) {
+  const m = name.match(/\b(19|20)\d{2}\b/);
+  return m ? m[0] : '';
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function makeId(name) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = ((h<<5)-h) + name.charCodeAt(i) | 0;
+  return 'item-' + Math.abs(h);
+}
 
-async function getOrPickFolder() {
-  if (_folderHandle) {
-    const perm = await _folderHandle.queryPermission({ mode:'read' });
-    if (perm === 'granted') return _folderHandle;
-    if (await _folderHandle.requestPermission({ mode:'read' }) === 'granted') return _folderHandle;
-  }
+function buildCard(item) {
+  const title = cleanTitle(item.name);
+  const year  = getYear(item.name);
+  const itemPath = item.path || item.name;
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.id = makeId(item.name);
+  card.dataset.path = itemPath;
+  card.dataset.title = title;
+  card.dataset.year = year;
+  card.dataset.search = (title + ' ' + item.name).toLowerCase();
+
+  const isEmpty = item.videoCount === 0;
+  const typeBadge = item.isSeries ? '📺' : '🎬';
+
+  card.innerHTML = `
+    <div class="card-type">${typeBadge}</div>
+    ${isEmpty ? '<div class="card-empty-badge">EMPTY</div>' : ''}
+    <div class="card-poster">
+      <div class="card-no-poster">${escapeHtml(title)}</div>
+    </div>
+    <div class="card-overlay">
+      <div class="card-title">${escapeHtml(title)}</div>
+      <div class="card-meta">${year || 'Unknown'} ${isEmpty ? '· No videos yet' : '· ' + item.videoCount + ' video' + (item.videoCount > 1 ? 's' : '')}</div>
+      <div class="card-actions">
+        ${!isEmpty ? '<button class="cabtn cabtn-play" onclick="event.stopPropagation();playCard(this)">▶ Play</button>' : ''}
+        <button class="cabtn" onclick="event.stopPropagation();openFolder(this)">📁 Open</button>
+        ${!isEmpty ? '<button class="cabtn" onclick="event.stopPropagation();openSubtitles(this)">🔤 Subs</button>' : ''}
+      </div>
+    </div>
+  `;
+  return card;
+}
+
+async function loadLibrary() {
+  setProgress(20);
   try {
-    _folderHandle = await window.showDirectoryPicker({ mode:'read', startIn:'downloads' });
-    return _folderHandle;
-  } catch(e) { return null; }
-}
+    const res = await fetch(API + '/api/operations-report');
+    if (!res.ok) throw new Error('Server returned ' + res.status);
+    const report = await res.json();
+    setProgress(60);
 
-async function refreshFolder() {
-  const btn = document.getElementById('refreshFolderBtn');
-  btn.classList.add('syncing'); btn.disabled = true;
+    const series = document.getElementById('grid-series');
+    const movies = document.getElementById('grid-movies');
+    series.innerHTML = '';
+    movies.innerHTML = '';
 
-  const dir = await getOrPickFolder();
-  if (!dir) {
-    showToast('⚠ לא נבחרה תיקייה');
-    btn.classList.remove('syncing'); btn.disabled = false; return;
+    const visible = report.items.filter(i => !i.isMusic);
+    let seriesCount = 0, moviesCount = 0;
+
+    for (const item of visible) {
+      const card = buildCard(item);
+      if (item.isSeries) { series.appendChild(card); seriesCount++; }
+      else               { movies.appendChild(card); moviesCount++; }
+    }
+
+    document.getElementById('count-series').textContent = seriesCount;
+    document.getElementById('count-movies').textContent = moviesCount;
+    document.getElementById('empty-series').style.display = seriesCount ? 'none' : 'block';
+    document.getElementById('empty-movies').style.display = moviesCount ? 'none' : 'block';
+
+    const pill = document.getElementById('stats-display');
+    pill.textContent = `📊 ${seriesCount}S · ${moviesCount}M · ${report.totalVideos} files`;
+    pill.classList.remove('warning');
+
+    setProgress(80);
+    loadPosters(visible);
+    setProgress(100);
+    clearProgress();
+    return report;
+  } catch(e) {
+    clearProgress();
+    document.getElementById('stats-display').textContent = '❌ Server offline';
+    document.getElementById('stats-display').classList.add('warning');
+    showToast('⚠ Server unreachable. Open ' + API + ' and accept the cert warning, then reload.');
+    throw e;
   }
-
-  const items = [];
-  for await (const [name, handle] of dir.entries()) items.push({ name, isDir: handle.kind==='directory' });
-
-  const folderNames = new Set(items.map(i => i.name.toLowerCase()));
-  let added = 0, removed = 0;
-
-  // Hide cards not in folder; unhide ones that returned
-  document.querySelectorAll('[data-path]').forEach(card => {
-    const base = card.dataset.path.split('\\').pop().split('/').pop().toLowerCase();
-    if (!folderNames.has(base)) { card.classList.add('hidden-card'); removed++; }
-    else card.classList.remove('hidden-card');
-  });
-
-  // Add new items
-  const knownNames = new Set([...document.querySelectorAll('[data-path]')].map(c => c.dataset.path.split('\\').pop().split('/').pop().toLowerCase()));
-  const MUSIC_KW  = /mp3|music|billboard|songs|chart|acoustic|party|flac|album/i;
-  const SERIES_KW = /\bS\d{2}\b|season\s*\d|complete/i;
-  const ROOT = 'C:\\Users\\asafa\\FinishDownloads';
-
-  items.forEach(item => {
-    if (knownNames.has(item.name.toLowerCase())) return;
-    if (/^\.|^desktop\.ini$|^thumbs\.db$/i.test(item.name)) return;
-    added++;
-    const path = ROOT + '\\' + item.name;
-    const uid  = 'new-' + Date.now() + '-' + added;
-
-    if (MUSIC_KW.test(item.name)) {
-      document.getElementById('grid-music').insertAdjacentHTML('beforeend', `
-        <div class="music-card" data-id="${uid}" data-path="${path}" data-search="${item.name.toLowerCase()}">
-          <div class="music-icon">🎵</div>
-          <div class="music-info">
-            <div class="music-title">${item.name}</div>
-            <div class="music-sub">חדש</div>
-            <div class="music-actions">
-              <button class="cabtn cabtn-open" onclick="openCard(this)">📁 Open</button>
-              <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-            </div>
-          </div>
-        </div>`);
-    } else {
-      const gridId = SERIES_KW.test(item.name) ? 'grid-series' : 'grid-movies';
-      document.getElementById(gridId).insertAdjacentHTML('beforeend', `
-        <div class="card" data-id="${uid}" data-path="${path}" data-search="${item.name.toLowerCase()}">
-          <div class="card-poster">
-            <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a2a1a,#0a1a0a);display:flex;align-items:center;justify-content:center;font-size:40px">🎬</div>
-            <div class="card-overlay">
-              <div class="card-title">${item.name}</div>
-              <div class="card-meta">חדש</div>
-              <div class="card-actions">
-                <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
-                <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
-                <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
-              </div>
-            </div>
-          </div>
-        </div>`);
-    }
-  });
-
-  updateCounts();
-  btn.classList.remove('syncing'); btn.disabled = false;
-  const parts = [];
-  if (added)   parts.push(`${added} חדשים`);
-  if (removed) parts.push(`${removed} הוסרו`);
-  showToast(parts.length ? '🔄 ' + parts.join(' · ') : '✓ הספריה מסונכרנת');
 }
 
-// ── Click poster to open, buttons stay independent ────
-function initCardClicks() {
-  document.querySelectorAll('.card-poster').forEach(poster => {
-    poster.addEventListener('click', function(e) {
-      if (e.target.closest('.cabtn')) return;
-      openCard(this);
-    });
+async function loadPosters(items) {
+  for (const item of items) {
+    if (item.videoCount === 0) continue;
+    const title = cleanTitle(item.name);
+    const year  = getYear(item.name);
+    const cardId = makeId(item.name);
+    try {
+      const r = await fetch(API + '/api/poster?title=' + encodeURIComponent(title) + '&year=' + year);
+      const d = await r.json();
+      if (d.poster) injectPoster(cardId, d.poster, title);
+    } catch(_) {}
+  }
+}
+
+function injectPoster(cardId, posterUrl, title) {
+  const card = document.querySelector(`[data-id="${cardId}"]`);
+  if (!card) return;
+  const poster = card.querySelector('.card-poster');
+  if (poster.querySelector('img')) return;
+  const noPost = poster.querySelector('.card-no-poster');
+  const img = document.createElement('img');
+  img.src = posterUrl;
+  img.alt = title;
+  img.onload  = () => { img.classList.add('loaded'); if (noPost) noPost.style.display = 'none'; };
+  img.onerror = () => img.remove();
+  poster.insertBefore(img, poster.firstChild);
+}
+
+async function refreshLibrary() {
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('syncing');
+  btn.disabled = true;
+  try {
+    await loadLibrary();
+    showToast('✓ Library refreshed');
+  } catch(_) {}
+  btn.classList.remove('syncing');
+  btn.disabled = false;
+}
+
+async function playCard(btnEl) {
+  const card = btnEl.closest('.card');
+  const p = card.dataset.path;
+  showToast('▶ Loading...');
+  try {
+    const epRes = await fetch(API + '/api/episodes?path=' + encodeURIComponent(p));
+    const eps = await epRes.json();
+    if (!Array.isArray(eps) || eps.length === 0) { showToast('⚠ No videos found'); return; }
+    await fetch(API + '/api/play?path=' + encodeURIComponent(eps[0].path));
+    showToast('▶ Playing ' + eps[0].name);
+  } catch(e) { showToast('⚠ ' + e.message); }
+}
+
+function openFolder(btnEl) {
+  const p = btnEl.closest('.card').dataset.path;
+  fetch(API + '/api/play?path=' + encodeURIComponent(p)).catch(() => {});
+  showToast('📁 Opening folder...');
+}
+
+async function openSubtitles(btnEl) {
+  const card = btnEl.closest('.card');
+  const title = card.dataset.title;
+  const year  = card.dataset.year;
+  showToast('🔤 Searching subtitles for ' + title);
+  try {
+    const r = await fetch(API + '/api/subtitles/search?title=' + encodeURIComponent(title) + '&year=' + year);
+    const subs = await r.json();
+    if (!subs.length) { showToast('No subtitles found'); return; }
+    const best = subs[0];
+    const dlRes = await fetch(API + '/api/subtitles/download?url=' + encodeURIComponent(best.url) +
+      '&savePath=' + encodeURIComponent(card.dataset.path) + '&title=' + encodeURIComponent(title));
+    const dlData = await dlRes.json();
+    if (dlData.saved) showToast('✓ Subtitle saved');
+    else showToast('⚠ Subtitle download failed');
+  } catch(e) { showToast('⚠ ' + e.message); }
+}
+
+function filterCards(q) {
+  const term = q.toLowerCase().trim();
+  document.querySelectorAll('.card').forEach(c => {
+    c.style.display = (!term || c.dataset.search.includes(term)) ? '' : 'none';
   });
 }
 
-// ── Init ───────────────────────────────────────────────
-function applyState() {
-  const s = getState();
-  document.querySelectorAll('[data-id]').forEach(card => {
-    if (s.hidden.has(card.dataset.id))  card.classList.add('hidden-card');
-    if (s.watched.has(card.dataset.id)) {
-      card.classList.add('watched');
-      const btn = card.querySelector('.cabtn-saw');
-      if (btn) btn.textContent = '↩ Unwatch';
-    }
-  });
-  updateCounts();
+async function openOperationsCenter() {
+  const modal = document.getElementById('ops-modal');
+  const content = document.getElementById('ops-content');
+  content.innerHTML = '<div class="empty-state">Loading...</div>';
+  modal.classList.add('show');
+
+  try {
+    const r = await fetch(API + '/api/operations-report');
+    const data = await r.json();
+    const visible = data.items.filter(i => !i.isMusic).length;
+    const hidden = data.items.filter(i => i.isMusic).length;
+
+    content.innerHTML = `
+      <div class="ops-summary">
+        <div class="ops-stat"><div class="ops-stat-label">Total Videos</div><div class="ops-stat-value">${data.totalVideos}</div></div>
+        <div class="ops-stat"><div class="ops-stat-label">Total Folders</div><div class="ops-stat-value">${data.totalFolders}</div></div>
+        <div class="ops-stat"><div class="ops-stat-label">Movies</div><div class="ops-stat-value">${data.movieFolders}</div></div>
+        <div class="ops-stat"><div class="ops-stat-label">Series</div><div class="ops-stat-value">${data.seriesFolders}</div></div>
+        <div class="ops-stat"><div class="ops-stat-label">Music (hidden)</div><div class="ops-stat-value" style="color:#888">${hidden}</div></div>
+        <div class="ops-stat"><div class="ops-stat-label">Empty</div><div class="ops-stat-value" style="color:#ffa500">${data.emptyFolders}</div></div>
+        <div class="ops-stat"><div class="ops-stat-label">Posters</div><div class="ops-stat-value">${data.postersFound}/${data.videoFolders}</div></div>
+        <div class="ops-stat"><div class="ops-stat-label">Shown in UI</div><div class="ops-stat-value">${visible}</div></div>
+      </div>
+
+      <table class="ops-table">
+        <thead><tr>
+          <th>#</th><th>Folder</th><th>Videos</th><th>Type</th><th>Poster</th><th>Shown?</th><th>Reason</th>
+        </tr></thead>
+        <tbody>
+          ${data.items.map((i, idx) => `
+            <tr class="${i.isMusic ? 'row-music' : (i.videoCount === 0 ? 'row-empty' : '')}">
+              <td>${idx + 1}</td>
+              <td>${escapeHtml(i.name.length > 70 ? i.name.slice(0,70) + '…' : i.name)}</td>
+              <td class="ops-row-status">${i.videoCount}</td>
+              <td>${i.isMusic ? '🎵 Music' : i.isSeries ? '📺 Series' : '🎬 Movie'}</td>
+              <td class="ops-row-status">${i.hasPoster ? '<span class="ops-status-yes">✓</span>' : '<span class="ops-status-no">✗</span>'}</td>
+              <td class="ops-row-status">${!i.isMusic ? '<span class="ops-status-yes">YES</span>' : '<span class="ops-status-no">NO</span>'}</td>
+              <td style="font-size:11px;color:#888">${i.isMusic ? 'Music folder (hidden)' : i.videoCount === 0 ? 'Empty folder (shown w/ badge)' : 'OK'}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  } catch(e) {
+    content.innerHTML = '<div class="empty-state">⚠ Error: ' + escapeHtml(e.message) + '</div>';
+  }
 }
 
-applyState();
-initCardClicks();
+function closeOpsModal() {
+  document.getElementById('ops-modal').classList.remove('show');
+}
+
+document.getElementById('ops-modal').addEventListener('click', e => {
+  if (e.target.id === 'ops-modal') closeOpsModal();
+});
+
+loadLibrary();
 </script>
+
 </body>
 </html>
