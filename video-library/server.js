@@ -210,6 +210,27 @@ http.createServer(async (req, res) => {
     } catch(e) { return json(res, { error: e.message }, 500); }
   }
 
+  // ── /api/count-videos ─────────────────────────────────
+  if (route === '/api/count-videos') {
+    try {
+      function countVideos(dir) {
+        let count = 0;
+        try {
+          fs.readdirSync(dir, { withFileTypes: true }).forEach(entry => {
+            if (entry.isFile() && VIDEO_EXT.has(path.extname(entry.name).toLowerCase())) {
+              count++;
+            } else if (entry.isDirectory()) {
+              count += countVideos(path.join(dir, entry.name));
+            }
+          });
+        } catch(_) {}
+        return count;
+      }
+      const total = countVideos(WATCH_FOLDER);
+      return json(res, { totalVideoFiles: total });
+    } catch(e) { return json(res, { error: e.message }, 500); }
+  }
+
   // ── /api/folder-type?path=X ────────────────────────────
   if (route === '/api/folder-type') {
     const folderPath = params.get('path');
