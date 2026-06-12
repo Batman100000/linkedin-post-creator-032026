@@ -653,33 +653,20 @@ function showToast(msg) {
   clearTimeout(_tt); _tt = setTimeout(() => t.classList.remove('show'), 2200);
 }
 
-// ── Refresh Folder (File System Access API) ────────────
-let _folderHandle = null;
-
-async function getOrPickFolder() {
-  if (_folderHandle) {
-    const perm = await _folderHandle.queryPermission({ mode:'read' });
-    if (perm === 'granted') return _folderHandle;
-    if (await _folderHandle.requestPermission({ mode:'read' }) === 'granted') return _folderHandle;
-  }
-  try {
-    _folderHandle = await window.showDirectoryPicker({ mode:'read', startIn:'downloads' });
-    return _folderHandle;
-  } catch(e) { return null; }
-}
-
+// ── Refresh Folder — reads C:\Users\asafa\FinishDownloads via local server ──
 async function refreshFolder() {
   const btn = document.getElementById('refreshFolderBtn');
   btn.classList.add('syncing'); btn.disabled = true;
 
-  const dir = await getOrPickFolder();
-  if (!dir) {
-    showToast('⚠ לא נבחרה תיקייה');
+  let items;
+  try {
+    const res = await fetch('http://localhost:8001/api/scan');
+    if (!res.ok) throw new Error('server error');
+    items = await res.json();
+  } catch(e) {
+    showToast('⚠ הפעל את start-library.bat ולחץ שוב');
     btn.classList.remove('syncing'); btn.disabled = false; return;
   }
-
-  const items = [];
-  for await (const [name, handle] of dir.entries()) items.push({ name, isDir: handle.kind==='directory' });
 
   const folderNames = new Set(items.map(i => i.name.toLowerCase()));
   let added = 0, removed = 0;
