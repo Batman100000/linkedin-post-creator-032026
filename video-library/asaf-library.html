@@ -81,12 +81,13 @@ body {
 .card {
   position: relative;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: visible;
   cursor: pointer;
   transition: transform 0.25s ease, box-shadow 0.25s ease, z-index 0s 0.25s;
   background: #1f1f1f;
   aspect-ratio: 2/3;
 }
+.card-poster { border-radius: 8px; overflow: hidden; }
 .card:hover {
   transform: scale(1.08);
   box-shadow: 0 20px 60px rgba(0,0,0,0.8);
@@ -735,6 +736,16 @@ async function refreshFolder() {
   showToast(parts.length ? '🔄 ' + parts.join(' · ') : '✓ הספריה מסונכרנת');
 }
 
+// ── Click poster to open, buttons stay independent ────
+function initCardClicks() {
+  document.querySelectorAll('.card-poster').forEach(poster => {
+    poster.addEventListener('click', function(e) {
+      if (e.target.closest('.cabtn')) return;
+      openCard(this);
+    });
+  });
+}
+
 // ── Init ───────────────────────────────────────────────
 function applyState() {
   const s = getState();
@@ -750,6 +761,7 @@ function applyState() {
 }
 
 applyState();
+initCardClicks();
 </script>
 </body>
 </html>
