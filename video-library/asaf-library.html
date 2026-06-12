@@ -7,7 +7,7 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  background: #111;
+  background: #141414;
   color: #e5e5e5;
   font-family: 'Segoe UI', Arial, sans-serif;
   min-height: 100vh;
@@ -16,189 +16,198 @@ body {
 /* ── HEADER ── */
 .header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 18px 36px;
-  border-bottom: 1px solid #222;
-  background: #111;
+  padding: 18px 40px;
+  background: linear-gradient(to bottom, #000 0%, transparent 100%);
   position: sticky; top: 0; z-index: 100;
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 .header-left { display: flex; align-items: center; gap: 14px; }
-.header-icon { font-size: 26px; }
-.header-title { font-size: 26px; font-weight: 800; color: #1a8fff; letter-spacing: 0.5px; }
+.header-title { font-size: 28px; font-weight: 900; color: #e50914; letter-spacing: -0.5px; }
 .header-sub { font-size: 11px; color: #555; margin-top: 2px; }
-.header-right { display: flex; gap: 10px; align-items: center; }
+.header-right { display: flex; gap: 8px; align-items: center; }
 .hbtn {
   display: inline-flex; align-items: center; gap: 6px;
-  background: #1e1e1e; border: 1px solid #333; color: #aaa;
-  font-size: 12px; border-radius: 6px; padding: 7px 14px;
-  cursor: pointer; transition: all 0.15s; font-family: inherit;
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+  color: #ccc; font-size: 12px; border-radius: 6px; padding: 7px 14px;
+  cursor: pointer; transition: all 0.15s; font-family: inherit; white-space: nowrap;
 }
-.hbtn:hover { background: #2a2a2a; color: #fff; border-color: #555; }
+.hbtn:hover { background: rgba(255,255,255,0.2); color: #fff; }
 .hbtn.active { color: #4caf50; border-color: #4caf50; }
-.hbtn.syncing { color: #f5c518; border-color: #f5c518; animation: spin 1s linear infinite; }
-@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.hbtn-refresh {
+  background: rgba(229,9,20,0.15); border-color: rgba(229,9,20,0.4); color: #ff6b6b;
+}
+.hbtn-refresh:hover { background: rgba(229,9,20,0.3); color: #fff; }
 .hbtn.syncing svg { animation: spin 1s linear infinite; }
-
-/* missing / new row highlights */
-tbody tr.missing-row td { background: rgba(220,50,50,0.07) !important; }
-tbody tr.missing-row .title-main::after {
-  content: ' ⚠ Missing'; font-size: 10px; color: #e05555;
-  font-weight: 400; margin-left: 6px;
-}
-tbody tr.new-row td { background: rgba(80,200,80,0.07) !important; }
-tbody tr.new-row .title-main::after {
-  content: ' ✦ New'; font-size: 10px; color: #6abf69;
-  font-weight: 400; margin-left: 6px;
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* ── SEARCH ── */
-.search-bar {
-  padding: 14px 36px;
-  border-bottom: 1px solid #1a1a1a;
-}
+.search-bar { padding: 16px 40px 0; }
 .search-inner {
   display: flex; align-items: center; gap: 10px;
-  background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 7px;
-  padding: 8px 14px; max-width: 400px;
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px; padding: 9px 16px; max-width: 380px;
 }
 .search-inner input {
   background: none; border: none; outline: none;
   color: #fff; font-size: 13px; width: 100%; font-family: inherit;
 }
-.search-inner svg { color: #555; flex-shrink: 0; }
+.search-inner input::placeholder { color: #666; }
 
 /* ── SECTION ── */
-.section { padding: 28px 36px 10px; }
-.section-header {
-  display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
-}
+.section { padding: 32px 40px 8px; }
 .section-title {
-  font-size: 16px; font-weight: 700; color: #fff;
-  border-left: 4px solid #e50914; padding-left: 10px;
-  display: flex; align-items: center; gap: 8px;
+  font-size: 20px; font-weight: 800; color: #fff;
+  margin-bottom: 18px; display: flex; align-items: center; gap: 10px;
 }
 .section-count {
-  font-size: 11px; color: #777; background: #1e1e1e;
-  border-radius: 10px; padding: 2px 8px; border: 1px solid #2a2a2a;
+  font-size: 12px; color: #888; background: rgba(255,255,255,0.08);
+  border-radius: 10px; padding: 2px 10px; font-weight: 400;
 }
 
-/* ── TABLE ── */
-table {
-  width: 100%; border-collapse: collapse;
-  background: #161616; border-radius: 10px; overflow: hidden;
-  margin-bottom: 30px;
+/* ── CARD GRID ── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
 }
-thead tr {
-  background: #1c1c1c;
-  color: #555; font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
-}
-th { padding: 10px 14px; text-align: left; font-weight: 600; }
-td { padding: 10px 14px; border-bottom: 1px solid #1e1e1e; vertical-align: middle; }
-tbody tr:last-child td { border-bottom: none; }
-tbody tr { transition: background 0.12s; }
-tbody tr:hover td { background: #1c1c1c; }
-tbody tr.watched td { opacity: 0.35; }
-tbody tr.watched .title-main { text-decoration: line-through; }
-tbody tr.hidden-row { display: none; }
-body.hide-watched tbody tr.watched { display: none !important; }
-tbody tr.search-hidden { display: none; }
-
-/* ── POSTER CELL ── */
-.poster-cell { width: 62px; }
-.poster-wrap {
-  width: 48px; height: 68px; border-radius: 5px; overflow: hidden;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; border: 1px solid #333;
-  position: relative; font-size: 20px; font-weight: 700;
-  color: rgba(255,255,255,0.85); text-align: center;
-}
-.poster-wrap.gen1 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-.poster-wrap.gen2 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-.poster-wrap.gen3 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
-.poster-wrap.gen4 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
-.poster-wrap.gen5 { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
-.poster-wrap.gen6 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
-.poster-wrap.gen7 { background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%); }
-.poster-wrap.gen8 { background: linear-gradient(135deg, #2e2e78 0%, #009ffd 100%); }
-.poster-wrap.gen9 { background: linear-gradient(135deg, #8ec5fc 0%, #e0c3fc 100%); }
-.poster-wrap.gen10 { background: linear-gradient(135deg, #f857a6 0%, #ff5858 100%); }
-.poster-wrap.gen11 { background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%); }
-.poster-wrap.gen12 { background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%); }
-.poster-wrap.gen13 { background: linear-gradient(135deg, #ff6e7f 0%, #bfe9ff 100%); }
-.poster-wrap img { width: 100%; height: 100%; object-fit: cover; display: none; }
-.poster-wrap img.loaded { display: block; }
-.poster-wrap .no-poster { display: none; }
-
-/* ── TITLE CELL ── */
-.title-cell { min-width: 200px; }
-.title-main { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 3px; }
-.title-sub { font-size: 11px; color: #555; }
-
-/* ── EPISODE CHIPS ── */
-.ep-chips { display: flex; gap: 5px; flex-wrap: wrap; }
-.ep-chip {
-  font-size: 10px; color: #bbb; background: #222; border: 1px solid #333;
-  border-radius: 4px; padding: 3px 7px; white-space: nowrap; font-weight: 600;
+.music-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
 }
 
-/* ── GENRE CHIPS ── */
-.genre-chips { display: flex; gap: 5px; flex-wrap: wrap; }
+/* ── CARD ── */
+.card {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, z-index 0s 0.25s;
+  background: #1f1f1f;
+  aspect-ratio: 2/3;
+}
+.card:hover {
+  transform: scale(1.08);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+  z-index: 10;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.card.watched { opacity: 0.45; }
+.card.watched:hover { opacity: 1; }
+.card.hidden-card { display: none !important; }
+.card.search-hidden { display: none !important; }
+body.hide-watched .card.watched { display: none !important; }
+
+/* poster */
+.card-poster {
+  width: 100%; height: 100%;
+  background: #1f1f1f;
+  position: relative;
+}
+.card-poster img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.3s;
+}
+
+/* watched ribbon */
+.card.watched::before {
+  content: '✓ WATCHED';
+  position: absolute; top: 10px; left: -22px;
+  background: #4caf50; color: #fff;
+  font-size: 9px; font-weight: 800; letter-spacing: 1px;
+  padding: 3px 28px; transform: rotate(-35deg);
+  z-index: 5; pointer-events: none;
+}
+
+/* ── OVERLAY ── */
+.card-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.1) 100%);
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 12px;
+  opacity: 0; transition: opacity 0.25s ease;
+}
+.card:hover .card-overlay { opacity: 1; }
+
+.card-title {
+  font-size: 13px; font-weight: 800; color: #fff;
+  margin-bottom: 4px; line-height: 1.2;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+.card-meta { font-size: 10px; color: #aaa; margin-bottom: 6px; }
+
+.genre-chips { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; }
 .genre-chip {
-  font-size: 10px; color: #999; background: #1e1e1e; border: 1px solid #2a2a2a;
-  border-radius: 4px; padding: 3px 8px; white-space: nowrap;
+  font-size: 9px; color: #bbb; background: rgba(255,255,255,0.12);
+  border-radius: 3px; padding: 2px 6px; white-space: nowrap;
 }
 
-/* ── IMDB BADGE ── */
 .imdb-badge {
-  display: inline-flex; align-items: center; gap: 4px;
+  display: inline-flex; align-items: center; gap: 3px;
   background: #f5c518; color: #000;
-  font-size: 12px; font-weight: 800; border-radius: 5px;
-  padding: 4px 9px; white-space: nowrap;
+  font-size: 10px; font-weight: 900; border-radius: 4px;
+  padding: 3px 7px; margin-bottom: 8px; width: fit-content;
 }
-.imdb-badge .star { font-size: 13px; }
-.imdb-na { font-size: 11px; color: #444; }
 
-/* ── YEAR ── */
-.year-cell { font-size: 13px; color: #888; font-weight: 600; white-space: nowrap; }
-
-/* ── ACTION BUTTONS ── */
-.actions-cell { white-space: nowrap; }
-.abtn {
-  display: inline-flex; align-items: center; gap: 4px;
-  font-size: 11px; border-radius: 5px; padding: 5px 10px;
-  cursor: pointer; border: none; transition: all 0.13s;
-  font-family: inherit; margin: 2px 2px 2px 0;
+/* card action buttons */
+.card-actions { display: flex; gap: 5px; flex-wrap: wrap; }
+.cabtn {
+  font-size: 10px; border-radius: 4px; padding: 4px 8px;
+  cursor: pointer; border: none; font-family: inherit;
+  transition: all 0.13s; display: inline-flex; align-items: center; gap: 3px;
 }
-.btn-open  { background: #222; color: #ccc; border: 1px solid #333; }
-.btn-open:hover  { background: #333; color: #fff; }
-.btn-saw   { background: #1a2e1a; color: #6abf69; border: 1px solid #2a4a2a; }
-.btn-saw:hover   { background: #2a4a2a; color: #90ee90; }
-tr.watched .btn-saw { background: #2e1a1a; color: #cf6679; border-color: #4a2a2a; }
-.btn-remove { background: #1a1a2e; color: #7b9cdb; border: 1px solid #2a2a4a; }
-.btn-remove:hover { background: #2a2a4a; color: #a0b8f0; }
-.btn-delete { background: #2e1a1a; color: #e05555; border: 1px solid #4a2a2a; }
-.btn-delete:hover { background: #4a1a1a; color: #ff7070; }
+.cabtn-open  { background: #fff; color: #000; font-weight: 700; }
+.cabtn-open:hover  { background: #e5e5e5; }
+.cabtn-saw   { background: rgba(76,175,80,0.25); color: #90ee90; border: 1px solid rgba(76,175,80,0.4); }
+.cabtn-saw:hover   { background: rgba(76,175,80,0.4); }
+.card.watched .cabtn-saw { background: rgba(200,60,60,0.25); color: #ff8888; border-color: rgba(200,60,60,0.4); }
+.cabtn-remove { background: rgba(255,255,255,0.08); color: #aaa; border: 1px solid rgba(255,255,255,0.15); }
+.cabtn-remove:hover { background: rgba(255,255,255,0.15); color: #fff; }
 
-/* ── MUSIC TABLE ── */
-.music-title-cell { min-width: 220px; }
-.music-icon-cell { font-size: 22px; width: 46px; text-align: center; }
+/* title below card (always visible) */
+.card-label {
+  padding: 7px 2px 2px;
+  font-size: 12px; font-weight: 700; color: #ccc;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.card-year { font-size: 10px; color: #666; margin-top: 2px; }
+
+/* ── MUSIC CARD ── */
+.music-card {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px; padding: 18px;
+  display: flex; align-items: center; gap: 14px;
+  cursor: pointer; transition: all 0.2s;
+  position: relative;
+}
+.music-card:hover { background: linear-gradient(135deg, #1e1e3a 0%, #1a2547 100%); border-color: rgba(255,255,255,0.18); transform: translateY(-2px); }
+.music-card.hidden-card { display: none !important; }
+.music-card.search-hidden { display: none !important; }
+.music-icon { font-size: 32px; flex-shrink: 0; }
+.music-info { flex: 1; overflow: hidden; }
+.music-title { font-size: 13px; font-weight: 700; color: #fff; }
+.music-sub { font-size: 11px; color: #666; margin-top: 3px; }
+.music-actions { display: flex; gap: 5px; margin-top: 8px; }
 
 /* ── TOAST ── */
 #toast {
   position: fixed; bottom: 26px; left: 50%;
   transform: translateX(-50%) translateY(50px);
-  background: #222; color: #fff; font-size: 13px;
-  padding: 9px 22px; border-radius: 6px; opacity: 0;
+  background: #1a1a1a; color: #fff; font-size: 13px;
+  padding: 10px 24px; border-radius: 8px; opacity: 0;
   transition: all 0.25s; pointer-events: none; z-index: 9999;
-  border-left: 3px solid #e50914;
+  border-left: 3px solid #e50914; box-shadow: 0 4px 20px rgba(0,0,0,0.6);
 }
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 footer {
-  margin: 10px 36px 28px;
+  margin: 20px 40px 30px;
   color: #333; font-size: 11px;
   padding-top: 16px; border-top: 1px solid #1e1e1e;
-  display: flex; justify-content: space-between;
 }
 </style>
 </head>
@@ -207,10 +216,9 @@ footer {
 <!-- HEADER -->
 <div class="header">
   <div class="header-left">
-    <div class="header-icon">🎬</div>
     <div>
-      <div class="header-title">Asaf's Video Library</div>
-      <div class="header-sub">C:\Users\asafa\FinishDownloads · IMDB scores for local files only</div>
+      <div class="header-title">ASAF'S LIBRARY</div>
+      <div class="header-sub">C:\Users\asafa\FinishDownloads</div>
     </div>
   </div>
   <div class="header-right">
@@ -218,11 +226,7 @@ footer {
       <svg width="13" height="13" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/></svg>
       Show Watched
     </button>
-    <button class="hbtn" onclick="loadPosters()">
-      <svg width="13" height="13" fill="currentColor" viewBox="0 0 16 16"><path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/><path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/></svg>
-      Refresh Posters
-    </button>
-    <button class="hbtn" id="refreshFolderBtn" onclick="refreshFolder()">
+    <button class="hbtn hbtn-refresh" id="refreshFolderBtn" onclick="refreshFolder()">
       <svg width="13" height="13" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/></svg>
       REFRESH BASED ON FOLDER
     </button>
@@ -237,477 +241,362 @@ footer {
   </div>
 </div>
 
-<!-- ═══════════════ SERIES ═══════════════ -->
+<!-- ═══ SERIES ═══ -->
 <div class="section">
-  <div class="section-header">
-    <div class="section-title">📺 Series <span class="section-count" id="count-series">1</span></div>
-  </div>
-  <table id="tbl-series">
-    <thead>
-      <tr>
-        <th class="poster-cell">Poster</th>
-        <th>Title</th>
-        <th>Episodes</th>
-        <th>Genre</th>
-        <th>IMDb</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
+  <div class="section-title">📺 Series <span class="section-count" id="count-series">1</span></div>
+  <div class="card-grid" id="grid-series">
 
-      <tr data-id="s0" data-path="C:\Users\asafa\FinishDownloads\Spider-Noir.S01.1080p.WEBRip.10Bit.DDP5.1.x265-NeoNoir" data-search="spider-noir 2024 action animation crime">
-        <td class="poster-cell">
-          <div class="poster-wrap">
-            <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/iiIzxf4FPOhH8T7avb0DCMYVwDQ.jpg" alt="Spider-Noir" style="width:100%;height:100%;object-fit:cover;" referrerpolicy="no-referrer">
+    <div class="card" data-id="s0" data-path="C:\Users\asafa\FinishDownloads\Spider-Noir.S01.1080p.WEBRip.10Bit.DDP5.1.x265-NeoNoir" data-search="spider-noir 2024 action animation crime">
+      <div class="card-poster">
+        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/iiIzxf4FPOhH8T7avb0DCMYVwDQ.jpg" alt="Spider-Noir">
+        <div class="card-overlay">
+          <div class="card-title">Spider-Noir</div>
+          <div class="card-meta">2024 · S01 · Amazon Prime</div>
+          <div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Animation</span><span class="genre-chip">Crime</span></div>
+          <div class="imdb-badge">★ 7.8</div>
+          <div class="card-actions">
+            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
+            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
+            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
           </div>
-        </td>
-        <td class="title-cell">
-          <div class="title-main">Spider-Noir</div>
-          <div class="title-sub">2024 · Amazon Prime · S01</div>
-        </td>
-        <td><div class="ep-chips"><span class="ep-chip">S01E01–E05</span></div></td>
-        <td><div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Animation</span><span class="genre-chip">Crime</span></div></td>
-        <td><div class="imdb-badge"><span class="star">★</span>7.8</div></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-          <button class="abtn btn-delete" onclick="removeRow(this)">🗑 Delete</button>
-        </td>
-      </tr>
+        </div>
+      </div>
+    </div>
 
-    </tbody>
-  </table>
+  </div>
 </div>
 
-<!-- ═══════════════ MOVIES ═══════════════ -->
+<!-- ═══ MOVIES ═══ -->
 <div class="section">
-  <div class="section-header">
-    <div class="section-title">🎬 Movies <span class="section-count" id="count-movies">13</span></div>
+  <div class="section-title">🎬 Movies <span class="section-count" id="count-movies">13</span></div>
+  <div class="card-grid" id="grid-movies">
+
+    <div class="card" data-id="m0" data-path="C:\Users\asafa\FinishDownloads\We.Live.in.Time.2024.1080p.AMZN.WEBRip.1400MB.DD5.1.x264-GalaxyRG[TGx]" data-search="we live in time 2024 drama romance">
+      <div class="card-poster">
+        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/82cCNsGo41sA8hkyvYnPTQxdSkb.jpg" alt="We Live in Time">
+        <div class="card-overlay">
+          <div class="card-title">We Live in Time</div>
+          <div class="card-meta">2024 · 107 min</div>
+          <div class="genre-chips"><span class="genre-chip">Drama</span><span class="genre-chip">Romance</span></div>
+          <div class="imdb-badge">★ 7.4</div>
+          <div class="card-actions">
+            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
+            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
+            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-id="m1" data-path="C:\Users\asafa\FinishDownloads\Ghosted.2023.1080p.WEBRip.1400MB.DD5.1.x264-GalaxyRG[TGx]" data-search="ghosted 2023 action adventure comedy">
+      <div class="card-poster">
+        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/iSZxxbWA01HIEdZUz3vkS9vJXIr.jpg" alt="Ghosted">
+        <div class="card-overlay">
+          <div class="card-title">Ghosted</div>
+          <div class="card-meta">2023 · 116 min</div>
+          <div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Adventure</span><span class="genre-chip">Comedy</span></div>
+          <div class="imdb-badge">★ 5.5</div>
+          <div class="card-actions">
+            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
+            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
+            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-id="m2" data-path="C:\Users\asafa\FinishDownloads\[www.Torrenting.com] - It Ends With Us (2024) 1080p WEBRip 5.1-LAMA" data-search="it ends with us 2024 drama romance">
+      <div class="card-poster">
+        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/3KQ686Isg0CkfIXo1whjSPjfjB0.jpg" alt="It Ends with Us">
+        <div class="card-overlay">
+          <div class="card-title">It Ends with Us</div>
+          <div class="card-meta">2024 · 130 min</div>
+          <div class="genre-chips"><span class="genre-chip">Drama</span><span class="genre-chip">Romance</span></div>
+          <div class="imdb-badge">★ 6.2</div>
+          <div class="card-actions">
+            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
+            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
+            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-id="m3" data-path="C:\Users\asafa\FinishDownloads\Wolfs.2024.1080p.ATVP.WEBRip.1400MB.DD5.1.x264-GalaxyRG[TGx]" data-search="wolfs 2024 action comedy crime">
+      <div class="card-poster">
+        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/vOX1Zng472PC2KnS0B9nRfM8aaZ.jpg" alt="Wolfs">
+        <div class="card-overlay">
+          <div class="card-title">Wolfs</div>
+          <div class="card-meta">2024 · 95 min</div>
+          <div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Comedy</span><span class="genre-chip">Crime</span></div>
+          <div class="imdb-badge">★ 6.3</div>
+          <div class="card-actions">
+            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
+            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
+            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-id="m4" data-path="C:\Users\asafa\FinishDownloads\The Killers Game (2024) [720p] [WEBRip] [YTS.MX]" data-search="the killers game 2024 action comedy">
+      <div class="card-poster">
+        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/scPJaGU6HTYgrj5DeUiUFKuhX5p.jpg" alt="The Killer's Game">
+        <div class="card-overlay">
+          <div class="card-title">The Killer's Game</div>
+          <div class="card-meta">2024 · 103 min</div>
+          <div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Comedy</span></div>
+          <div class="imdb-badge">★ 5.8</div>
+          <div class="card-actions">
+            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
+            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
+            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-id="m5" data-path="C:\Users\asafa\FinishDownloads\The.Instigators.2024.1080p.WEBRip.1400MB.DD5.1.x264-GalaxyRG[TGx]" data-search="the instigators 2024 action comedy crime">
+      <div class="card-poster">
+        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/dnYWsIFDmygCjNg65rY3uBymx81.jpg" alt="The Instigators">
+        <div class="card-overlay">
+          <div class="card-title">The Instigators</div>
+          <div class="card-meta">2024 · 100 min</div>
+          <div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Comedy</span><span class="genre-chip">Crime</span></div>
+          <div class="imdb-badge">★ 6.1</div>
+          <div class="card-actions">
+            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
+            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
+            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-id="m6" data-path="C:\Users\asafa\FinishDownloads\Normal.2025.1080p.WEBRip.10Bit.DDP.5.1.x265-NeoNoir.mkv" data-search="normal 2025 drama thriller">
+      <div class="card-poster">
+        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/koqvUHndq9ORZPJnJr5AOejHICm.jpg" alt="Normal">
+        <div class="card-overlay">
+          <div class="card-title">Normal</div>
+          <div class="card-meta">2025 · 98 min</div>
+          <div class="genre-chips"><span class="genre-chip">Drama</span><span class="genre-chip">Thriller</span></div>
+          <div class="imdb-badge">★ 6.8</div>
+          <div class="card-actions">
+            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
+            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
+            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-id="m7" data-path="C:\Users\asafa\FinishDownloads\Master Of The Universe 2026 1080p WEB-DL HEVC x265 5.1 BONE.mkv" data-search="masters of the universe 2026 action adventure fantasy">
+      <div class="card-poster">
+        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/5Et1L8ysbZ15B9JfDsoicn4ROnq.jpg" alt="Masters of the Universe">
+        <div class="card-overlay">
+          <div class="card-title">Masters of the Universe</div>
+          <div class="card-meta">2026</div>
+          <div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Adventure</span><span class="genre-chip">Fantasy</span></div>
+          <div class="card-actions">
+            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
+            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
+            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-id="m8" data-path="C:\Users\asafa\FinishDownloads\The.Housemaid.2025.1080p.WEBRip.AAC5.1.10bits.x265-Rapta.mkv" data-search="the housemaid 2025 drama thriller">
+      <div class="card-poster">
+        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/ktjBpYrLlP18f5rsf2rTOO0aG40.jpg" alt="The Housemaid">
+        <div class="card-overlay">
+          <div class="card-title">The Housemaid</div>
+          <div class="card-meta">2025 · 118 min</div>
+          <div class="genre-chips"><span class="genre-chip">Drama</span><span class="genre-chip">Thriller</span></div>
+          <div class="imdb-badge">★ 6.4</div>
+          <div class="card-actions">
+            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
+            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
+            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-id="m9" data-path="C:\Users\asafa\FinishDownloads\Nuremberg 2025 1080p HDRip HC HEVC x265 5.1 BONE.mkv" data-search="nuremberg 2025 biography drama history war">
+      <div class="card-poster">
+        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/htKaQHnevZTnHUMlUmbt0mUNPVD.jpg" alt="Nuremberg">
+        <div class="card-overlay">
+          <div class="card-title">Nuremberg</div>
+          <div class="card-meta">2025 · 148 min</div>
+          <div class="genre-chips"><span class="genre-chip">Biography</span><span class="genre-chip">History</span><span class="genre-chip">War</span></div>
+          <div class="imdb-badge">★ 7.4</div>
+          <div class="card-actions">
+            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
+            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
+            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-id="m10" data-path="C:\Users\asafa\FinishDownloads\Marty Supreme (2025) [1080p] [WEBRip] [5.1] [YTS.BZ]" data-search="marty supreme 2025 biography drama sport timothee chalamet">
+      <div class="card-poster">
+        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/w6pnewEfz05jxUxUeYjs3tbHIq4.jpg" alt="Marty Supreme">
+        <div class="card-overlay">
+          <div class="card-title">Marty Supreme</div>
+          <div class="card-meta">2025 · Timothée Chalamet</div>
+          <div class="genre-chips"><span class="genre-chip">Drama</span><span class="genre-chip">Sport</span></div>
+          <div class="imdb-badge">★ 7.8</div>
+          <div class="card-actions">
+            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
+            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
+            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-id="m11" data-path="C:\Users\asafa\FinishDownloads\[www.UIndex.org]    -    Ballerina 2025 1080p AMZN WEB-DL DDP5 1 Atmos H 264-BYNDR" data-search="ballerina 2025 action crime thriller john wick">
+      <div class="card-poster">
+        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/zpRpjzIYDtzX5sQ1oG2Et7jva1e.jpg" alt="Ballerina">
+        <div class="card-overlay">
+          <div class="card-title">Ballerina</div>
+          <div class="card-meta">2025 · 120 min · John Wick Universe</div>
+          <div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Crime</span><span class="genre-chip">Thriller</span></div>
+          <div class="imdb-badge">★ 7.0</div>
+          <div class="card-actions">
+            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
+            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
+            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-id="m12" data-path="C:\Users\asafa\FinishDownloads\The Order (2024) [1080p] [WEBRip] [5.1] [YTS.MX]" data-search="the order 2024 crime drama thriller jude law">
+      <div class="card-poster">
+        <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/4YHzTTTeD0V3EiylKKOtedZBxj8.jpg" alt="The Order">
+        <div class="card-overlay">
+          <div class="card-title">The Order</div>
+          <div class="card-meta">2024 · 116 min · Jude Law</div>
+          <div class="genre-chips"><span class="genre-chip">Crime</span><span class="genre-chip">Drama</span><span class="genre-chip">Thriller</span></div>
+          <div class="imdb-badge">★ 6.6</div>
+          <div class="card-actions">
+            <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
+            <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
+            <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
-  <table id="tbl-movies">
-    <thead>
-      <tr>
-        <th class="poster-cell">Poster</th>
-        <th>Title</th>
-        <th>Year</th>
-        <th>Genre</th>
-        <th>IMDb</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-
-      <tr data-id="m0" data-path="C:\Users\asafa\FinishDownloads\We.Live.in.Time.2024.1080p.AMZN.WEBRip.1400MB.DD5.1.x264-GalaxyRG[TGx]" data-search="we live in time 2024 drama romance">
-        <td class="poster-cell">
-          <div class="poster-wrap">
-            <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/82cCNsGo41sA8hkyvYnPTQxdSkb.jpg" alt="We Live in Time" style="width:100%;height:100%;object-fit:cover;" referrerpolicy="no-referrer">
-          </div>
-        </td>
-        <td class="title-cell">
-          <div class="title-main">We Live in Time</div>
-          <div class="title-sub">Drama · Romance · 107 min · R</div>
-        </td>
-        <td class="year-cell">2024</td>
-        <td><div class="genre-chips"><span class="genre-chip">Drama</span><span class="genre-chip">Romance</span></div></td>
-        <td><div class="imdb-badge"><span class="star">★</span>7.4</div></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-          <button class="abtn btn-delete" onclick="removeRow(this)">🗑 Delete</button>
-        </td>
-      </tr>
-
-      <tr data-id="m1" data-path="C:\Users\asafa\FinishDownloads\Ghosted.2023.1080p.WEBRip.1400MB.DD5.1.x264-GalaxyRG[TGx]" data-search="ghosted 2023 action adventure comedy">
-        <td class="poster-cell">
-          <div class="poster-wrap">
-            <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/iSZxxbWA01HIEdZUz3vkS9vJXIr.jpg" alt="Ghosted" style="width:100%;height:100%;object-fit:cover;" referrerpolicy="no-referrer">
-          </div>
-        </td>
-        <td class="title-cell">
-          <div class="title-main">Ghosted</div>
-          <div class="title-sub">Action · Adventure · Comedy · 116 min · PG-13</div>
-        </td>
-        <td class="year-cell">2023</td>
-        <td><div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Adventure</span><span class="genre-chip">Comedy</span></div></td>
-        <td><div class="imdb-badge"><span class="star">★</span>5.5</div></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-          <button class="abtn btn-delete" onclick="removeRow(this)">🗑 Delete</button>
-        </td>
-      </tr>
-
-      <tr data-id="m2" data-path="C:\Users\asafa\FinishDownloads\[www.Torrenting.com] - It Ends With Us (2024) 1080p WEBRip 5.1-LAMA" data-search="it ends with us 2024 drama romance">
-        <td class="poster-cell">
-          <div class="poster-wrap">
-            <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/3KQ686Isg0CkfIXo1whjSPjfjB0.jpg" alt="It Ends with Us" style="width:100%;height:100%;object-fit:cover;" referrerpolicy="no-referrer">
-          </div>
-        </td>
-        <td class="title-cell">
-          <div class="title-main">It Ends with Us</div>
-          <div class="title-sub">Drama · Romance · 130 min · PG-13</div>
-        </td>
-        <td class="year-cell">2024</td>
-        <td><div class="genre-chips"><span class="genre-chip">Drama</span><span class="genre-chip">Romance</span></div></td>
-        <td><div class="imdb-badge"><span class="star">★</span>6.2</div></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-          <button class="abtn btn-delete" onclick="removeRow(this)">🗑 Delete</button>
-        </td>
-      </tr>
-
-      <tr data-id="m3" data-path="C:\Users\asafa\FinishDownloads\Wolfs.2024.1080p.ATVP.WEBRip.1400MB.DD5.1.x264-GalaxyRG[TGx]" data-search="wolfs 2024 action comedy crime">
-        <td class="poster-cell">
-          <div class="poster-wrap">
-            <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/vOX1Zng472PC2KnS0B9nRfM8aaZ.jpg" alt="Wolfs" style="width:100%;height:100%;object-fit:cover;" referrerpolicy="no-referrer">
-          </div>
-        </td>
-        <td class="title-cell">
-          <div class="title-main">Wolfs</div>
-          <div class="title-sub">Action · Comedy · Crime · 95 min · R</div>
-        </td>
-        <td class="year-cell">2024</td>
-        <td><div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Comedy</span><span class="genre-chip">Crime</span></div></td>
-        <td><div class="imdb-badge"><span class="star">★</span>6.3</div></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-          <button class="abtn btn-delete" onclick="removeRow(this)">🗑 Delete</button>
-        </td>
-      </tr>
-
-      <tr data-id="m4" data-path="C:\Users\asafa\FinishDownloads\The Killers Game (2024) [720p] [WEBRip] [YTS.MX]" data-search="the killers game 2024 action comedy">
-        <td class="poster-cell">
-          <div class="poster-wrap">
-            <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/scPJaGU6HTYgrj5DeUiUFKuhX5p.jpg" alt="The Killer's Game" style="width:100%;height:100%;object-fit:cover;" referrerpolicy="no-referrer">
-          </div>
-        </td>
-        <td class="title-cell">
-          <div class="title-main">The Killer's Game</div>
-          <div class="title-sub">Action · Comedy · 103 min · R</div>
-        </td>
-        <td class="year-cell">2024</td>
-        <td><div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Comedy</span></div></td>
-        <td><div class="imdb-badge"><span class="star">★</span>5.8</div></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-          <button class="abtn btn-delete" onclick="removeRow(this)">🗑 Delete</button>
-        </td>
-      </tr>
-
-      <tr data-id="m5" data-path="C:\Users\asafa\FinishDownloads\The.Instigators.2024.1080p.WEBRip.1400MB.DD5.1.x264-GalaxyRG[TGx]" data-search="the instigators 2024 action comedy crime">
-        <td class="poster-cell">
-          <div class="poster-wrap">
-            <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/dnYWsIFDmygCjNg65rY3uBymx81.jpg" alt="The Instigators" style="width:100%;height:100%;object-fit:cover;" referrerpolicy="no-referrer">
-          </div>
-        </td>
-        <td class="title-cell">
-          <div class="title-main">The Instigators</div>
-          <div class="title-sub">Action · Comedy · Crime · 100 min · R</div>
-        </td>
-        <td class="year-cell">2024</td>
-        <td><div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Comedy</span><span class="genre-chip">Crime</span></div></td>
-        <td><div class="imdb-badge"><span class="star">★</span>6.1</div></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-          <button class="abtn btn-delete" onclick="removeRow(this)">🗑 Delete</button>
-        </td>
-      </tr>
-
-      <tr data-id="m6" data-path="C:\Users\asafa\FinishDownloads\Normal.2025.1080p.WEBRip.10Bit.DDP.5.1.x265-NeoNoir.mkv" data-search="normal 2025 drama thriller">
-        <td class="poster-cell">
-          <div class="poster-wrap">
-            <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/koqvUHndq9ORZPJnJr5AOejHICm.jpg" alt="Normal" style="width:100%;height:100%;object-fit:cover;" referrerpolicy="no-referrer">
-          </div>
-        </td>
-        <td class="title-cell">
-          <div class="title-main">Normal</div>
-          <div class="title-sub">Drama · Thriller · 98 min · R</div>
-        </td>
-        <td class="year-cell">2025</td>
-        <td><div class="genre-chips"><span class="genre-chip">Drama</span><span class="genre-chip">Thriller</span></div></td>
-        <td><div class="imdb-badge"><span class="star">★</span>6.8</div></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-          <button class="abtn btn-delete" onclick="removeRow(this)">🗑 Delete</button>
-        </td>
-      </tr>
-
-      <tr data-id="m7" data-path="C:\Users\asafa\FinishDownloads\Master Of The Universe 2026 1080p WEB-DL HEVC x265 5.1 BONE.mkv" data-search="masters of the universe 2026 action adventure fantasy">
-        <td class="poster-cell">
-          <div class="poster-wrap">
-            <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/5Et1L8ysbZ15B9JfDsoicn4ROnq.jpg" referrerpolicy="no-referrer" alt="Masters of the Universe" style="width:100%;height:100%;object-fit:cover;">
-          </div>
-        </td>
-        <td class="title-cell">
-          <div class="title-main">Masters of the Universe</div>
-          <div class="title-sub">Action · Adventure · Fantasy · 2026</div>
-        </td>
-        <td class="year-cell">2026</td>
-        <td><div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Adventure</span><span class="genre-chip">Fantasy</span></div></td>
-        <td><span class="imdb-na">N/A</span></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-          <button class="abtn btn-delete" onclick="removeRow(this)">🗑 Delete</button>
-        </td>
-      </tr>
-
-      <tr data-id="m8" data-path="C:\Users\asafa\FinishDownloads\The.Housemaid.2025.1080p.WEBRip.AAC5.1.10bits.x265-Rapta.mkv" data-search="the housemaid 2025 drama thriller">
-        <td class="poster-cell">
-          <div class="poster-wrap">
-            <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/ktjBpYrLlP18f5rsf2rTOO0aG40.jpg" alt="The Housemaid" style="width:100%;height:100%;object-fit:cover;" referrerpolicy="no-referrer">
-          </div>
-        </td>
-        <td class="title-cell">
-          <div class="title-main">The Housemaid</div>
-          <div class="title-sub">Drama · Thriller · 118 min · R</div>
-        </td>
-        <td class="year-cell">2025</td>
-        <td><div class="genre-chips"><span class="genre-chip">Drama</span><span class="genre-chip">Thriller</span></div></td>
-        <td><div class="imdb-badge"><span class="star">★</span>6.4</div></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-          <button class="abtn btn-delete" onclick="removeRow(this)">🗑 Delete</button>
-        </td>
-      </tr>
-
-      <tr data-id="m9" data-path="C:\Users\asafa\FinishDownloads\Nuremberg 2025 1080p HDRip HC HEVC x265 5.1 BONE.mkv" data-search="nuremberg 2025 biography drama history war">
-        <td class="poster-cell">
-          <div class="poster-wrap">
-            <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/htKaQHnevZTnHUMlUmbt0mUNPVD.jpg" alt="Nuremberg" style="width:100%;height:100%;object-fit:cover;" referrerpolicy="no-referrer">
-          </div>
-        </td>
-        <td class="title-cell">
-          <div class="title-main">Nuremberg</div>
-          <div class="title-sub">Biography · Drama · History · 148 min · R</div>
-        </td>
-        <td class="year-cell">2025</td>
-        <td><div class="genre-chips"><span class="genre-chip">Biography</span><span class="genre-chip">History</span></div></td>
-        <td><div class="imdb-badge"><span class="star">★</span>7.4</div></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-          <button class="abtn btn-delete" onclick="removeRow(this)">🗑 Delete</button>
-        </td>
-      </tr>
-
-      <tr data-id="m10" data-path="C:\Users\asafa\FinishDownloads\Marty Supreme (2025) [1080p] [WEBRip] [5.1] [YTS.BZ]" data-search="marty supreme 2025 biography drama sport timothee chalamet">
-        <td class="poster-cell">
-          <div class="poster-wrap">
-            <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/w6pnewEfz05jxUxUeYjs3tbHIq4.jpg" alt="Marty Supreme" style="width:100%;height:100%;object-fit:cover;" referrerpolicy="no-referrer">
-          </div>
-        </td>
-        <td class="title-cell">
-          <div class="title-main">Marty Supreme</div>
-          <div class="title-sub">Drama · Sport · Timothée Chalamet</div>
-        </td>
-        <td class="year-cell">2025</td>
-        <td><div class="genre-chips"><span class="genre-chip">Drama</span><span class="genre-chip">Sport</span></div></td>
-        <td><div class="imdb-badge"><span class="star">★</span>7.8</div></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-          <button class="abtn btn-delete" onclick="removeRow(this)">🗑 Delete</button>
-        </td>
-      </tr>
-
-      <tr data-id="m11" data-path="C:\Users\asafa\FinishDownloads\[www.UIndex.org]    -    Ballerina 2025 1080p AMZN WEB-DL DDP5 1 Atmos H 264-BYNDR" data-search="ballerina 2025 action crime thriller john wick">
-        <td class="poster-cell">
-          <div class="poster-wrap">
-            <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/zpRpjzIYDtzX5sQ1oG2Et7jva1e.jpg" alt="Ballerina" style="width:100%;height:100%;object-fit:cover;" referrerpolicy="no-referrer">
-          </div>
-        </td>
-        <td class="title-cell">
-          <div class="title-main">Ballerina</div>
-          <div class="title-sub">Action · Crime · Thriller · 120 min · R</div>
-        </td>
-        <td class="year-cell">2025</td>
-        <td><div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Crime</span><span class="genre-chip">Thriller</span></div></td>
-        <td><div class="imdb-badge"><span class="star">★</span>7.0</div></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-          <button class="abtn btn-delete" onclick="removeRow(this)">🗑 Delete</button>
-        </td>
-      </tr>
-
-      <tr data-id="m12" data-path="C:\Users\asafa\FinishDownloads\The Order (2024) [1080p] [WEBRip] [5.1] [YTS.MX]" data-search="the order 2024 crime drama thriller jude law">
-        <td class="poster-cell">
-          <div class="poster-wrap">
-            <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/4YHzTTTeD0V3EiylKKOtedZBxj8.jpg" alt="The Order" style="width:100%;height:100%;object-fit:cover;" referrerpolicy="no-referrer">
-          </div>
-        </td>
-        <td class="title-cell">
-          <div class="title-main">The Order</div>
-          <div class="title-sub">Crime · Drama · Thriller · 116 min · R</div>
-        </td>
-        <td class="year-cell">2024</td>
-        <td><div class="genre-chips"><span class="genre-chip">Crime</span><span class="genre-chip">Drama</span><span class="genre-chip">Thriller</span></div></td>
-        <td><div class="imdb-badge"><span class="star">★</span>6.6</div></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-          <button class="abtn btn-delete" onclick="removeRow(this)">🗑 Delete</button>
-        </td>
-      </tr>
-
-    </tbody>
-  </table>
 </div>
 
-<!-- ═══════════════ MUSIC ═══════════════ -->
+<!-- ═══ MUSIC ═══ -->
 <div class="section">
-  <div class="section-header">
-    <div class="section-title">🎵 Music <span class="section-count" id="count-music">5</span></div>
+  <div class="section-title">🎵 Music <span class="section-count" id="count-music">5</span></div>
+  <div class="music-grid" id="grid-music">
+
+    <div class="music-card" data-id="mu0" data-path="C:\Users\asafa\FinishDownloads\Billboard Hot 100 Singles Chart (03-August-2024) Mp3 320kbps [PMEDIA] ⭐️" data-search="billboard hot 100 2024 chart">
+      <div class="music-icon">🎵</div>
+      <div class="music-info">
+        <div class="music-title">Billboard Hot 100</div>
+        <div class="music-sub">August 2024 · MP3 320kbps</div>
+        <div class="music-actions">
+          <button class="cabtn cabtn-open" onclick="openCard(this)">📁 Open</button>
+          <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="music-card" data-id="mu1" data-path="C:\Users\asafa\FinishDownloads\Various Artists - 100 Greatest Party Songs (2022) Mp3 320kbps [PMEDIA] ⭐️" data-search="100 greatest party songs 2022 various">
+      <div class="music-icon">🎉</div>
+      <div class="music-info">
+        <div class="music-title">100 Greatest Party Songs</div>
+        <div class="music-sub">2022 · Various Artists · MP3 320kbps</div>
+        <div class="music-actions">
+          <button class="cabtn cabtn-open" onclick="openCard(this)">📁 Open</button>
+          <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="music-card" data-id="mu2" data-path="C:\Users\asafa\FinishDownloads\MP3 NEW RELEASES 2025 WEEK 29 - [GloDLS]" data-search="new releases 2025 week 29 mp3">
+      <div class="music-icon">🆕</div>
+      <div class="music-info">
+        <div class="music-title">MP3 New Releases 2025</div>
+        <div class="music-sub">Week 29 · 2025</div>
+        <div class="music-actions">
+          <button class="cabtn cabtn-open" onclick="openCard(this)">📁 Open</button>
+          <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="music-card" data-id="mu3" data-path="C:\Users\asafa\FinishDownloads\Various Artists - Top Movie Songs (2025)" data-search="top movie songs 2025 various">
+      <div class="music-icon">🎬</div>
+      <div class="music-info">
+        <div class="music-title">Top Movie Songs</div>
+        <div class="music-sub">2025 · Various Artists</div>
+        <div class="music-actions">
+          <button class="cabtn cabtn-open" onclick="openCard(this)">📁 Open</button>
+          <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="music-card" data-id="mu4" data-path="C:\Users\asafa\FinishDownloads\Various Artists - Soft Acoustic Songs (2025)" data-search="soft acoustic songs 2025 various">
+      <div class="music-icon">🎸</div>
+      <div class="music-info">
+        <div class="music-title">Soft Acoustic Songs</div>
+        <div class="music-sub">2025 · Various Artists</div>
+        <div class="music-actions">
+          <button class="cabtn cabtn-open" onclick="openCard(this)">📁 Open</button>
+          <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
+        </div>
+      </div>
+    </div>
+
   </div>
-  <table id="tbl-music">
-    <thead>
-      <tr>
-        <th style="width:46px"></th>
-        <th>Title</th>
-        <th>Year</th>
-        <th>Type</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-
-      <tr data-id="mu0" data-path="C:\Users\asafa\FinishDownloads\Billboard Hot 100 Singles Chart (03-August-2024) Mp3 320kbps [PMEDIA] ⭐️" data-search="billboard hot 100 2024 chart">
-        <td class="music-icon-cell">🎵</td>
-        <td class="music-title-cell"><div class="title-main">Billboard Hot 100</div><div class="title-sub">03 August 2024 · MP3 320kbps</div></td>
-        <td class="year-cell">2024</td>
-        <td><div class="genre-chips"><span class="genre-chip">Chart</span><span class="genre-chip">Singles</span></div></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-        </td>
-      </tr>
-
-      <tr data-id="mu1" data-path="C:\Users\asafa\FinishDownloads\Various Artists - 100 Greatest Party Songs (2022) Mp3 320kbps [PMEDIA] ⭐️" data-search="100 greatest party songs 2022 various">
-        <td class="music-icon-cell">🎉</td>
-        <td class="music-title-cell"><div class="title-main">100 Greatest Party Songs</div><div class="title-sub">2022 · Various Artists · MP3 320kbps</div></td>
-        <td class="year-cell">2022</td>
-        <td><div class="genre-chips"><span class="genre-chip">Party</span><span class="genre-chip">Compilation</span></div></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-        </td>
-      </tr>
-
-      <tr data-id="mu2" data-path="C:\Users\asafa\FinishDownloads\MP3 NEW RELEASES 2025 WEEK 29 - [GloDLS]" data-search="new releases 2025 week 29 mp3">
-        <td class="music-icon-cell">🆕</td>
-        <td class="music-title-cell"><div class="title-main">MP3 New Releases 2025</div><div class="title-sub">Week 29 · 2025</div></td>
-        <td class="year-cell">2025</td>
-        <td><div class="genre-chips"><span class="genre-chip">New Releases</span></div></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-        </td>
-      </tr>
-
-      <tr data-id="mu3" data-path="C:\Users\asafa\FinishDownloads\Various Artists - Top Movie Songs (2025)" data-search="top movie songs 2025 various">
-        <td class="music-icon-cell">🎬</td>
-        <td class="music-title-cell"><div class="title-main">Top Movie Songs</div><div class="title-sub">2025 · Various Artists</div></td>
-        <td class="year-cell">2025</td>
-        <td><div class="genre-chips"><span class="genre-chip">Soundtrack</span></div></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-        </td>
-      </tr>
-
-      <tr data-id="mu4" data-path="C:\Users\asafa\FinishDownloads\Various Artists - Soft Acoustic Songs (2025)" data-search="soft acoustic songs 2025 various">
-        <td class="music-icon-cell">🎸</td>
-        <td class="music-title-cell"><div class="title-main">Soft Acoustic Songs</div><div class="title-sub">2025 · Various Artists</div></td>
-        <td class="year-cell">2025</td>
-        <td><div class="genre-chips"><span class="genre-chip">Acoustic</span></div></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-        </td>
-      </tr>
-
-    </tbody>
-  </table>
 </div>
 
-<footer>
-  <span>🎬 Asaf's Library · 13 Movies · 1 Series · 5 Music</span>
-  <span>Posters via Amazon · Ratings from IMDb</span>
-</footer>
-
+<footer>🎬 Asaf's Library · 13 Movies · 1 Series · 5 Music · Posters via TMDB</footer>
 <div id="toast"></div>
 
 <script>
-// ── Poster lazy load ───────────────────────────────────
-function loadPosters() {
-  document.querySelectorAll('.poster-wrap img[data-src]').forEach(img => {
-    const src = img.dataset.src;
-    if (!src) return;
-    const wrap = img.closest('.poster-wrap');
-    const noP  = wrap.querySelector('.no-poster');
-    // Proxy Amazon URLs to bypass hotlink protection
-    img.referrerPolicy = 'no-referrer';
-    img.onload  = () => { img.classList.add('loaded'); if(noP) noP.style.display = 'none'; };
-    img.onerror = () => { img.style.display = 'none'; };
-    img.src = src;
-    delete img.dataset.src;
-  });
-}
-
-// ── State persistence ──────────────────────────────────
+// ── State ──────────────────────────────────────────────
 function getState() {
-  try {
-    const r = JSON.parse(localStorage.getItem('asaflib3') || '{}');
-    return { watched: new Set(r.watched || []), hidden: new Set(r.hidden || []) };
+  try { const r = JSON.parse(localStorage.getItem('asaflib4') || '{}');
+    return { watched: new Set(r.watched||[]), hidden: new Set(r.hidden||[]) };
   } catch(e) { return { watched: new Set(), hidden: new Set() }; }
 }
 function saveState(s) {
-  try { localStorage.setItem('asaflib3', JSON.stringify({ watched:[...s.watched], hidden:[...s.hidden] })); } catch(e) {}
+  try { localStorage.setItem('asaflib4', JSON.stringify({ watched:[...s.watched], hidden:[...s.hidden] })); } catch(e) {}
 }
 
 // ── Actions ────────────────────────────────────────────
-function openRow(btn) {
-  const row = btn.closest('tr');
-  const path = row.dataset.path;
-  window.open('file:///' + path.replace(/\\/g, '/'), '_blank');
+function openCard(btn) {
+  const card = btn.closest('[data-path]');
+  window.open('file:///' + card.dataset.path.replace(/\\/g,'/'), '_blank');
 }
 
 function toggleWatched(btn) {
-  const row = btn.closest('tr');
-  const id  = row.dataset.id;
-  const now = row.classList.toggle('watched');
-  btn.textContent = now ? '↩ Unwatch' : '👁 Saw This';
+  const card = btn.closest('[data-id]');
+  const id   = card.dataset.id;
+  const now  = card.classList.toggle('watched');
+  btn.textContent = now ? '↩ Unwatch' : '👁 Saw It';
   const s = getState();
   now ? s.watched.add(id) : s.watched.delete(id);
   saveState(s); updateCounts();
   showToast(now ? 'Marked as watched ✓' : 'Unmarked');
 }
 
-function removeRow(btn) {
-  const row = btn.closest('tr');
-  row.classList.add('hidden-row');
-  const s = getState(); s.hidden.add(row.dataset.id); saveState(s);
+function removeCard(btn) {
+  const card = btn.closest('[data-id]');
+  card.classList.add('hidden-card');
+  const s = getState(); s.hidden.add(card.dataset.id); saveState(s);
   updateCounts(); showToast('Removed');
 }
 
@@ -716,8 +605,7 @@ function toggleHideWatched() {
   hideWatched = !hideWatched;
   document.body.classList.toggle('hide-watched', hideWatched);
   const btn = document.getElementById('toggleWatchedBtn');
-  const txt = hideWatched ? 'Show Watched' : 'Hide Watched';
-  btn.childNodes.forEach(n => { if(n.nodeType===3) n.textContent = ' ' + txt; });
+  btn.childNodes.forEach(n => { if(n.nodeType===3) n.textContent = ' ' + (hideWatched ? 'Show Watched' : 'Hide Watched'); });
   btn.classList.toggle('active', !hideWatched);
   updateCounts();
 }
@@ -725,24 +613,24 @@ function toggleHideWatched() {
 // ── Search ─────────────────────────────────────────────
 function doSearch(q) {
   const term = q.trim().toLowerCase();
-  document.querySelectorAll('tbody tr[data-search]').forEach(row => {
-    const match = !term || row.dataset.search.includes(term) ||
-      row.querySelector('.title-main')?.textContent.toLowerCase().includes(term);
-    row.classList.toggle('search-hidden', !match);
+  document.querySelectorAll('[data-search]').forEach(card => {
+    const match = !term || card.dataset.search.includes(term) ||
+      (card.querySelector('.card-title, .music-title')?.textContent.toLowerCase().includes(term));
+    card.classList.toggle('search-hidden', !match);
   });
   updateCounts();
 }
 
 // ── Counts ─────────────────────────────────────────────
 function updateCounts() {
-  [['tbl-series','count-series'],['tbl-movies','count-movies'],['tbl-music','count-music']].forEach(([tbl,badge]) => {
-    const t = document.getElementById(tbl);
+  [['grid-series','count-series'],['grid-movies','count-movies'],['grid-music','count-music']].forEach(([grid,badge]) => {
+    const g = document.getElementById(grid);
     const b = document.getElementById(badge);
-    if (!t || !b) return;
-    b.textContent = [...t.querySelectorAll('tbody tr')].filter(r =>
-      !r.classList.contains('hidden-row') &&
-      !r.classList.contains('search-hidden') &&
-      !(hideWatched && r.classList.contains('watched'))
+    if (!g||!b) return;
+    b.textContent = [...g.querySelectorAll('[data-id]')].filter(c =>
+      !c.classList.contains('hidden-card') &&
+      !c.classList.contains('search-hidden') &&
+      !(hideWatched && c.classList.contains('watched'))
     ).length;
   });
 }
@@ -752,148 +640,116 @@ let _tt;
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
-  clearTimeout(_tt); _tt = setTimeout(() => t.classList.remove('show'), 2000);
+  clearTimeout(_tt); _tt = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── Refresh Folder (File System Access API) ────────────
+let _folderHandle = null;
+
+async function getOrPickFolder() {
+  if (_folderHandle) {
+    const perm = await _folderHandle.queryPermission({ mode:'read' });
+    if (perm === 'granted') return _folderHandle;
+    if (await _folderHandle.requestPermission({ mode:'read' }) === 'granted') return _folderHandle;
+  }
+  try {
+    _folderHandle = await window.showDirectoryPicker({ mode:'read', startIn:'downloads' });
+    return _folderHandle;
+  } catch(e) { return null; }
+}
+
+async function refreshFolder() {
+  const btn = document.getElementById('refreshFolderBtn');
+  btn.classList.add('syncing'); btn.disabled = true;
+
+  const dir = await getOrPickFolder();
+  if (!dir) {
+    showToast('⚠ לא נבחרה תיקייה');
+    btn.classList.remove('syncing'); btn.disabled = false; return;
+  }
+
+  const items = [];
+  for await (const [name, handle] of dir.entries()) items.push({ name, isDir: handle.kind==='directory' });
+
+  const folderNames = new Set(items.map(i => i.name.toLowerCase()));
+  let added = 0, removed = 0;
+
+  // Hide cards not in folder; unhide ones that returned
+  document.querySelectorAll('[data-path]').forEach(card => {
+    const base = card.dataset.path.split('\\').pop().split('/').pop().toLowerCase();
+    if (!folderNames.has(base)) { card.classList.add('hidden-card'); removed++; }
+    else card.classList.remove('hidden-card');
+  });
+
+  // Add new items
+  const knownNames = new Set([...document.querySelectorAll('[data-path]')].map(c => c.dataset.path.split('\\').pop().split('/').pop().toLowerCase()));
+  const MUSIC_KW  = /mp3|music|billboard|songs|chart|acoustic|party|flac|album/i;
+  const SERIES_KW = /\bS\d{2}\b|season\s*\d|complete/i;
+  const ROOT = 'C:\\Users\\asafa\\FinishDownloads';
+
+  items.forEach(item => {
+    if (knownNames.has(item.name.toLowerCase())) return;
+    if (/^\.|^desktop\.ini$|^thumbs\.db$/i.test(item.name)) return;
+    added++;
+    const path = ROOT + '\\' + item.name;
+    const uid  = 'new-' + Date.now() + '-' + added;
+
+    if (MUSIC_KW.test(item.name)) {
+      document.getElementById('grid-music').insertAdjacentHTML('beforeend', `
+        <div class="music-card" data-id="${uid}" data-path="${path}" data-search="${item.name.toLowerCase()}">
+          <div class="music-icon">🎵</div>
+          <div class="music-info">
+            <div class="music-title">${item.name}</div>
+            <div class="music-sub">חדש</div>
+            <div class="music-actions">
+              <button class="cabtn cabtn-open" onclick="openCard(this)">📁 Open</button>
+              <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
+            </div>
+          </div>
+        </div>`);
+    } else {
+      const gridId = SERIES_KW.test(item.name) ? 'grid-series' : 'grid-movies';
+      document.getElementById(gridId).insertAdjacentHTML('beforeend', `
+        <div class="card" data-id="${uid}" data-path="${path}" data-search="${item.name.toLowerCase()}">
+          <div class="card-poster">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a2a1a,#0a1a0a);display:flex;align-items:center;justify-content:center;font-size:40px">🎬</div>
+            <div class="card-overlay">
+              <div class="card-title">${item.name}</div>
+              <div class="card-meta">חדש</div>
+              <div class="card-actions">
+                <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
+                <button class="cabtn cabtn-saw" onclick="toggleWatched(this)">👁 Saw It</button>
+                <button class="cabtn cabtn-remove" onclick="removeCard(this)">✕</button>
+              </div>
+            </div>
+          </div>
+        </div>`);
+    }
+  });
+
+  updateCounts();
+  btn.classList.remove('syncing'); btn.disabled = false;
+  const parts = [];
+  if (added)   parts.push(`${added} חדשים`);
+  if (removed) parts.push(`${removed} הוסרו`);
+  showToast(parts.length ? '🔄 ' + parts.join(' · ') : '✓ הספריה מסונכרנת');
 }
 
 // ── Init ───────────────────────────────────────────────
 function applyState() {
   const s = getState();
-  document.querySelectorAll('tbody tr[data-id]').forEach(row => {
-    if (s.hidden.has(row.dataset.id))  row.classList.add('hidden-row');
-    if (s.watched.has(row.dataset.id)) {
-      row.classList.add('watched');
-      const btn = row.querySelector('.btn-saw');
+  document.querySelectorAll('[data-id]').forEach(card => {
+    if (s.hidden.has(card.dataset.id))  card.classList.add('hidden-card');
+    if (s.watched.has(card.dataset.id)) {
+      card.classList.add('watched');
+      const btn = card.querySelector('.cabtn-saw');
       if (btn) btn.textContent = '↩ Unwatch';
     }
   });
   updateCounts();
 }
 
-// ── Refresh Folder sync (File System Access API — no server needed) ──
-let _folderHandle = null;
-
-async function getOrPickFolder() {
-  // Try stored handle first
-  if (_folderHandle) {
-    const perm = await _folderHandle.queryPermission({ mode: 'read' });
-    if (perm === 'granted') return _folderHandle;
-    const req = await _folderHandle.requestPermission({ mode: 'read' });
-    if (req === 'granted') return _folderHandle;
-  }
-  // Ask user to pick the folder
-  try {
-    _folderHandle = await window.showDirectoryPicker({ mode: 'read', startIn: 'downloads' });
-    return _folderHandle;
-  } catch(e) {
-    return null; // user cancelled
-  }
-}
-
-async function refreshFolder() {
-  const btn = document.getElementById('refreshFolderBtn');
-  btn.classList.add('syncing');
-  btn.disabled = true;
-
-  const dir = await getOrPickFolder();
-  if (!dir) {
-    showToast('⚠ לא נבחרה תיקייה');
-    btn.classList.remove('syncing'); btn.disabled = false;
-    return;
-  }
-
-  // Read folder contents
-  const items = [];
-  for await (const [name, handle] of dir.entries()) {
-    items.push({ name, isDir: handle.kind === 'directory' });
-  }
-
-  const folderNames = new Set(items.map(i => i.name.toLowerCase()));
-  let added = 0, removed = 0, restored = 0;
-
-  // 1. Show only rows whose file/folder exists in the folder — hide the rest
-  document.querySelectorAll('tbody tr[data-path]').forEach(row => {
-    const rowBase = row.dataset.path.split('\\').pop().split('/').pop().toLowerCase();
-    const exists  = folderNames.has(rowBase);
-    if (!exists) {
-      row.classList.add('hidden-row'); removed++;
-    } else {
-      row.classList.remove('hidden-row', 'missing-row');
-    }
-  });
-
-  // 2. Find new items not yet in any row
-  const knownNames = new Set(
-    [...document.querySelectorAll('tbody tr[data-path]')]
-      .map(r => r.dataset.path.split('\\').pop().split('/').pop().toLowerCase())
-  );
-
-  const MUSIC_KW  = /mp3|music|billboard|songs|chart|acoustic|party|flac|album/i;
-  const SERIES_KW = /\bS\d{2}\b|season\s*\d|complete/i;
-  const folderPath = 'C:\\Users\\asafa\\FinishDownloads';
-
-  items.forEach(item => {
-    if (knownNames.has(item.name.toLowerCase())) return;
-    if (/^\.|^desktop\.ini$|^thumbs\.db$/i.test(item.name)) return;
-
-    added++;
-    const fullPath = folderPath + '\\' + item.name;
-    const uid = 'new-' + Date.now() + '-' + added;
-    let tableId, rowHtml;
-
-    if (MUSIC_KW.test(item.name)) {
-      tableId = 'tbl-music';
-      rowHtml = `<tr data-id="${uid}" data-path="${fullPath}" data-search="${item.name.toLowerCase()}" class="new-row">
-        <td class="music-icon-cell">🎵</td>
-        <td class="music-title-cell"><div class="title-main">${item.name}</div><div class="title-sub">חדש</div></td>
-        <td class="year-cell">—</td>
-        <td><div class="genre-chips"><span class="genre-chip">Music</span></div></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-        </td></tr>`;
-    } else if (SERIES_KW.test(item.name)) {
-      tableId = 'tbl-series';
-      rowHtml = `<tr data-id="${uid}" data-path="${fullPath}" data-search="${item.name.toLowerCase()}" class="new-row">
-        <td class="poster-cell"><div class="poster-wrap" style="background:#1a2a1a"></div></td>
-        <td class="title-cell"><div class="title-main">${item.name}</div><div class="title-sub">סדרה חדשה</div></td>
-        <td><div class="ep-chips"><span class="ep-chip">?</span></div></td>
-        <td><div class="genre-chips"><span class="genre-chip">Series</span></div></td>
-        <td><span class="imdb-na">N/A</span></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-        </td></tr>`;
-    } else {
-      tableId = 'tbl-movies';
-      rowHtml = `<tr data-id="${uid}" data-path="${fullPath}" data-search="${item.name.toLowerCase()}" class="new-row">
-        <td class="poster-cell"><div class="poster-wrap" style="background:#1a2a1a"></div></td>
-        <td class="title-cell"><div class="title-main">${item.name}</div><div class="title-sub">חדש</div></td>
-        <td class="year-cell">—</td>
-        <td><div class="genre-chips"><span class="genre-chip">Unknown</span></div></td>
-        <td><span class="imdb-na">N/A</span></td>
-        <td class="actions-cell">
-          <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
-          <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
-          <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
-        </td></tr>`;
-    }
-
-    document.querySelector(`#${tableId} tbody`).insertAdjacentHTML('beforeend', rowHtml);
-  });
-
-  updateCounts();
-  btn.classList.remove('syncing'); btn.disabled = false;
-
-  const parts = [];
-  if (added)    parts.push(`${added} חדשים`);
-  if (removed)  parts.push(`${removed} חסרים`);
-  if (restored) parts.push(`${restored} חזרו`);
-  showToast(parts.length ? '🔄 ' + parts.join(' · ') : '✓ הספריה מסונכרנת');
-}
-
 applyState();
-loadPosters();
 </script>
 </body>
 </html>
