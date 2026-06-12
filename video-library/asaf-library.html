@@ -202,6 +202,28 @@ body.hide-watched .card.watched { display: none !important; }
 .music-sub { font-size: 11px; color: #666; margin-top: 3px; }
 .music-actions { display: flex; gap: 5px; margin-top: 8px; }
 
+/* ── PROGRESS BAR ── */
+#progress-wrap {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9998;
+  height: 4px; background: rgba(255,255,255,0.06);
+  opacity: 0; transition: opacity 0.2s;
+  pointer-events: none;
+}
+#progress-wrap.show { opacity: 1; }
+#progress-bar {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, #e50914, #ff6b6b);
+  transition: width 0.3s ease;
+  box-shadow: 0 0 8px rgba(229,9,20,0.7);
+}
+#progress-label {
+  position: fixed; top: 8px; left: 50%; transform: translateX(-50%);
+  font-size: 11px; color: #ff6b6b; font-weight: 700; letter-spacing: 0.5px;
+  opacity: 0; transition: opacity 0.2s; z-index: 9999; pointer-events: none;
+  background: rgba(0,0,0,0.7); padding: 3px 12px; border-radius: 10px;
+}
+#progress-label.show { opacity: 1; }
+
 /* ── TOAST ── */
 #toast {
   position: fixed; bottom: 26px; left: 50%;
@@ -573,6 +595,8 @@ footer {
 </div>
 
 <footer>🎬 Asaf's Library · 13 Movies · 1 Series · 5 Music · Posters via TMDB</footer>
+<div id="progress-wrap"><div id="progress-bar"></div></div>
+<div id="progress-label"></div>
 <div id="toast"></div>
 
 <script>
@@ -653,6 +677,29 @@ function showToast(msg) {
   clearTimeout(_tt); _tt = setTimeout(() => t.classList.remove('show'), 2200);
 }
 
+// ── Progress bar ───────────────────────────────────────
+function setProgress(pct, label) {
+  const wrap  = document.getElementById('progress-wrap');
+  const bar   = document.getElementById('progress-bar');
+  const lbl   = document.getElementById('progress-label');
+  wrap.classList.add('show');
+  lbl.classList.add('show');
+  bar.style.width  = pct + '%';
+  lbl.textContent  = label;
+}
+function clearProgress() {
+  const wrap = document.getElementById('progress-wrap');
+  const bar  = document.getElementById('progress-bar');
+  const lbl  = document.getElementById('progress-label');
+  bar.style.width = '100%';
+  lbl.textContent = '✓ Done';
+  setTimeout(() => {
+    wrap.classList.remove('show');
+    lbl.classList.remove('show');
+    bar.style.width = '0%';
+  }, 800);
+}
+
 // ── Refresh Folder — reads C:\Users\asafa\FinishDownloads via local server ──
 async function refreshFolder() {
   const btn = document.getElementById('refreshFolderBtn');
@@ -660,14 +707,18 @@ async function refreshFolder() {
 
   let items;
   try {
+    setProgress(10, 'מתחבר לשרת...');
     const res = await fetch('http://localhost:8001/api/scan');
     if (!res.ok) throw new Error('server error');
+    setProgress(35, 'קורא תיקייה...');
     items = await res.json();
   } catch(e) {
+    clearProgress();
     showToast('⚠ הפעל את start-library.bat ולחץ שוב');
     btn.classList.remove('syncing'); btn.disabled = false; return;
   }
 
+  setProgress(60, 'מסנכרן רשימה...');
   const folderNames = new Set(items.map(i => i.name.toLowerCase()));
   let added = 0, removed = 0;
 
@@ -678,6 +729,7 @@ async function refreshFolder() {
     else card.classList.remove('hidden-card');
   });
 
+  setProgress(80, 'מוסיף פריטים חדשים...');
   // Add new items
   const knownNames = new Set([...document.querySelectorAll('[data-path]')].map(c => c.dataset.path.split('\\').pop().split('/').pop().toLowerCase()));
   const MUSIC_KW  = /mp3|music|billboard|songs|chart|acoustic|party|flac|album/i;
@@ -725,6 +777,7 @@ async function refreshFolder() {
   });
 
   updateCounts();
+  clearProgress();
   btn.classList.remove('syncing'); btn.disabled = false;
   const parts = [];
   if (added)   parts.push(`${added} חדשים`);
