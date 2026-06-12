@@ -105,12 +105,20 @@ body.hide-watched .card.watched { display: none !important; }
   width: 100%; height: 100%;
   background: #1f1f1f;
   position: relative;
+  display: flex; align-items: center; justify-content: center;
 }
 .card-poster img {
+  position: absolute; inset: 0;
   width: 100%; height: 100%;
   object-fit: cover;
-  display: block;
-  transition: opacity 0.3s;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.card-poster img.loaded { opacity: 1; }
+.card-no-poster {
+  font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.5);
+  text-align: center; padding: 10px; line-height: 1.3; z-index: 1;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
 }
 
 /* watched ribbon */
@@ -1060,11 +1068,31 @@ function applyState() {
   updateCounts();
 }
 
+function initPosters() {
+  document.querySelectorAll('.card-poster img').forEach(img => {
+    if (!img.src) return;
+    const title = img.closest('[data-id]')?.querySelector('.card-title')?.textContent.trim() || '';
+    img.onload  = () => img.classList.add('loaded');
+    img.onerror = () => {
+      img.style.display = 'none';
+      const poster = img.closest('.card-poster');
+      if (!poster.querySelector('.card-no-poster')) {
+        poster.insertAdjacentHTML('beforeend',
+          `<div class="card-no-poster">${title}</div>`);
+      }
+    };
+    // trigger for already-cached images
+    if (img.complete && img.naturalWidth > 0) img.classList.add('loaded');
+    else if (img.complete) img.dispatchEvent(new Event('error'));
+  });
+}
+
 applyState();
 injectTypeBadges();
 injectPlayButtons();
 injectSubtitleButtons();
 initCardClicks();
+initPosters();
 </script>
 </body>
 </html>
