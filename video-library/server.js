@@ -9,7 +9,10 @@ const VIDEO_EXT = new Set(['.mkv','.mp4','.avi','.mov','.wmv','.m4v','.flv','.we
 
 const HTML_FILE    = path.join(__dirname, 'asaf-library.html');
 const WATCH_FOLDER = 'C:\\Users\\asafa\\FinishDownloads';
+const POSTERS_DIR  = path.join(__dirname, 'posters');
 const PORT         = 8001;
+
+if (!fs.existsSync(POSTERS_DIR)) fs.mkdirSync(POSTERS_DIR);
 
 const MIME = { '.html':'text/html', '.css':'text/css', '.js':'application/javascript',
                '.jpg':'image/jpeg', '.png':'image/png', '.svg':'image/svg+xml' };
@@ -54,17 +57,86 @@ http.createServer(async (req, res) => {
   if (route === '/api/poster') {
     const title = params.get('title') || '';
     const year  = params.get('year')  || '';
-    const q     = encodeURIComponent(title);
-    const omdbUrl = `https://www.omdbapi.com/?t=${q}&y=${year}&apikey=b9bd48a6`;
+    const slug  = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const localFile = path.join(POSTERS_DIR, slug + '.jpg');
+    const localUrl  = `http://localhost:${PORT}/posters/${slug}.jpg`;
+
+    // Serve from cache if already downloaded
+    if (fs.existsSync(localFile)) {
+      return json(res, { poster: localUrl, cached: true });
+    }
+
+    // Helper: download image and cache it, return local URL on success
+    async function cacheImage(remoteUrl) {
+      try {
+        const imgRes = await fetchUrl(remoteUrl);
+        if (imgRes.status === 200 && imgRes.body.length > 5000) {
+          fs.writeFileSync(localFile, imgRes.body);
+          return localUrl;
+        }
+      } catch(_) {}
+      return null;
+    }
+
+    // Helper: get poster URL from a Wikipedia page slug
+    async function wikiPoster(pageSlug) {
+      try {
+        const { body } = await fetchUrl(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(pageSlug)}`);
+        const data = JSON.parse(body.toString());
+        if (!data.thumbnail) return null;
+        // Upgrade thumbnail to 500px width
+        return data.thumbnail.source.replace(/\/\d+px-/, '/500px-');
+      } catch(_) { return null; }
+    }
+
+    // 1) Try OMDB
     try {
-      const { body } = await fetchUrl(omdbUrl);
+      const q = encodeURIComponent(title);
+      const { body } = await fetchUrl(`https://www.omdbapi.com/?t=${q}&y=${year}&apikey=b9bd48a6`);
       const data = JSON.parse(body.toString());
-      if (data.Poster && data.Poster !== 'N/A') {
-        return json(res, { poster: data.Poster, title: data.Title, year: data.Year, imdb: data.imdbRating });
+      if (data.Poster && data.Poster !== 'N/A' && data.Response !== 'False') {
+        const cached = await cacheImage(data.Poster);
+        if (cached) return json(res, { poster: cached });
       }
-      // fallback: search TMDB without key via scrape
-      return json(res, { poster: null });
-    } catch(e) { return json(res, { poster: null }); }
+    } catch(_) {}
+
+    // 2) Wikipedia — try common film article title patterns
+    const wikiCandidates = [
+      `${title} (film)`,
+      year ? `${title} (${year} film)` : null,
+      `${title}`,
+    ].filter(Boolean);
+
+    for (const candidate of wikiCandidates) {
+      const remoteUrl = await wikiPoster(candidate);
+      if (remoteUrl) {
+        const cached = await cacheImage(remoteUrl);
+        if (cached) return json(res, { poster: cached });
+        // Image too small or failed — return remote URL directly
+        return json(res, { poster: remoteUrl });
+      }
+    }
+
+    // 3) Wikipedia search as last resort
+    try {
+      const q = encodeURIComponent(title + (year ? ' ' + year : '') + ' film');
+      const { body } = await fetchUrl(`https://en.wikipedia.org/w/api.php?action=opensearch&search=${q}&limit=3&format=json`);
+      const results = JSON.parse(body.toString());
+      const titles  = results[1] || [];
+      const urls    = results[3] || [];
+      for (let i = 0; i < titles.length; i++) {
+        const pageSlug = decodeURIComponent(urls[i].split('/wiki/')[1] || '');
+        if (!pageSlug) continue;
+        const remoteUrl = await wikiPoster(pageSlug);
+        if (remoteUrl) {
+          const cached = await cacheImage(remoteUrl);
+          if (cached) return json(res, { poster: cached });
+          return json(res, { poster: remoteUrl });
+        }
+      }
+    } catch(_) {}
+
+    return json(res, { poster: null });
   }
 
   // ── /api/play?path=X ──────────────────────────────────
@@ -146,6 +218,18 @@ http.createServer(async (req, res) => {
       fs.writeFileSync(destFile, srtBuf);
       return json(res, { saved: destFile });
     } catch(e) { return json(res, { error: e.message }, 500); }
+  }
+
+  // ── /posters/ static images ───────────────────────────
+  if (route.startsWith('/posters/')) {
+    const imgFile = path.join(POSTERS_DIR, path.basename(route));
+    fs.readFile(imgFile, (err, data) => {
+      if (err) { res.writeHead(404); res.end('Not found'); return; }
+      res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Access-Control-Allow-Origin':'*',
+                           'Cache-Control': 'public, max-age=31536000' });
+      res.end(data);
+    });
+    return;
   }
 
   // ── static files ──────────────────────────────────────

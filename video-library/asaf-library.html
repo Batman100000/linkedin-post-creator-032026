@@ -863,17 +863,21 @@ async function refreshFolder() {
     !/^\.|^desktop\.ini$|^thumbs\.db$/i.test(item.name)
   );
 
+  const videoNewItems = [];
   newItems.forEach(item => {
     added++;
-    const itemPath = ROOT + '\\' + item.name;
-    const uid  = 'new-' + Date.now() + '-' + added;
+    const itemPath   = ROOT + '\\' + item.name;
+    const uid        = 'new-' + Date.now() + '-' + added;
+    const cleanTitle = item.name.replace(/\.\d{4}\..*|_|\./g, ' ').replace(/\s+/g,' ').trim();
+    const yearMatch  = item.name.match(/\b(19|20)\d{2}\b/);
+    const year       = yearMatch ? yearMatch[0] : '';
 
     if (MUSIC_KW.test(item.name)) {
       document.getElementById('grid-music').insertAdjacentHTML('beforeend', `
         <div class="music-card" data-id="${uid}" data-path="${itemPath}" data-search="${item.name.toLowerCase()}">
           <div class="music-icon">🎵</div>
           <div class="music-info">
-            <div class="music-title">${item.name}</div>
+            <div class="music-title">${cleanTitle}</div>
             <div class="music-sub">חדש</div>
             <div class="music-actions">
               <button class="cabtn cabtn-open" onclick="openCard(this)">📁 Open</button>
@@ -883,14 +887,13 @@ async function refreshFolder() {
         </div>`);
     } else {
       const gridId = SERIES_KW.test(item.name) ? 'grid-series' : 'grid-movies';
-      const cleanTitle = item.name.replace(/\.\d{4}\..*|_|\./g, ' ').replace(/\s+/g,' ').trim();
       document.getElementById(gridId).insertAdjacentHTML('beforeend', `
-        <div class="card" data-id="${uid}" data-path="${itemPath}" data-search="${item.name.toLowerCase()}">
+        <div class="card" data-id="${uid}" data-path="${itemPath}" data-title="${cleanTitle}" data-year="${year}" data-search="${item.name.toLowerCase()}">
           <div class="card-poster">
-            <div class="card-no-poster" style="font-size:13px;padding:12px;text-align:center;color:#aaa">${cleanTitle}</div>
+            <div class="card-no-poster">${cleanTitle}</div>
             <div class="card-overlay">
               <div class="card-title">${cleanTitle}</div>
-              <div class="card-meta">חדש</div>
+              <div class="card-meta">${year || 'חדש'}</div>
               <div class="card-actions">
                 <button class="cabtn cabtn-play" onclick="playCard(this)">▶ נגן</button>
                 <button class="cabtn cabtn-open" onclick="openCard(this)">▶ Open</button>
@@ -901,42 +904,20 @@ async function refreshFolder() {
             </div>
           </div>
         </div>`);
+      videoNewItems.push({ uid, cleanTitle, year });
     }
   });
 
-  // Fetch posters for new video items
-  if (newItems.some(i => !MUSIC_KW.test(i.name))) {
+  // Fetch and cache posters for new video items
+  if (videoNewItems.length) {
     setProgress(88, 'מחפש תמונות...');
-    const posterPromises = newItems
-      .filter(i => !MUSIC_KW.test(i.name))
-      .map(async (item, idx) => {
-        const uid = 'new-' + (Date.now() - (newItems.length - idx) + idx + 1);
-        const cleanTitle = item.name.replace(/\.\d{4}\..*|_|\./g, ' ').replace(/\s+/g,' ').trim();
-        const yearMatch  = item.name.match(/\b(19|20)\d{2}\b/);
-        const year       = yearMatch ? yearMatch[0] : '';
-        try {
-          const r = await fetch(`http://localhost:8001/api/poster?title=${encodeURIComponent(cleanTitle)}&year=${year}`);
-          const d = await r.json();
-          if (d.poster) {
-            // Find the card by searching for the title in card-title
-            document.querySelectorAll('.card').forEach(card => {
-              const t = card.querySelector('.card-title');
-              if (t && t.textContent.trim() === cleanTitle) {
-                const poster = card.querySelector('.card-poster');
-                const noPost = poster.querySelector('.card-no-poster');
-                const img = document.createElement('img');
-                img.src = d.poster;
-                img.alt = cleanTitle;
-                img.onload  = () => img.classList.add('loaded');
-                img.onerror = () => img.remove();
-                if (noPost) noPost.style.display = 'none';
-                poster.insertBefore(img, poster.firstChild);
-              }
-            });
-          }
-        } catch(_) {}
-      });
-    await Promise.allSettled(posterPromises);
+    await Promise.allSettled(videoNewItems.map(async ({ uid, cleanTitle, year }) => {
+      try {
+        const r = await fetch(`http://localhost:8001/api/poster?title=${encodeURIComponent(cleanTitle)}&year=${year}`);
+        const d = await r.json();
+        if (d.poster) applyPosterToCard(uid, d.poster, cleanTitle);
+      } catch(_) {}
+    }));
   }
 
   updateCounts();
@@ -1109,23 +1090,41 @@ function applyState() {
   updateCounts();
 }
 
+// Attach load/error handlers to a single img element
+function wireImg(img, title) {
+  img.onload  = () => { img.classList.add('loaded'); };
+  img.onerror = () => {
+    img.remove();
+    const poster = img.closest('.card-poster');
+    if (poster && !poster.querySelector('.card-no-poster'))
+      poster.insertAdjacentHTML('beforeend', `<div class="card-no-poster">${title}</div>`);
+  };
+  if (img.complete && img.naturalWidth > 0) img.classList.add('loaded');
+  else if (img.complete) img.dispatchEvent(new Event('error'));
+}
+
 function initPosters() {
   document.querySelectorAll('.card-poster img').forEach(img => {
     if (!img.src) return;
     const title = img.closest('[data-id]')?.querySelector('.card-title')?.textContent.trim() || '';
-    img.onload  = () => img.classList.add('loaded');
-    img.onerror = () => {
-      img.style.display = 'none';
-      const poster = img.closest('.card-poster');
-      if (!poster.querySelector('.card-no-poster')) {
-        poster.insertAdjacentHTML('beforeend',
-          `<div class="card-no-poster">${title}</div>`);
-      }
-    };
-    // trigger for already-cached images
-    if (img.complete && img.naturalWidth > 0) img.classList.add('loaded');
-    else if (img.complete) img.dispatchEvent(new Event('error'));
+    wireImg(img, title);
   });
+}
+
+// Inject img into a card poster by uid
+function applyPosterToCard(uid, posterUrl, title) {
+  const card = document.querySelector(`[data-id="${uid}"]`);
+  if (!card) return;
+  const poster  = card.querySelector('.card-poster');
+  const noPost  = poster.querySelector('.card-no-poster');
+  // Don't add duplicate
+  if (poster.querySelector('img')) return;
+  const img = document.createElement('img');
+  img.src = posterUrl;
+  img.alt = title;
+  wireImg(img, title);
+  poster.insertBefore(img, poster.firstChild);
+  if (noPost) noPost.style.display = 'none';
 }
 
 applyState();
