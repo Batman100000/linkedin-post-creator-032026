@@ -34,6 +34,21 @@ body {
 }
 .hbtn:hover { background: #2a2a2a; color: #fff; border-color: #555; }
 .hbtn.active { color: #4caf50; border-color: #4caf50; }
+.hbtn.syncing { color: #f5c518; border-color: #f5c518; animation: spin 1s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.hbtn.syncing svg { animation: spin 1s linear infinite; }
+
+/* missing / new row highlights */
+tbody tr.missing-row td { background: rgba(220,50,50,0.07) !important; }
+tbody tr.missing-row .title-main::after {
+  content: ' ⚠ Missing'; font-size: 10px; color: #e05555;
+  font-weight: 400; margin-left: 6px;
+}
+tbody tr.new-row td { background: rgba(80,200,80,0.07) !important; }
+tbody tr.new-row .title-main::after {
+  content: ' ✦ New'; font-size: 10px; color: #6abf69;
+  font-weight: 400; margin-left: 6px;
+}
 
 /* ── SEARCH ── */
 .search-bar {
@@ -206,6 +221,10 @@ footer {
     <button class="hbtn" onclick="loadPosters()">
       <svg width="13" height="13" fill="currentColor" viewBox="0 0 16 16"><path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/><path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/></svg>
       Refresh Posters
+    </button>
+    <button class="hbtn" id="refreshFolderBtn" onclick="refreshFolder()">
+      <svg width="13" height="13" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/></svg>
+      Refresh Folder
     </button>
   </div>
 </div>
@@ -748,6 +767,120 @@ function applyState() {
     }
   });
   updateCounts();
+}
+
+// ── Refresh Folder sync ────────────────────────────────
+async function refreshFolder() {
+  const btn = document.getElementById('refreshFolderBtn');
+  btn.classList.add('syncing');
+  btn.disabled = true;
+
+  let items;
+  try {
+    const res = await fetch('http://localhost:8001/api/scan');
+    if (!res.ok) throw new Error('Server error ' + res.status);
+    items = await res.json();
+  } catch(e) {
+    showToast('⚠ Server not running — start server.js first');
+    btn.classList.remove('syncing'); btn.disabled = false;
+    return;
+  }
+
+  const folderNames = new Set(items.map(i => i.name.toLowerCase()));
+  const folderPaths = items.map(i => i.path);
+  let added = 0, removed = 0, restored = 0;
+
+  // 1. Check existing rows — mark missing / restore found
+  document.querySelectorAll('tbody tr[data-path]').forEach(row => {
+    const rowBase = row.dataset.path.split('\\').pop().toLowerCase();
+    const exists  = folderNames.has(rowBase);
+    if (!exists) {
+      if (!row.classList.contains('missing-row')) {
+        row.classList.add('missing-row'); removed++;
+      }
+    } else {
+      if (row.classList.contains('missing-row')) {
+        row.classList.remove('missing-row'); restored++;
+      }
+    }
+  });
+
+  // 2. Find items in folder not already in any row
+  const knownPaths = new Set(
+    [...document.querySelectorAll('tbody tr[data-path]')]
+      .map(r => r.dataset.path.split('\\').pop().toLowerCase())
+  );
+
+  const VIDEO_EXT = /\.(mp4|mkv|avi|mov|wmv|m4v|flv|webm)$/i;
+  const MUSIC_KW  = /mp3|music|billboard|songs|chart|acoustic|party|flac|album/i;
+  const SERIES_KW = /\bS\d{2}\b|season|complete/i;
+
+  items.forEach(item => {
+    const base = item.name.toLowerCase();
+    if (knownPaths.has(base)) return;
+    // Skip obvious non-media
+    if (/^\.|^desktop\.ini$/i.test(item.name)) return;
+
+    added++;
+    let tableId, rowHtml;
+
+    if (MUSIC_KW.test(item.name)) {
+      tableId = 'tbl-music';
+      rowHtml = `
+        <tr data-id="new-${Date.now()}-${added}" data-path="${item.path}" data-search="${item.name.toLowerCase()}" class="new-row">
+          <td class="music-icon-cell">🎵</td>
+          <td class="music-title-cell"><div class="title-main">${item.name}</div><div class="title-sub">New item</div></td>
+          <td class="year-cell">—</td>
+          <td><div class="genre-chips"><span class="genre-chip">Music</span></div></td>
+          <td class="actions-cell">
+            <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
+            <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
+          </td>
+        </tr>`;
+    } else if (SERIES_KW.test(item.name)) {
+      tableId = 'tbl-series';
+      rowHtml = `
+        <tr data-id="new-${Date.now()}-${added}" data-path="${item.path}" data-search="${item.name.toLowerCase()}" class="new-row">
+          <td class="poster-cell"><div class="poster-wrap"><img src="" alt="" style="display:none"></div></td>
+          <td class="title-cell"><div class="title-main">${item.name}</div><div class="title-sub">New series</div></td>
+          <td><div class="ep-chips"><span class="ep-chip">Unknown</span></div></td>
+          <td><div class="genre-chips"><span class="genre-chip">Series</span></div></td>
+          <td><span class="imdb-na">N/A</span></td>
+          <td class="actions-cell">
+            <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
+            <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
+            <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
+          </td>
+        </tr>`;
+    } else {
+      tableId = 'tbl-movies';
+      rowHtml = `
+        <tr data-id="new-${Date.now()}-${added}" data-path="${item.path}" data-search="${item.name.toLowerCase()}" class="new-row">
+          <td class="poster-cell"><div class="poster-wrap"><img src="" alt="" style="display:none"></div></td>
+          <td class="title-cell"><div class="title-main">${item.name}</div><div class="title-sub">New item</div></td>
+          <td class="year-cell">—</td>
+          <td><div class="genre-chips"><span class="genre-chip">Unknown</span></div></td>
+          <td><span class="imdb-na">N/A</span></td>
+          <td class="actions-cell">
+            <button class="abtn btn-open" onclick="openRow(this)">📁 Open</button>
+            <button class="abtn btn-saw" onclick="toggleWatched(this)">👁 Saw This</button>
+            <button class="abtn btn-remove" onclick="removeRow(this)">✕ Remove</button>
+          </td>
+        </tr>`;
+    }
+
+    const tbody = document.querySelector(`#${tableId} tbody`);
+    if (tbody) tbody.insertAdjacentHTML('beforeend', rowHtml);
+  });
+
+  updateCounts();
+  btn.classList.remove('syncing'); btn.disabled = false;
+
+  const parts = [];
+  if (added)    parts.push(`${added} new`);
+  if (removed)  parts.push(`${removed} missing`);
+  if (restored) parts.push(`${restored} restored`);
+  showToast(parts.length ? '🔄 ' + parts.join(' · ') : '✓ Folder in sync — nothing changed');
 }
 
 applyState();
