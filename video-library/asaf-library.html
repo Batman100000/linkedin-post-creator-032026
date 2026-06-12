@@ -54,22 +54,6 @@ body {
 }
 .search-inner input::placeholder { color: #666; }
 
-/* ── SPLIT LAYOUT ── */
-.split-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
-  padding: 32px 0 8px;
-  border-bottom: 1px solid #1e1e1e;
-}
-.split-pane {
-  padding: 0 40px;
-  min-height: 0;
-}
-.split-pane:first-child {
-  border-right: 1px solid #1e1e1e;
-}
-
 /* ── SECTION ── */
 .section { padding: 32px 40px 8px; }
 .section-title {
@@ -161,6 +145,14 @@ body.hide-watched .card.watched { display: none !important; }
   font-size: 9px; color: #bbb; background: rgba(255,255,255,0.12);
   border-radius: 3px; padding: 2px 6px; white-space: nowrap;
 }
+
+.type-badge {
+  display: inline-block;
+  font-size: 9px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 3px; margin-bottom: 5px;
+}
+.type-badge.movie  { background: rgba(229,9,20,0.25); color: #ff6b6b; border: 1px solid rgba(229,9,20,0.4); }
+.type-badge.series { background: rgba(30,144,255,0.25); color: #6bb5ff; border: 1px solid rgba(30,144,255,0.4); }
 
 .imdb-badge {
   display: inline-flex; align-items: center; gap: 3px;
@@ -258,10 +250,8 @@ footer {
   </div>
 </div>
 
-<!-- ═══ SERIES + MOVIES SPLIT ═══ -->
-<div class="split-layout">
-
-<div class="split-pane">
+<!-- ═══ SERIES ═══ -->
+<div class="section">
   <div class="section-title">📺 Series <span class="section-count" id="count-series">1</span></div>
   <div class="card-grid" id="grid-series">
 
@@ -269,6 +259,7 @@ footer {
       <div class="card-poster">
         <img src="https://media.themoviedb.org/t/p/w300_and_h450_face/iiIzxf4FPOhH8T7avb0DCMYVwDQ.jpg" alt="Spider-Noir">
         <div class="card-overlay">
+          <div class="type-badge series">📺 Series</div>
           <div class="card-title">Spider-Noir</div>
           <div class="card-meta">2024 · S01 · Amazon Prime</div>
           <div class="genre-chips"><span class="genre-chip">Action</span><span class="genre-chip">Animation</span><span class="genre-chip">Crime</span></div>
@@ -285,7 +276,8 @@ footer {
   </div>
 </div>
 
-<div class="split-pane">
+<!-- ═══ MOVIES ═══ -->
+<div class="section">
   <div class="section-title">🎬 Movies <span class="section-count" id="count-movies">13</span></div>
   <div class="card-grid" id="grid-movies">
 
@@ -511,8 +503,6 @@ footer {
 
   </div>
 </div>
-
-</div><!-- end split-layout -->
 
 <!-- ═══ MUSIC ═══ -->
 <div class="section">
@@ -755,6 +745,15 @@ async function refreshFolder() {
   showToast(parts.length ? '🔄 ' + parts.join(' · ') : '✓ הספריה מסונכרנת');
 }
 
+// ── Inject type badges dynamically ────────────────────
+function injectTypeBadges() {
+  document.querySelectorAll('#grid-movies .card-overlay').forEach(overlay => {
+    if (!overlay.querySelector('.type-badge')) {
+      overlay.insertAdjacentHTML('afterbegin', '<div class="type-badge movie">🎬 Movie</div>');
+    }
+  });
+}
+
 // ── Click poster to open, buttons stay independent ────
 function initCardClicks() {
   document.querySelectorAll('.card-poster').forEach(poster => {
@@ -780,6 +779,7 @@ function applyState() {
 }
 
 applyState();
+injectTypeBadges();
 initCardClicks();
 </script>
 </body>
