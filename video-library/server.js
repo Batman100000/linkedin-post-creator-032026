@@ -106,7 +106,9 @@ http.createServer(async (req, res) => {
     // 2) Wikipedia — try common film article title patterns
     const wikiCandidates = [
       `${title} (film)`,
-      year ? `${title} (${year} film)` : null,
+      `${title} (${year} film)`,
+      year ? `${title} (${year})` : null,
+      `${title} film`,
       `${title}`,
     ].filter(Boolean);
 
@@ -115,29 +117,36 @@ http.createServer(async (req, res) => {
       if (remoteUrl) {
         const cached = await cacheImage(remoteUrl);
         if (cached) return json(res, { poster: cached });
-        // Image too small or failed — return remote URL directly
         return json(res, { poster: remoteUrl });
       }
     }
 
-    // 3) Wikipedia search as last resort
-    try {
-      const q = encodeURIComponent(title + (year ? ' ' + year : '') + ' film');
-      const { body } = await fetchUrl(`https://en.wikipedia.org/w/api.php?action=opensearch&search=${q}&limit=3&format=json`);
-      const results = JSON.parse(body.toString());
-      const titles  = results[1] || [];
-      const urls    = results[3] || [];
-      for (let i = 0; i < titles.length; i++) {
-        const pageSlug = decodeURIComponent(urls[i].split('/wiki/')[1] || '');
-        if (!pageSlug) continue;
-        const remoteUrl = await wikiPoster(pageSlug);
-        if (remoteUrl) {
-          const cached = await cacheImage(remoteUrl);
-          if (cached) return json(res, { poster: cached });
-          return json(res, { poster: remoteUrl });
+    // 3) Wikipedia search as last resort (try multiple search terms)
+    const searchTerms = [
+      title + (year ? ' ' + year : '') + ' film',
+      title + ' film',
+      title + (year ? ' ' + year : ''),
+    ];
+
+    for (const searchTerm of searchTerms) {
+      try {
+        const q = encodeURIComponent(searchTerm);
+        const { body } = await fetchUrl(`https://en.wikipedia.org/w/api.php?action=opensearch&search=${q}&limit=5&format=json`);
+        const results = JSON.parse(body.toString());
+        const titles  = results[1] || [];
+        const urls    = results[3] || [];
+        for (let i = 0; i < titles.length; i++) {
+          const pageSlug = decodeURIComponent(urls[i].split('/wiki/')[1] || '');
+          if (!pageSlug) continue;
+          const remoteUrl = await wikiPoster(pageSlug);
+          if (remoteUrl) {
+            const cached = await cacheImage(remoteUrl);
+            if (cached) return json(res, { poster: cached });
+            return json(res, { poster: remoteUrl });
+          }
         }
-      }
-    } catch(_) {}
+      } catch(_) {}
+    }
 
     return json(res, { poster: null });
   }
