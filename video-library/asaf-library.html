@@ -202,6 +202,57 @@ body.hide-watched .card.watched { display: none !important; }
 .music-sub { font-size: 11px; color: #666; margin-top: 3px; }
 .music-actions { display: flex; gap: 5px; margin-top: 8px; }
 
+/* ── SUBTITLE MODAL ── */
+#sub-modal-bg {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85); z-index: 10000;
+  align-items: center; justify-content: center;
+}
+#sub-modal-bg.open { display: flex; }
+#sub-modal {
+  background: #1a1a1a; border: 1px solid #333; border-radius: 12px;
+  width: 540px; max-width: 95vw; max-height: 80vh;
+  display: flex; flex-direction: column; overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.9);
+}
+#sub-modal-head {
+  padding: 18px 20px 14px; border-bottom: 1px solid #252525;
+  display: flex; align-items: center; justify-content: space-between;
+}
+#sub-modal-title { font-size: 15px; font-weight: 800; color: #fff; }
+#sub-modal-close {
+  background: none; border: none; color: #666; font-size: 20px;
+  cursor: pointer; padding: 0 4px; line-height: 1;
+}
+#sub-modal-close:hover { color: #fff; }
+#sub-modal-body { overflow-y: auto; padding: 12px 16px; flex: 1; }
+#sub-modal-status { text-align: center; padding: 30px; color: #666; font-size: 13px; }
+.sub-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: 8px; margin-bottom: 6px;
+  background: #222; border: 1px solid #2a2a2a; transition: border-color 0.15s;
+}
+.sub-item:hover { border-color: #444; }
+.sub-info { flex: 1; overflow: hidden; }
+.sub-name { font-size: 12px; color: #ddd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sub-meta { font-size: 10px; color: #666; margin-top: 3px; }
+.sub-dl-btn {
+  background: #1a3a1a; color: #6abf69; border: 1px solid #2a4a2a;
+  font-size: 11px; padding: 5px 12px; border-radius: 5px;
+  cursor: pointer; font-family: inherit; white-space: nowrap; flex-shrink: 0;
+  transition: all 0.13s;
+}
+.sub-dl-btn:hover { background: #2a4a2a; color: #90ee90; }
+.sub-dl-btn.done { background: #0a2a0a; color: #4caf50; border-color: #4caf50; }
+.sub-dl-btn.loading { opacity: 0.6; pointer-events: none; }
+
+/* subtitle button on card */
+.cabtn-sub {
+  background: rgba(100,180,255,0.15); color: #88ccff;
+  border: 1px solid rgba(100,180,255,0.3);
+}
+.cabtn-sub:hover { background: rgba(100,180,255,0.28); color: #fff; }
+
 /* ── PROGRESS BAR ── */
 #progress-wrap {
   position: fixed; top: 0; left: 0; right: 0; z-index: 9998;
@@ -595,6 +646,19 @@ footer {
 </div>
 
 <footer>🎬 Asaf's Library · 13 Movies · 1 Series · 5 Music · Posters via TMDB</footer>
+<!-- SUBTITLE MODAL -->
+<div id="sub-modal-bg" onclick="if(event.target===this)closeSubModal()">
+  <div id="sub-modal">
+    <div id="sub-modal-head">
+      <div id="sub-modal-title">🔤 כתוביות עבריות</div>
+      <button id="sub-modal-close" onclick="closeSubModal()">✕</button>
+    </div>
+    <div id="sub-modal-body">
+      <div id="sub-modal-status">מחפש כתוביות...</div>
+    </div>
+  </div>
+</div>
+
 <div id="progress-wrap"><div id="progress-bar"></div></div>
 <div id="progress-label"></div>
 <div id="toast"></div>
@@ -785,11 +849,86 @@ async function refreshFolder() {
   showToast(parts.length ? '🔄 ' + parts.join(' · ') : '✓ הספריה מסונכרנת');
 }
 
+// ── Subtitle modal ─────────────────────────────────────
+let _subSavePath = '';
+
+function openSubtitles(btn) {
+  const card  = btn.closest('[data-id]');
+  const title = card.querySelector('.card-title')?.textContent.trim() || '';
+  const meta  = card.querySelector('.card-meta')?.textContent || '';
+  const year  = (meta.match(/\d{4}/) || [''])[0];
+  _subSavePath = card.dataset.path || '';
+
+  document.getElementById('sub-modal-title').textContent = '🔤 כתוביות — ' + title;
+  document.getElementById('sub-modal-body').innerHTML = '<div id="sub-modal-status">מחפש כתוביות עבריות...</div>';
+  document.getElementById('sub-modal-bg').classList.add('open');
+
+  fetch(`http://localhost:8001/api/subtitles/search?title=${encodeURIComponent(title)}&year=${year}`)
+    .then(r => r.json())
+    .then(results => {
+      const body = document.getElementById('sub-modal-body');
+      if (!results.length) {
+        body.innerHTML = '<div id="sub-modal-status">לא נמצאו כתוביות עבריות לתוכן זה</div>';
+        return;
+      }
+      body.innerHTML = results.map((s, i) => `
+        <div class="sub-item">
+          <div class="sub-info">
+            <div class="sub-name" title="${s.name}">${s.name}</div>
+            <div class="sub-meta">⬇ ${Number(s.downloads||0).toLocaleString()} הורדות · ⭐ ${parseFloat(s.rating||0).toFixed(1)}</div>
+          </div>
+          <button class="sub-dl-btn" onclick="downloadSub(this,'${encodeURIComponent(s.url)}','${encodeURIComponent(s.name.replace(/\.gz$/,''))}')">⬇ הורד</button>
+        </div>`).join('');
+    })
+    .catch(() => {
+      document.getElementById('sub-modal-body').innerHTML =
+        '<div id="sub-modal-status">⚠ שגיאה — ודא שהשרת רץ (start-library.bat)</div>';
+    });
+}
+
+async function downloadSub(btn, encodedUrl, encodedName) {
+  btn.classList.add('loading');
+  btn.textContent = 'מוריד...';
+  const savePath = _subSavePath.includes('.') // file not folder
+    ? _subSavePath.substring(0, _subSavePath.lastIndexOf('\\'))
+    : _subSavePath;
+  const title = decodeURIComponent(encodedName).replace(/\.\w+$/, '');
+  try {
+    const res = await fetch(
+      `http://localhost:8001/api/subtitles/download?url=${encodedUrl}&savePath=${encodeURIComponent(savePath)}&title=${encodeURIComponent(title)}`
+    );
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    btn.classList.remove('loading');
+    btn.classList.add('done');
+    btn.textContent = '✓ נשמר!';
+    showToast('✓ כתוביות נשמרו: ' + data.saved.split('\\').pop());
+  } catch(e) {
+    btn.classList.remove('loading');
+    btn.textContent = '⚠ שגיאה';
+    showToast('שגיאה בהורדה: ' + e.message);
+  }
+}
+
+function closeSubModal() {
+  document.getElementById('sub-modal-bg').classList.remove('open');
+}
+
 // ── Inject type badges dynamically ────────────────────
 function injectTypeBadges() {
   document.querySelectorAll('#grid-movies .card-overlay').forEach(overlay => {
     if (!overlay.querySelector('.type-badge')) {
       overlay.insertAdjacentHTML('afterbegin', '<div class="type-badge movie">🎬 Movie</div>');
+    }
+  });
+}
+
+function injectSubtitleButtons() {
+  document.querySelectorAll('#grid-movies .card-actions, #grid-series .card-actions').forEach(actions => {
+    if (!actions.querySelector('.cabtn-sub')) {
+      actions.insertAdjacentHTML('beforeend',
+        '<button class="cabtn cabtn-sub" onclick="openSubtitles(this)">🔤 כתוביות</button>'
+      );
     }
   });
 }
@@ -820,6 +959,7 @@ function applyState() {
 
 applyState();
 injectTypeBadges();
+injectSubtitleButtons();
 initCardClicks();
 </script>
 </body>
