@@ -832,7 +832,7 @@ function clearProgress() {
 // ── Update stats display ───────────────────────────────
 async function updateStatsDisplay() {
   try {
-    const countRes = await fetch('http://localhost:8001/api/count-videos');
+    const countRes = await fetch('https://localhost:8001/api/count-videos');
     const countData = await countRes.json();
     const totalFiles = countData.totalVideoFiles || 0;
 
@@ -864,7 +864,7 @@ async function refreshFolder() {
   let items;
   try {
     setProgress(10, 'מתחבר לשרת...');
-    const res = await fetch('http://localhost:8001/api/scan');
+    const res = await fetch('https://localhost:8001/api/scan');
     if (!res.ok) throw new Error('server error');
     setProgress(35, 'קורא תיקייה...');
     items = await res.json();
@@ -916,7 +916,7 @@ async function refreshFolder() {
   const itemTypePromises = newItems.map(async item => {
     const itemPath = ROOT + '\\' + item.name;
     try {
-      const typeRes = await fetch(`http://localhost:8001/api/folder-type?path=${encodeURIComponent(itemPath)}`);
+      const typeRes = await fetch(`https://localhost:8001/api/folder-type?path=${encodeURIComponent(itemPath)}`);
       const typeData = await typeRes.json();
       return { item, isMusic: typeData.isMusic, videoCount: typeData.fileCount };
     } catch(_) {
@@ -966,7 +966,7 @@ async function refreshFolder() {
     setProgress(88, 'מחפש תמונות...');
     await Promise.allSettled(videoNewItems.map(async ({ uid, cleanTitle, year }) => {
       try {
-        const r = await fetch(`http://localhost:8001/api/poster?title=${encodeURIComponent(cleanTitle)}&year=${year}`);
+        const r = await fetch(`https://localhost:8001/api/poster?title=${encodeURIComponent(cleanTitle)}&year=${year}`);
         const d = await r.json();
         if (d.poster) applyPosterToCard(uid, d.poster, cleanTitle);
       } catch(_) {}
@@ -996,7 +996,7 @@ async function playCard(btn) {
   if (VIDEO_EXT.test(p)) { playFile(p); return; }
   // It's a folder — fetch episode list
   try {
-    const res  = await fetch(`http://localhost:8001/api/episodes?path=${encodeURIComponent(p)}`);
+    const res  = await fetch(`https://localhost:8001/api/episodes?path=${encodeURIComponent(p)}`);
     const eps  = await res.json();
     if (eps.error) throw new Error(eps.error);
     if (eps.length === 1) { playFile(eps[0].path); return; }
@@ -1006,7 +1006,7 @@ async function playCard(btn) {
 }
 
 function playFile(filePath) {
-  fetch(`http://localhost:8001/api/play?path=${encodeURIComponent(filePath)}`)
+  fetch(`https://localhost:8001/api/play?path=${encodeURIComponent(filePath)}`)
     .then(r => r.json())
     .then(d => { if (d.error) showToast('⚠ ' + d.error); else showToast('▶ מפעיל...'); })
     .catch(() => showToast('⚠ ודא שהשרת רץ (start-library.bat)'));
@@ -1043,7 +1043,7 @@ function openSubtitles(btn) {
   document.getElementById('sub-modal-body').innerHTML = '<div id="sub-modal-status">מחפש כתוביות עבריות...</div>';
   document.getElementById('sub-modal-bg').classList.add('open');
 
-  fetch(`http://localhost:8001/api/subtitles/search?title=${encodeURIComponent(title)}&year=${year}`)
+  fetch(`https://localhost:8001/api/subtitles/search?title=${encodeURIComponent(title)}&year=${year}`)
     .then(r => r.json())
     .then(results => {
       const body = document.getElementById('sub-modal-body');
@@ -1075,7 +1075,7 @@ async function downloadSub(btn, encodedUrl, encodedName) {
   const title = decodeURIComponent(encodedName).replace(/\.\w+$/, '');
   try {
     const res = await fetch(
-      `http://localhost:8001/api/subtitles/download?url=${encodedUrl}&savePath=${encodeURIComponent(savePath)}&title=${encodeURIComponent(title)}`
+      `https://localhost:8001/api/subtitles/download?url=${encodedUrl}&savePath=${encodeURIComponent(savePath)}&title=${encodeURIComponent(title)}`
     );
     const data = await res.json();
     if (data.error) throw new Error(data.error);
@@ -1193,7 +1193,7 @@ async function openOperationsCenter() {
   tbody.innerHTML = '<tr><td colspan="8">Loading...</td></tr>';
 
   try {
-    const res = await fetch('http://localhost:8001/api/operations-report');
+    const res = await fetch('https://localhost:8001/api/operations-report');
     const data = await res.json();
 
     // Summary
