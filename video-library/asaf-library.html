@@ -928,8 +928,8 @@ async function refreshFolder() {
   const itemsWithTypes = await Promise.all(itemTypePromises);
 
   itemsWithTypes.forEach(({ item, isMusic, videoCount }) => {
-    // Skip music folders and empty folders
-    if (isMusic || videoCount === 0) return;
+    // Skip only music folders (show video folders even if empty)
+    if (isMusic) return;
 
     added++;
     const itemPath   = ROOT + '\\' + item.name;
