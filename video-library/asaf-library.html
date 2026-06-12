@@ -810,14 +810,14 @@ async function refreshFolder() {
   const folderNames = new Set(items.map(i => i.name.toLowerCase()));
   let added = 0, removed = 0, restored = 0;
 
-  // 1. Check existing rows — mark missing / restore found
+  // 1. Show only rows whose file/folder exists in the folder — hide the rest
   document.querySelectorAll('tbody tr[data-path]').forEach(row => {
     const rowBase = row.dataset.path.split('\\').pop().split('/').pop().toLowerCase();
     const exists  = folderNames.has(rowBase);
     if (!exists) {
-      if (!row.classList.contains('missing-row')) { row.classList.add('missing-row'); removed++; }
+      row.classList.add('hidden-row'); removed++;
     } else {
-      if (row.classList.contains('missing-row'))  { row.classList.remove('missing-row'); restored++; }
+      row.classList.remove('hidden-row', 'missing-row');
     }
   });
 
