@@ -20,6 +20,12 @@ if (!fs.existsSync(POSTERS_DIR)) fs.mkdirSync(POSTERS_DIR);
 const MIME = { '.html':'text/html', '.css':'text/css', '.js':'application/javascript',
                '.jpg':'image/jpeg', '.png':'image/png', '.svg':'image/svg+xml' };
 
+// True only if p is inside root (not just a string prefix of it)
+function insideFolder(p, root) {
+  const rel = path.relative(root, p);
+  return rel !== '' && !rel.startsWith('..') && !path.isAbsolute(rel);
+}
+
 function json(res, data, status=200) {
   res.writeHead(status, { 'Content-Type':'application/json' });
   res.end(JSON.stringify(data));
@@ -48,6 +54,11 @@ function extractGzip(buf) {
 }
 
 http.createServer(async (req, res) => {
+  // Reject DNS-rebinding requests: Host must be this server's own address
+  const host = (req.headers.host || '').toLowerCase();
+  if (host !== `localhost:${PORT}` && host !== `127.0.0.1:${PORT}`) {
+    res.writeHead(403); res.end('forbidden'); return;
+  }
   if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
 
   const urlObj  = new URL(req.url, `http://localhost:${PORT}`);
@@ -153,10 +164,11 @@ http.createServer(async (req, res) => {
   if (route === '/api/play') {
     const filePath = params.get('path');
     if (!filePath) return json(res, { error: 'missing path' }, 400);
-    // Prevent path traversal — file must be under WATCH_FOLDER
+    // Browsers block cross-site requests that carry this custom header (no CORS is allowed)
+    if (req.headers['x-library-request'] !== '1') return json(res, { error: 'forbidden' }, 403);
+    // Prevent path traversal — file must be inside WATCH_FOLDER
     const resolved = path.resolve(filePath);
-    const watchResolved = path.resolve(WATCH_FOLDER);
-    if (!resolved.startsWith(watchResolved)) {
+    if (!insideFolder(resolved, path.resolve(WATCH_FOLDER))) {
       return json(res, { error: 'access denied' }, 403);
     }
     // Verify file exists and is a video
@@ -177,7 +189,7 @@ http.createServer(async (req, res) => {
     // Prevent path traversal
     const resolved = path.resolve(folderPath);
     const watchResolved = path.resolve(WATCH_FOLDER);
-    if (!resolved.startsWith(watchResolved)) {
+    if (!insideFolder(resolved, watchResolved)) {
       return json(res, { error: 'access denied' }, 403);
     }
     try {
@@ -294,7 +306,7 @@ http.createServer(async (req, res) => {
     if (!folderPath) return json(res, { error: 'missing path' }, 400);
     const resolved = path.resolve(folderPath);
     const watchResolved = path.resolve(WATCH_FOLDER);
-    if (!resolved.startsWith(watchResolved)) return json(res, { error: 'access denied' }, 403);
+    if (!insideFolder(resolved, watchResolved)) return json(res, { error: 'access denied' }, 403);
 
     try {
       // Recursively find all files in folder tree
@@ -354,7 +366,7 @@ http.createServer(async (req, res) => {
     // Prevent path traversal in savePath
     const resolved = path.resolve(savePath);
     const watchResolved = path.resolve(WATCH_FOLDER);
-    if (!resolved.startsWith(watchResolved)) {
+    if (!insideFolder(resolved, watchResolved)) {
       return json(res, { error: 'access denied' }, 403);
     }
 
@@ -375,7 +387,7 @@ http.createServer(async (req, res) => {
 
       // Final path check
       const destResolved = path.resolve(destFile);
-      if (!destResolved.startsWith(watchResolved)) {
+      if (!insideFolder(destResolved, watchResolved)) {
         return json(res, { error: 'invalid path' }, 403);
       }
 

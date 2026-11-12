@@ -455,14 +455,14 @@ async function playCard(btnEl) {
     const epRes = await fetch(API + '/api/episodes?path=' + encodeURIComponent(p));
     const eps = await epRes.json();
     if (!Array.isArray(eps) || eps.length === 0) { showToast('⚠ No videos found'); return; }
-    await fetch(API + '/api/play?path=' + encodeURIComponent(eps[0].path));
+    await fetch(API + '/api/play?path=' + encodeURIComponent(eps[0].path), {headers:{'X-Library-Request':'1'}});
     showToast('▶ Playing ' + eps[0].name);
   } catch(e) { showToast('⚠ ' + e.message); }
 }
 
 function openFolder(btnEl) {
   const p = btnEl.closest('.card').dataset.path;
-  fetch(API + '/api/play?path=' + encodeURIComponent(p)).catch(() => {});
+  fetch(API + '/api/play?path=' + encodeURIComponent(p), {headers:{'X-Library-Request':'1'}}).catch(() => {});
   showToast('📁 Opening folder...');
 }
 
