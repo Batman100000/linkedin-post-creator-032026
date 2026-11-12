@@ -3,7 +3,7 @@ const https  = require('https');
 const fs     = require('fs');
 const path   = require('path');
 const zlib   = require('zlib');
-const { exec } = require('child_process');
+const { execFile } = require('child_process');
 
 // Load API key from environment (or use provided key)
 const OMDB_KEY = process.env.OMDB_API_KEY || 'b9bd48a6';
@@ -21,7 +21,7 @@ const MIME = { '.html':'text/html', '.css':'text/css', '.js':'application/javasc
                '.jpg':'image/jpeg', '.png':'image/png', '.svg':'image/svg+xml' };
 
 function json(res, data, status=200) {
-  res.writeHead(status, { 'Content-Type':'application/json', 'Access-Control-Allow-Origin':'*' });
+  res.writeHead(status, { 'Content-Type':'application/json' });
   res.end(JSON.stringify(data));
 }
 
@@ -48,8 +48,6 @@ function extractGzip(buf) {
 }
 
 http.createServer(async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Headers', '*');
   if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
 
   const urlObj  = new URL(req.url, `http://localhost:${PORT}`);
@@ -166,10 +164,9 @@ http.createServer(async (req, res) => {
       return json(res, { error: 'not a video file' }, 400);
     }
     // Use start "" to open with default player (Windows)
-    exec(`start "" "${filePath}"`, err => {
-      if (err) return json(res, { error: 'play failed' }, 500);
-      json(res, { ok: true });
-    });
+    if (!fs.existsSync(resolved)) return json(res, { error: 'not found' }, 404);
+    // execFile passes the path as one argument (no shell), so it cannot inject commands
+    execFile('explorer.exe', [resolved], () => json(res, { ok: true }));
     return;
   }
 
@@ -403,7 +400,7 @@ http.createServer(async (req, res) => {
     }
     fs.readFile(imgFile, (err, data) => {
       if (err) { res.writeHead(404); res.end('Not found'); return; }
-      res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Access-Control-Allow-Origin':'*',
+      res.writeHead(200, { 'Content-Type': 'image/jpeg',
                            'Cache-Control': 'public, max-age=31536000' });
       res.end(data);
     });
@@ -421,9 +418,9 @@ http.createServer(async (req, res) => {
   fs.readFile(filePath, (err, data) => {
     if (err) { res.writeHead(404); res.end('Not found'); return; }
     const ext = path.extname(filePath);
-    res.writeHead(200, { 'Content-Type': MIME[ext] || 'text/plain', 'Access-Control-Allow-Origin':'*' });
+    res.writeHead(200, { 'Content-Type': MIME[ext] || 'text/plain' });
     res.end(data);
   });
-}).listen(PORT, () => {
+}).listen(PORT, '127.0.0.1', () => {
   console.log(`Library server running at http://localhost:${PORT}`);
 });
