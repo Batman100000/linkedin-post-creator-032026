@@ -11,3 +11,6 @@ npm-debug.log*
 
 # ── Runtime logs ──
 *.log
+
+# Local API key file (legacy)
+config.txt
