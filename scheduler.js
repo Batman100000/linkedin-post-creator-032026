@@ -30,7 +30,13 @@ function startServers() {
   killPort(3001);
   killPort(8000);
 
-  const apiKey = fs.readFileSync(path.join(DIR, 'config.txt'), 'utf8').trim();
+  // Key: env var first, then key.txt (git-ignored), then legacy config.txt
+  const apiKey = (process.env.CLAUDE_API_KEY
+    || ['key.txt', 'config.txt']
+         .map(f => path.join(DIR, f))
+         .filter(f => fs.existsSync(f))
+         .map(f => fs.readFileSync(f, 'utf8').trim())[0]
+    || '').trim();
 
   const proxy = spawn('node', [path.join(DIR, 'proxy-server.js')], {
     env:      { ...process.env, CLAUDE_API_KEY: apiKey },
@@ -41,7 +47,7 @@ function startServers() {
   log(`Proxy server started (PID ${proxy.pid}) — http://localhost:3001`);
 
   setTimeout(() => {
-    const web = spawn('python3', ['-m', 'http.server', '8000', '--directory', DIR], {
+    const web = spawn('python3', ['-m', 'http.server', '8000', '--bind', '127.0.0.1', '--directory', DIR], {
       detached: true,
       stdio:    'ignore',
     });
