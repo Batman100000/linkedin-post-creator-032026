@@ -1,0 +1,6 @@
+config.txt
+key.txt
+.env
+*.env
+*.log
+.claude/
