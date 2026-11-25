@@ -149,13 +149,8 @@ class LibraryHandler(http.server.SimpleHTTPRequestHandler):
     def send_json(self, data, status=200):
         self.send_response(status)
         self.send_header('Content-Type', 'application/json')
-        self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
         self.wfile.write(json.dumps(data).encode())
-
-    def end_headers(self):
-        self.send_header('Access-Control-Allow-Origin', '*')
-        super().end_headers()
 
 if __name__ == '__main__':
     server_dir = os.path.dirname(os.path.abspath(__file__))
@@ -165,7 +160,7 @@ if __name__ == '__main__':
     key_file = os.path.join(server_dir, 'key.pem')
     use_https = os.path.exists(cert_file) and os.path.exists(key_file)
 
-    with socketserver.TCPServer(('', PORT), LibraryHandler) as httpd:
+    with socketserver.TCPServer(('127.0.0.1', PORT), LibraryHandler) as httpd:
         if use_https:
             context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
             context.load_cert_chain(cert_file, key_file)
