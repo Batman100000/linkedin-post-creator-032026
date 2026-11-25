@@ -11,3 +11,6 @@ npm-debug.log*
 
 # ── Runtime logs ──
 *.log
+
+# Local backups (not for git)
+backup/
