@@ -162,12 +162,11 @@ function handleNewsRequest(res) {
   });
 }
 
-// ── CORS — allow localhost AND file:// origins (local machine only) ─────────
+// ── CORS — allow only localhost origins (null/file:// origins are refused) ──
 function setCORS(res, origin) {
   const isLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin || '');
-  const isFile      = !origin || origin === 'null'; // file:// sends empty/null origin
-  if (isLocalhost || isFile) {
-    res.setHeader('Access-Control-Allow-Origin', origin || '*');
+  if (isLocalhost) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
   }
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
